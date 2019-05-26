@@ -1,7 +1,6 @@
 ## Pytorch-Person-REID-Baseline-Bag-of-Tricks
-* This project re-implement the strong person re-identification baseline [bag of tricks (BoT)](https://arxiv.org/abs/1903.07071).
-* This project refers the [offical code](https://github.com/michuanhaohao/reid-strong-baseline) a lot.
-* **Advantage**: Compared with the offical implementation, his project provides a more simple and clear implementation of BoT.
+* This project re-implements the strong person re-identification baseline [Bag of Tricks (BoT)](https://arxiv.org/abs/1903.07071), and refers the [offical code](https://github.com/michuanhaohao/reid-strong-baseline) a lot.
+* **Advantage**: Compared with the offical implementation, his project provides a more simple and clear implementation of BoT by removing unnecessary modules.
 
 ## Dependencies
 * [Anaconda (Python 2.7)](https://www.anaconda.com/download/)
