@@ -30,7 +30,7 @@ python main.py --market_path market_path --duke_path duke_path
 
 ### Tricks we used
 * [x] Warm up learning rate
-* [x] Random erasing augmentation
+* [x] Random erasing augmentation (REA)
 * [x] Label smoothing
 * [x] Last stride
 * [x] BNNeck
