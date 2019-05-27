@@ -38,7 +38,7 @@ python main.py --market_path market_path --duke_path duke_path
 ### Settings
 * We conduct our experiments on 1 GTX1080ti GPU
 
-### Results
+### Results (with REA)
 
 | Repeat | market2market | market2duke | | duke2duke |  duke2market |
 | :---:                             | :---: | :---: | - |:---: | :---: |
@@ -46,7 +46,13 @@ python main.py --market_path market_path --duke_path duke_path
 | 2 | 0.944 (0.858) | 0.295 (0.156) | | 0.868 (0.765) | 0.492 (0.223) |
 | 3 | 0.942 (0.859) | 0.281 (0.152) | | 0.863 (0.765) | 0.485 (0.221) |
 | Average | 0.942 (0.858) | 0.289 (0.156) | | 0.868 (0.766) | 0.488 (0.218) |
-| Paper | 0.941 (0.857) | - | | 0.864 (0.764) | - |
+| Paper | 0.941 (0.857) | - | | 0.864 (0.764) |
+
+### Results (without REA)
+| Repeat | market2market | market2duke | | duke2duke |  duke2market |
+| :---:                             | :---: | :---: | - |:---: | :---: |
+| 1 | 0.936 (0.824) | 0.427 (0.264) | | 0.849 (0.714) | 0.556 (0.269) |
+| Paper | - | 0.414(0.257) | | - | 0.543 (0.255) |  
 
 ## Contacts
 If you have any question about the project, please feel free to contact with me.
