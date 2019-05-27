@@ -79,7 +79,7 @@ if __name__ == '__main__':
 	# dataset configuration
 	parser.add_argument('--market_path', type=str, default='market_path')
 	parser.add_argument('--duke_path', type=str, default='duke_path')
-	parser.add_argument('--train_dataset', type=str, default='market_train', help='market_train, market2duke_train, duke_train, duke2market_train')
+	parser.add_argument('--train_dataset', type=str, default='market_train', help='market_train, duke_train')
 	parser.add_argument('--image_size', type=int, nargs='+', default=[256, 128])
 	parser.add_argument('--p', type=int, default=16, help='person count in a batch')
 	parser.add_argument('--k', type=int, default=4, help='images count of a person in a batch')
