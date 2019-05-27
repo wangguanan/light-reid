@@ -25,7 +25,6 @@ python main.py --market_path market_path --duke_path duke_path
 * [x] Label smoothing
 * [x] Last stride
 * [x] BNNeck
-* []Center loss
 
 ### Settings
 * We conduct our experiments on 1 GTX1080ti GPU
