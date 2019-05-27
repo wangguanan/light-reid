@@ -9,7 +9,7 @@
       booktitle={Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition Workshops},
       year={2019}
     }
-```
+    ```
 
 ## Dependencies
 * [Anaconda (Python 2.7)](https://www.anaconda.com/download/)
