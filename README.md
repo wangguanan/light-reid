@@ -1,17 +1,14 @@
 ## Pytorch-Person-ReID-Baseline-Bag-of-Tricks
 * This project re-implements the strong person re-identification baseline [Bag of Tricks (BoT)](https://arxiv.org/abs/1903.07071) and refers the [offical code](https://github.com/michuanhaohao/reid-strong-baseline) a lot.
 * **Advantage**: Compared with the offical code, this project provides a more simple and clear implementation of BoT by only using the best parameters and removing lots of unnecessary modules.
-
-
-### Acknowledge
-If you find this project useful, please cite the offical paper
-```
-@inproceedings{luo2019bag,
-  title={Bag of Tricks and A Strong Baseline for Deep Person Re-identification},
-  author={Luo, Hao and Gu, Youzhi and Liao, Xingyu and Lai, Shenqi and Jiang, Wei},
-  booktitle={Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition Workshops},
-  year={2019}
-}
+* If you find this project useful, please cite the offical paper
+    ```
+    @inproceedings{luo2019bag,
+      title={Bag of Tricks and A Strong Baseline for Deep Person Re-identification},
+      author={Luo, Hao and Gu, Youzhi and Liao, Xingyu and Lai, Shenqi and Jiang, Wei},
+      booktitle={Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition Workshops},
+      year={2019}
+    }
 ```
 
 ## Dependencies
