@@ -28,17 +28,17 @@ python main.py --market_path market_path --duke_path duke_path
 
 ## Experiments
 
-### Tricks we used
+### 1. Tricks we used
 * [x] Warm up learning rate
 * [x] Random erasing augmentation (REA)
 * [x] Label smoothing
 * [x] Last stride
 * [x] BNNeck
 * [x] **Note that** our implementation uses no the center loss and re-ranking.
-### Settings
+### 2. Settings
 * We conduct our experiments on 1 GTX1080ti GPU
 
-### Results (with REA)
+### 3. Results (with REA)
 
 | Repeat | market2market | market2duke | | duke2duke |  duke2market |
 | :---:                             | :---: | :---: | - |:---: | :---: |
@@ -48,7 +48,7 @@ python main.py --market_path market_path --duke_path duke_path
 | Average | 0.942 (0.858) | 0.289 (0.156) | | 0.868 (0.766) | 0.488 (0.218) |
 | Paper | 0.941 (0.857) | - | | 0.864 (0.764) |
 
-### Results (without REA)
+### 4. Results (without REA)
 | Repeat | market2market | market2duke | | duke2duke |  duke2market |
 | :---:                             | :---: | :---: | - |:---: | :---: |
 | 1 | 0.936 (0.824) | 0.427 (0.264) | | 0.849 (0.714) | 0.556 (0.269) |
