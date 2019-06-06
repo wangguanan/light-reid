@@ -18,7 +18,7 @@
 * Memory >= 20G
 
 ## Dataset Preparation
-* [Market-1501 Dataset](http://ww7.liangzheng.org/) and [DukeMTMC-reID Dataset](https://github.com/layumi/DukeMTMC-reID_evaluation)
+* [Market-1501 Dataset](https://jingdongwang2017.github.io/Projects/ReID/Datasets/Market-1501.html) and [DukeMTMC-reID Dataset](https://github.com/layumi/DukeMTMC-reID_evaluation)
 * Download and extract both anywhere
 
 ## Train and Test
