@@ -21,13 +21,11 @@
 * GPU Memory >= 10G
 * Memory >= 20G
 
-
-
 ## Dataset Preparation
 * [Market-1501 Dataset](https://jingdongwang2017.github.io/Projects/ReID/Datasets/Market-1501.html) and [DukeMTMC-reID Dataset](https://github.com/layumi/DukeMTMC-reID_evaluation)
 * Download and extract both anywhere
 
-## Train
+## Run
 ```
 # train
 python main.py --market_path market_path --duke_path duke_path --output_path output_path/ --mode train 
