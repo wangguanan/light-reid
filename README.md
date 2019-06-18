@@ -17,13 +17,27 @@
 * GPU Memory >= 10G
 * Memory >= 20G
 
+## News
+* 2019-06-18: we add visualization code to show ranked images 
+
 ## Dataset Preparation
 * [Market-1501 Dataset](https://jingdongwang2017.github.io/Projects/ReID/Datasets/Market-1501.html) and [DukeMTMC-reID Dataset](https://github.com/layumi/DukeMTMC-reID_evaluation)
 * Download and extract both anywhere
 
-## Train and Test
+## Train
 ```
-python main.py --market_path market_path --duke_path duke_path
+# train
+python main.py --market_path market_path --duke_path duke_path --output_path output_path/ --mode train 
+```
+
+```
+# test, the output_path should be same with that of training process
+python main.py --market_path market_path --duke_path duke_path --output_path output_path/ --mode test --resume_test_epoch resume_test_epoch
+```
+
+```
+# visualize the ranked images, the output_path should be same with that of training process
+python main.py --market_path market_path --duke_path duke_path --output_path output_path/ --mode visualize --resume_visualize_epoch resume_visualize_epoch
 ```
 
 ## Experiments
