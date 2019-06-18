@@ -11,14 +11,17 @@
     }
     ```
 
+## News
+* 2019-06-18: we add visualization code to show ranked images 
+
+
 ## Dependencies
 * [Anaconda (Python 2.7)](https://www.anaconda.com/download/)
 * [PyTorch 0.4.0](http://pytorch.org/)
 * GPU Memory >= 10G
 * Memory >= 20G
 
-## News
-* 2019-06-18: we add visualization code to show ranked images 
+
 
 ## Dataset Preparation
 * [Market-1501 Dataset](https://jingdongwang2017.github.io/Projects/ReID/Datasets/Market-1501.html) and [DukeMTMC-reID Dataset](https://github.com/layumi/DukeMTMC-reID_evaluation)
