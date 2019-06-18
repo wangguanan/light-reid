@@ -1,6 +1,6 @@
 import torch
 import numpy as np
-from tools import *
+from tools import time_now, CatMeter, PersonReIDMAP
 
 
 def test(config, base, loaders, test_dataset):
@@ -12,9 +12,9 @@ def test(config, base, loaders, test_dataset):
 	gallery_features_meter, gallery_pids_meter, gallery_cids_meter = CatMeter(), CatMeter(), CatMeter()
 
 	# init dataset
-	if test_dataset == 'market_test':
+	if test_dataset == 'market':
 		loaders = [loaders.market_query_loader, loaders.market_gallery_loader]
-	elif test_dataset == 'duke_test':
+	elif test_dataset == 'duke':
 		loaders = [loaders.duke_query_loader, loaders.duke_gallery_loader]
 
 	# compute query and gallery features
@@ -35,13 +35,9 @@ def test(config, base, loaders, test_dataset):
 					gallery_pids_meter.update(pids)
 					gallery_cids_meter.update(cids)
 
-	print('Time: {}, Successfully Compute Feature'.format(time_now()))
-
-	# norm features
+	#
 	query_features = query_features_meter.get_val_numpy()
 	gallery_features = gallery_features_meter.get_val_numpy()
-	print('Time: {}, Successfully Norm Feature'.format(time_now()))
-	print query_features.shape, gallery_features.shape
 
 	# compute mAP and rank@k
 	result = PersonReIDMAP(

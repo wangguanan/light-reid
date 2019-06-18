@@ -32,9 +32,9 @@ class MultiItemAverageMeter:
         '''
         :param val: dict, keys are strs, values are torch.Tensor or np.array
         '''
-        for key in val.keys():
+        for key in list(val.keys()):
             value = val[key]
-            if key not in self.content.keys():
+            if key not in list(self.content.keys()):
                 self.content[key] = {'avg': value, 'sum': value, 'count': 1.0}
             else:
                 self.content[key]['sum'] += value
@@ -42,7 +42,7 @@ class MultiItemAverageMeter:
                 self.content[key]['avg'] = self.content[key]['sum'] / self.content[key]['count']
 
     def get_val(self):
-        keys = self.content.keys()
+        keys = list(self.content.keys())
         values = []
         for key in keys:
             try:

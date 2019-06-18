@@ -1,4 +1,4 @@
-from __future__ import division
+
 
 import numpy as np
 from sklearn import metrics as sk_metrics
@@ -37,7 +37,7 @@ class PersonReIDMAP:
 
         APs = []
         CMC = []
-        for i in xrange(len(query_label)):
+        for i in range(len(query_label)):
             AP, cmc = self.evaluate(self.query_feature[i], self.query_cam[i], self.query_label[i],
                                     self.gallery_feature, self.gallery_cam, self.gallery_label)
             APs.append(AP)
@@ -71,7 +71,7 @@ class PersonReIDMAP:
             cmc = np.zeros([len(index)])
         else:
             precision = []
-            for i in xrange(num_good):
+            for i in range(num_good):
                 precision.append(float(i+1) / float((index_hit[i]+1)))
             AP = np.mean(np.array(precision))
             cmc = np.zeros([len(index)])

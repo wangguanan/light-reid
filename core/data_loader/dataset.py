@@ -69,6 +69,7 @@ class PersonReIDSamples:
         return identi_id, camera_id
 
 
+
 class Samples4Market(PersonReIDSamples):
     '''
     Market Dataset
@@ -121,4 +122,4 @@ class PersonReIDDataSet:
 if __name__ == '__main__':
 
     samples = PersonReIDSamples('/home/wangguanan/datasets/PersonReID/Market/Market-1501-v15.09.15/bounding_box_train/').samples
-    print len(samples)
+    print(len(samples))

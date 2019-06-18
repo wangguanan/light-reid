@@ -78,9 +78,3 @@ class Model(nn.Module):
             return features, cls_score
         else:
             return bned_features
-
-
-if __name__ == '__main__':
-
-    model = Model(751)
-    print model

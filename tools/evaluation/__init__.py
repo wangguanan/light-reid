@@ -1,2 +1,2 @@
-from classification import *
-from retrieval import *
+from .classification import *
+from .retrieval import *

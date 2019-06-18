@@ -40,7 +40,7 @@ class ClassUniformlySampler(data.sampler.Sampler):
         dict = {}
         for index, each_input in enumerate(inputs):
             class_index = each_input[self.class_position]
-            if class_index not in dict.keys():
+            if class_index not in list(dict.keys()):
                 dict[class_index] = [index]
             else:
                 dict[class_index].append(index)
@@ -56,7 +56,7 @@ class ClassUniformlySampler(data.sampler.Sampler):
         sample_list = []
 
         dict_copy = dict.copy()
-        keys = dict_copy.keys()
+        keys = list(dict_copy.keys())
         random.shuffle(keys)
         for key in keys:
             value = dict_copy[key]

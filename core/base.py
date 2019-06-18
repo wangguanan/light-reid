@@ -7,7 +7,7 @@ import torch.optim as optim
 from bisect import bisect_right
 import os
 
-from models import Model
+from .models import Model
 from tools import CrossEntropyLabelSmooth, TripletLoss
 
 
@@ -35,6 +35,9 @@ class Base:
 		self.output_path = config.output_path
 		self.save_model_path = os.path.join(self.output_path, 'models/')
 		self.save_logs_path = os.path.join(self.output_path, 'logs/')
+		self.save_visualize_market_path = os.path.join(self.output_path, 'visualization/market/')
+		self.save_visualize_duke_path = os.path.join(self.output_path, 'visualization/duke/')
+
 
 		# Train Configuration
 		self.base_learning_rate = config.base_learning_rate
@@ -94,7 +97,7 @@ class Base:
 	def resume_model(self, resume_epoch):
 		model_path = os.path.join(self.save_model_path, 'model_{}.pkl'.format(resume_epoch))
 		self.model.load_state_dict(torch.load(model_path))
-		print('successfully resume model from {}'.format(model_path))
+		print(('successfully resume model from {}'.format(model_path)))
 
 
 	## set model as train mode

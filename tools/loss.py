@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-from metric import *
+from .metric import *
 
 
 class CrossEntropyLabelSmooth(nn.Module):
@@ -121,7 +121,3 @@ class TripletLoss(RankingLoss):
 
 		return self.margin_loss(hard_n, hard_p, margin_label)
 
-
-
-if __name__ == '__main__':
-	pass

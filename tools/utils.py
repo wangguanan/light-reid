@@ -16,8 +16,8 @@ def time_now():
 def make_dirs(dir):
     if not os.path.exists(dir):
         os.makedirs(dir)
-        print 'Successfully make dirs: {}'.format(dir)
+        print('Successfully make dirs: {}'.format(dir))
     else:
-        print 'Existed dirs: {}'.format(dir)
+        print('Existed dirs: {}'.format(dir))
 
 

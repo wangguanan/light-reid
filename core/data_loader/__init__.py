@@ -1,8 +1,8 @@
 import sys
 sys.path.append('../')
 
-from dataset import *
-from loader import *
+from .dataset import *
+from .loader import *
 
 import torchvision.transforms as transforms
 from tools import *
@@ -60,14 +60,14 @@ class Loaders:
         self.train_iter = self._get_uniform_iter(train_samples, self.transform_train, self.p, self.k)
 
         # market test dataset and loader
-        market_query_samples, market_gallery_samples = self._get_test_samples('market_test')
-        self.market_query_loader = self._get_random_loader(market_query_samples, self.transform_test, 128)
-        self.market_gallery_loader = self._get_random_loader(market_gallery_samples, self.transform_test, 128)
+        self.market_query_samples, self.market_gallery_samples = self._get_test_samples('market_test')
+        self.market_query_loader = self._get_loader(self.market_query_samples, self.transform_test, 128)
+        self.market_gallery_loader = self._get_loader(self.market_gallery_samples, self.transform_test, 128)
 
         # duke test dataset and loader
-        duke_query_samples, duke_gallery_samples = self._get_test_samples('duke_test')
-        self.duke_query_loader = self._get_random_loader(duke_query_samples, self.transform_test, 128)
-        self.duke_gallery_loader = self._get_random_loader(duke_gallery_samples, self.transform_test, 128)
+        self.duke_query_samples, self.duke_gallery_samples = self._get_test_samples('duke_test')
+        self.duke_query_loader = self._get_loader(self.duke_query_samples, self.transform_test, 128)
+        self.duke_gallery_loader = self._get_loader(self.duke_gallery_samples, self.transform_test, 128)
 
 
     def _get_train_samples(self, train_dataset):
@@ -126,5 +126,12 @@ class Loaders:
 
         dataset = PersonReIDDataSet(samples.samples, transform=transform)
         loader = data.DataLoader(dataset, batch_size=batch_size, num_workers=8, drop_last=False, shuffle=True)
+        return loader
+
+
+    def _get_loader(self, samples, transform, batch_size):
+
+        dataset = PersonReIDDataSet(samples.samples, transform=transform)
+        loader = data.DataLoader(dataset, batch_size=batch_size, num_workers=8, drop_last=False, shuffle=False)
         return loader
 
