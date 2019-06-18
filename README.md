@@ -31,12 +31,12 @@ python main.py --market_path market_path --duke_path duke_path --output_path out
 ```
 
 ```
-# test, the output_path should be same with that of training process
+# test, the output_path should be same with that in training process
 python main.py --market_path market_path --duke_path duke_path --output_path output_path/ --mode test --resume_test_epoch resume_test_epoch
 ```
 
 ```
-# visualize the ranked images, the output_path should be same with that of training process
+# visualize the ranked images, the output_path should be same with that in training process
 python main.py --market_path market_path --duke_path duke_path --output_path output_path/ --mode visualize --resume_visualize_epoch resume_visualize_epoch
 ```
 
@@ -49,6 +49,7 @@ python main.py --market_path market_path --duke_path duke_path --output_path out
 * [x] Last stride
 * [x] BNNeck
 * [x] **Note that** our implementation uses no the center loss and re-ranking.
+
 ### 2. Settings
 * We conduct our experiments on 1 GTX1080ti GPU
 
@@ -67,6 +68,11 @@ python main.py --market_path market_path --duke_path duke_path --output_path out
 | :---:                             | :---: | :---: | - |:---: | :---: |
 | 1 | 0.936 (0.824) | 0.427 (0.264) | | 0.849 (0.714) | 0.556 (0.269) |
 | Paper | - | 0.414(0.257) | | - | 0.543 (0.255) |  
+
+### 5. Visualization of Ranked Images (with REA)
+
+
+
 
 ## Contacts
 If you have any question about the project, please feel free to contact with me.
