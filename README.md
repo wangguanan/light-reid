@@ -13,7 +13,7 @@
 
 ## News
 * 2019-06-18: we add visualization code to show ranked images 
-
+* 2019-05-01: We re-implement PCB and achieve better performance than the offical one. Our implementation can be found [here](https://github.com/wangguanan/Pytorch-Person-ReID-Baseline-PCB-Beyond-Part-Models).
 
 ## Dependencies
 * [Anaconda (Python 2.7)](https://www.anaconda.com/download/)
