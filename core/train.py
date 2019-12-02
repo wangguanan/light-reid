@@ -29,6 +29,6 @@ def train_an_epoch(config, base, loaders):
 		base.optimizer.step()
 
 		### recored
-		meter.update({'ide_loss': ide_loss, 'triplet_loss': triplet_loss, 'acc': acc})
+		meter.update({'ide_loss': ide_loss.data, 'triplet_loss': triplet_loss.data, 'acc': acc})
 
 	return meter.get_val(), meter.get_str()
