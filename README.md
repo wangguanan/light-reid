@@ -1,7 +1,6 @@
 ## Pytorch-Person-ReID-Baseline-Bag-of-Tricks
 * **Introduction**: This project re-implements the strong person re-identification baseline: Bag of Tricks ([paper](https://arxiv.org/abs/1903.07071) and [code](https://github.com/wangguanan/Pytorch-Person-REID-Baseline-Bag-of-Tricks)).
 * **Advantage**: This project provides a **more simple and clear implementation** by only using the best parameters and removing lots of unnecessary modules.
-* **Acknowledge**: This project refers the [official code](https://github.com/michuanhaohao/reid-strong-baseline), if you find this project useful, please cite the offical paper.
 
 ## News
 * 2019-10-25: Our new work about RGB-Infrared(IR) ReID for dark situation has been accepted by ICCV'19. Code is available at  [here](https://github.com/wangguanan/AlignGAN).
