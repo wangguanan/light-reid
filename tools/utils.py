@@ -10,7 +10,6 @@ def os_walk(folder_dir):
 
 
 def time_now():
-    '''return current time in format of 2000-01-01 12:01:01'''
     return time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
 
 

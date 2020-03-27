@@ -3,84 +3,34 @@
 * **Advantage**: This project provides a **more simple and clear implementation** by only using the best parameters and removing lots of unnecessary modules.
 
 ## News
-* 2020-03-27: **[CVPR'20]** Our new work about Occluded ReID has been accepted by CVPR'20. ([Paper](https://arxiv.org/abs/2003.08177))
-* 2020-01-01: **[AAAI'20]** Our new work about RGB-Infrared(IR) ReID for dark situation has been accepted by AAAI'20. ([Paper](https://arxiv.org/pdf/2002.04114.pdf), [Code](https://github.com/wangguanan/JSIA-ReID)).
-* 2019-10-25: **[ICCV'19]** Our new work about RGB-Infrared(IR) ReID for dark situation has been accepted by ICCV'19. ([Paper](http://openaccess.thecvf.com/content_ICCV_2019/papers/Wang_RGB-Infrared_Cross-Modality_Person_Re-Identification_via_Joint_Pixel_and_Feature_Alignment_ICCV_2019_paper.pdf), [Code](https://github.com/wangguanan/AlignGAN)).
-* 2019-05-01: We implement PCB and achieve better performance than the offical one. ([Code](https://github.com/wangguanan/Pytorch-Person-ReID-Baseline-PCB-Beyond-Part-Models))
-
-## Update
-* 2020-03-27: add demo.py to visualize customed dataset.
+* 2019-10-25: Our new work about RGB-Infrared(IR) ReID for dark situation has been accepted by ICCV'19. Code is available at  [here](https://github.com/wangguanan/AlignGAN).
 * 2019-06-18: we add visualization code to show ranked images 
+* 2019-05-01: We re-implement PCB and achieve better performance than the offical one. Code is available [here](https://github.com/wangguanan/Pytorch-Person-ReID-Baseline-PCB-Beyond-Part-Models).
 
 ## Dependencies
-* [Anaconda (Python 3.7)](https://www.anaconda.com/download/)
-* [PyTorch 1.1.0](http://pytorch.org/)
+* [Anaconda (Python 2.7)](https://www.anaconda.com/download/)
+* [PyTorch 0.4.0](http://pytorch.org/)
 * GPU Memory >= 10G
-* Memory >= 10G
+* Memory >= 20G
 
 ## Dataset Preparation
 * [Market-1501 Dataset](https://jingdongwang2017.github.io/Projects/ReID/Datasets/Market-1501.html) and [DukeMTMC-reID Dataset](https://github.com/layumi/DukeMTMC-reID_evaluation)
 * Download and extract both anywhere
 
 ## Run
-#### Train on Market-1501/DukeMTMC-reID
 ```
-python3 main.py --mode train \
-    --train_dataset market --test_dataset market \
-    --market_path /path/to/market/dataset/ \
-    --output_path ./results/market/ 
-python3 main.py --mode train \
-    --train_dataset duke --test_dataset duke \
-    --duke_path /path/to/duke/dataset/ \
-    --output_path ./results/duke/
+# train
+python main.py --market_path market_path --duke_path duke_path --output_path output_path/ --mode train 
 ```
 
-#### Test on Market-1501/DukeMTMC-reID
 ```
-python3 main.py --mode test \
-    --train_dataset market --test_dataset market \
-    --market_path /path/to/market/dataset/ \
-    --resume_test_model /path/to/pretrained/model.pkl \ 
-    --output_path ./results/test-on-market/
-python3 main.py --mode test \
-    --train_dataset duke --test_dataset duke \
-    --market_path /path/to/duke/dataset/ \
-    --resume_test_model /path/to/pretrained/model.pkl \ 
-    --output_path ./results/test-on-duke/
+# test, the output_path should be same with that in training process
+python main.py --market_path market_path --duke_path duke_path --output_path output_path/ --mode test --resume_test_epoch resume_test_epoch
 ```
 
-#### Visualize Market-1501/DukeMTMC-reID
 ```
-python3 main.py --mode visualize --visualize_mode inter-camera \
-    --train_dataset market --visualize_dataset market \
-    --market_path /path/to/market/dataset/ \
-    --resume_visualize_model /path/to/pretrained/model.pkl \ 
-    --visualize_output_path ./results/vis-on-market/ 
-python3 main.py --mode visualize --visualize_mode inter-camera \
-    --train_dataset duke --visualize_dataset duke \
-    --market_path /path/to/duke/dataset/ \
-    --resume_visualize_model /path/to/pretrained/model.pkl \ 
-    --visualize_output_path ./results/vis-on-duke/ 
-```
-
-#### Visualize customed dataset
-
-```
-# customed dataset structure
-|____ data_path/
-     |____ person_id_1/
-          |____ pid_1_imgid_1.jpg
-          |____ pid_2_imgid_2.jpg
-          |____ ......
-     |____ person_id_2/
-     |____ person_id_2/
-     |____ ......
-```
-```
-python3 demo.py \
-    --resume_visualize_model /path/to/pretrained/model.pkl \
-    --query_path /path/to/query/dataset/ --gallery_path /path/to/gallery/dataset/ \
-    --visualize_output_path ./results/vis-on-cus/
+# visualize the ranked images, the output_path should be same with that in training process
+python main.py --market_path market_path --duke_path duke_path --output_path output_path/ --mode visualize --resume_visualize_epoch resume_visualize_epoch
 ```
 
 ## Experiments
@@ -91,6 +41,7 @@ python3 demo.py \
 * [x] Label smoothing
 * [x] Last stride
 * [x] BNNeck
+* [x] **Note that** our implementation uses no the center loss and re-ranking.
 
 ### 2. Settings
 * We conduct our experiments on 1 GTX1080ti GPU
@@ -112,9 +63,10 @@ python3 demo.py \
 | Paper | - | 0.414(0.257) | | - | 0.543 (0.255) |  
 
 ### 5. Visualization of Ranked Images on Market-1501 Dataset (with REA)
-![](https://github.com/wangguanan/Pytorch-Person-REID-Baseline-Bag-of-Tricks/blob/master/ranked_images/market/1351_c6s3_064142_00.jpg?raw=true)
-![](https://github.com/wangguanan/Pytorch-Person-REID-Baseline-Bag-of-Tricks/blob/master/ranked_images/market/1354_c5s3_040965_00.jpg?raw=true)
-![](https://github.com/wangguanan/Pytorch-Person-REID-Baseline-Bag-of-Tricks/blob/master/ranked_images/market/1357_c5s3_094087_00.jpg?raw=true)
+| Query | Top1  | Top2  | Top3  | Top4  | Top5  | Top6  | Top7  | Top8  | Top9  | Top10 |
+| :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| ![](https://github.com/wangguanan/Pytorch-Person-REID-Baseline-Bag-of-Tricks/blob/master/ranked_images/market/0005_c1s1_001351_00.jpg/query_top000_name_0005_c1s1_001351_00.jpg?raw=true) | ![](https://github.com/wangguanan/Pytorch-Person-REID-Baseline-Bag-of-Tricks/blob/master/ranked_images/market/0005_c1s1_001351_00.jpg/gallery_top001_name_0005_c3s2_088328_02.jpg?raw=true) | ![](https://github.com/wangguanan/Pytorch-Person-REID-Baseline-Bag-of-Tricks/blob/master/ranked_images/market/0005_c1s1_001351_00.jpg/gallery_top002_name_0005_c5s1_000401_03.jpg?raw=true) | ![](https://github.com/wangguanan/Pytorch-Person-REID-Baseline-Bag-of-Tricks/blob/master/ranked_images/market/0005_c1s1_001351_00.jpg/gallery_top003_name_0005_c5s1_000426_02.jpg?raw=true) | ![](https://github.com/wangguanan/Pytorch-Person-REID-Baseline-Bag-of-Tricks/blob/master/ranked_images/market/0005_c1s1_001351_00.jpg/gallery_top004_name_0005_c4s1_006951_03.jpg?raw=true) | ![](https://github.com/wangguanan/Pytorch-Person-REID-Baseline-Bag-of-Tricks/blob/master/ranked_images/market/0005_c1s1_001351_00.jpg/gallery_top005_name_0005_c5s1_001026_01.jpg?raw=true) | ![](https://github.com/wangguanan/Pytorch-Person-REID-Baseline-Bag-of-Tricks/blob/master/ranked_images/market/0005_c1s1_001351_00.jpg/gallery_top006_name_0005_c3s3_060878_01.jpg?raw=true) | ![](https://github.com/wangguanan/Pytorch-Person-REID-Baseline-Bag-of-Tricks/blob/master/ranked_images/market/0005_c1s1_001351_00.jpg/gallery_top007_name_0005_c5s1_001426_01.jpg?raw=true) | ![](https://github.com/wangguanan/Pytorch-Person-REID-Baseline-Bag-of-Tricks/blob/master/ranked_images/market/0005_c1s1_001351_00.jpg/gallery_top008_name_0005_c5s1_014501_01.jpg?raw=true) | ![](https://github.com/wangguanan/Pytorch-Person-REID-Baseline-Bag-of-Tricks/blob/master/ranked_images/market/0005_c1s1_001351_00.jpg/gallery_top009_name_0005_c5s1_000626_02.jpg?raw=true) | ![](https://github.com/wangguanan/Pytorch-Person-REID-Baseline-Bag-of-Tricks/blob/master/ranked_images/market/0005_c1s1_001351_00.jpg/gallery_top010_name_0005_c3s3_074344_01.jpg?raw=true)
+
 * More results can be seen in folder ```ranked_images/market```
 
 

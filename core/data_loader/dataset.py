@@ -74,6 +74,7 @@ class Samples4Market(PersonReIDSamples):
     '''
     Market Dataset
     '''
+
     pass
 
 
@@ -81,6 +82,7 @@ class Samples4Duke(PersonReIDSamples):
     '''
     Duke dataset
     '''
+
     def _analysis_file_name(self, file_name):
         '''
 
@@ -114,3 +116,10 @@ class PersonReIDDataSet:
 
     def _loader(self, img_path):
         return Image.open(img_path).convert('RGB')
+
+
+
+if __name__ == '__main__':
+
+    samples = PersonReIDSamples('/home/wangguanan/datasets/PersonReID/Market/Market-1501-v15.09.15/bounding_box_train/').samples
+    print(len(samples))

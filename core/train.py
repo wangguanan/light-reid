@@ -1,5 +1,5 @@
 import torch
-from tools import MultiItemAverageMeter, accuracy
+from tools import *
 
 
 def train_an_epoch(config, base, loaders):
