@@ -3,8 +3,9 @@
 * **Advantage**: This project provides a **more simple and clear implementation** by only using the best parameters and removing lots of unnecessary modules.
 
 ## News
-* 2020-01-01: **[AAAI'20]** Our new work about RGB-Infrared(IR) ReID for dark situation has been accepted by AAAI'19. Code is available at [here](https://github.com/wangguanan/JSIA-ReID).
-* 2019-10-25: **[ICCV'19]** Our new work about RGB-Infrared(IR) ReID for dark situation has been accepted by ICCV'19. Code is available at [here](https://github.com/wangguanan/AlignGAN).
+* 2020-03-27: **[CVPR'20]** Our new work about Occluded ReID has been accepted by CVPR'20. ([Paper](https://arxiv.org/abs/2003.08177))
+* 2020-01-01: **[AAAI'20]** Our new work about RGB-Infrared(IR) ReID for dark situation has been accepted by AAAI'19. ([Paper](https://arxiv.org/pdf/2002.04114.pdf), [Code](https://github.com/wangguanan/JSIA-ReID)).
+* 2019-10-25: **[ICCV'19]** Our new work about RGB-Infrared(IR) ReID for dark situation has been accepted by ICCV'19. ([Paper](http://openaccess.thecvf.com/content_ICCV_2019/papers/Wang_RGB-Infrared_Cross-Modality_Person_Re-Identification_via_Joint_Pixel_and_Feature_Alignment_ICCV_2019_paper.pdf), [Code](https://github.com/wangguanan/AlignGAN)).
 
 ## Update
 * 2020-03-27: add demo.py to visualize customed dataset.
