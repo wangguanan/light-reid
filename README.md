@@ -23,11 +23,11 @@
 ```
 python3 main.py --mode train \
     --train_dataset market --test_dataset market \
-    --market_path /path/to/market/ \
+    --market_path /path/to/market/dataset/ \
     --output_path ./results/market/ 
 python3 main.py --mode train \
     --train_dataset duke --test_dataset duke \
-    --duke_path /path/to/duke/ \
+    --duke_path /path/to/duke/dataset/ \
     --output_path ./results/duke/
 ```
 
@@ -35,10 +35,12 @@ python3 main.py --mode train \
 ```
 python3 main.py --mode test \
     --train_dataset market --test_dataset market \
+    --market_path /path/to/market/dataset/ \
     --resume_test_model /path/to/pretrained/model.pkl \ 
     --output_path ./results/test-on-market/
 python3 main.py --mode test\
     --train_dataset duke --test_dataset duke \
+    --market_path /path/to/duke/dataset/ \
     --resume_test_model /path/to/pretrained/model.pkl \ 
     --output_path ./results/test-on-duke/
 ```
@@ -47,10 +49,12 @@ python3 main.py --mode test\
 ```
 python3 main.py --mode visualize --visualize_mode inter-camera \
     --train_dataset market --visualize_dataset market \
+    --market_path /path/to/market/dataset/ \
     --resume_visualize_model /path/to/pretrained/model.pkl \ 
     --visualize_output_path ./results/vis-on-market/ 
 python3 main.py --mode visualize --visualize_mode inter-camera \
     --train_dataset duke --visualize_dataset duke \
+    --market_path /path/to/duke/dataset/ \
     --resume_visualize_model /path/to/pretrained/model.pkl \ 
     --visualize_output_path ./results/vis-on-duke/ 
 ```
@@ -67,7 +71,6 @@ python3 main.py --mode visualize --visualize_mode inter-camera \
      |____ person_id_2/
      |____ person_id_2/
      |____ ......
-           
 ```
 ```
 python3 demo.py \
