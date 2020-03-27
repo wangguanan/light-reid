@@ -33,7 +33,7 @@ def main(config):
 			# train
 			base.lr_scheduler.step(current_epoch)
 			_, results = train_an_epoch(config, base, loaders)
-			logger('Time: {}; Test Dataset: {}, \nmAP: {} \nRank: {}'.format(time_now(), config.test_dataset, mAP, CMC))
+			logger('Time: {};  Epoch: {};  {}'.format(time_now(), current_epoch, results))
 
 		# test
 		base.save_model(config.total_train_epochs)
