@@ -6,12 +6,11 @@
 * 2020-03-27: **[CVPR'20]** Our new work about Occluded ReID has been accepted by CVPR'20. ([Paper](https://arxiv.org/abs/2003.08177))
 * 2020-01-01: **[AAAI'20]** Our new work about RGB-Infrared(IR) ReID for dark situation has been accepted by AAAI'20. ([Paper](https://arxiv.org/pdf/2002.04114.pdf), [Code](https://github.com/wangguanan/JSIA-ReID)).
 * 2019-10-25: **[ICCV'19]** Our new work about RGB-Infrared(IR) ReID for dark situation has been accepted by ICCV'19. ([Paper](http://openaccess.thecvf.com/content_ICCV_2019/papers/Wang_RGB-Infrared_Cross-Modality_Person_Re-Identification_via_Joint_Pixel_and_Feature_Alignment_ICCV_2019_paper.pdf), [Code](https://github.com/wangguanan/AlignGAN)).
+* 2019-05-01: We implement PCB and achieve better performance than the offical one. ([Code](https://github.com/wangguanan/Pytorch-Person-ReID-Baseline-PCB-Beyond-Part-Models))
 
 ## Update
 * 2020-03-27: add demo.py to visualize customed dataset.
 * 2019-06-18: we add visualization code to show ranked images 
-* 2019-05-01: We re-implement PCB and achieve better performance than the offical one. Code is available [here](https://github.com/wangguanan/Pytorch-Person-ReID-Baseline-PCB-Beyond-Part-Models).
-
 
 ## Dependencies
 * [Anaconda (Python 3.7)](https://www.anaconda.com/download/)
@@ -43,7 +42,7 @@ python3 main.py --mode test \
     --market_path /path/to/market/dataset/ \
     --resume_test_model /path/to/pretrained/model.pkl \ 
     --output_path ./results/test-on-market/
-python3 main.py --mode test\
+python3 main.py --mode test \
     --train_dataset duke --test_dataset duke \
     --market_path /path/to/duke/dataset/ \
     --resume_test_model /path/to/pretrained/model.pkl \ 
@@ -80,7 +79,7 @@ python3 main.py --mode visualize --visualize_mode inter-camera \
 ```
 python3 demo.py \
     --resume_visualize_model /path/to/pretrained/model.pkl \
-    --query_path /path/to/query/dataset/ --gallery_path /path/to/gallery/dataset/ 
+    --query_path /path/to/query/dataset/ --gallery_path /path/to/gallery/dataset/ \
     --visualize_output_path ./results/vis-on-cus/
 ```
 
