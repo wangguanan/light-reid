@@ -3,10 +3,14 @@
 * **Advantage**: This project provides a **more simple and clear implementation** by only using the best parameters and removing lots of unnecessary modules.
 
 ## News
-* 2019-10-25: Our new work about RGB-Infrared(IR) ReID for dark situation has been accepted by ICCV'19. Code is available at  [here](https://github.com/wangguanan/AlignGAN).
-* 2019-06-18: we add visualization code to show ranked images 
-* 2019-05-01: We re-implement PCB and achieve better performance than the offical one. Code is available [here](https://github.com/wangguanan/Pytorch-Person-ReID-Baseline-PCB-Beyond-Part-Models).
+* 2020-03-27: **[CVPR'20]** Our new work about Occluded ReID has been accepted by CVPR'20. ([Paper](https://arxiv.org/abs/2003.08177))
+* 2020-01-01: **[AAAI'20]** Our new work about RGB-Infrared(IR) ReID for dark situation has been accepted by AAAI'20. ([Paper](https://arxiv.org/pdf/2002.04114.pdf), [Code](https://github.com/wangguanan/JSIA-ReID)).
+* 2019-10-25: **[ICCV'19]** Our new work about RGB-Infrared(IR) ReID for dark situation has been accepted by ICCV'19. ([Paper](http://openaccess.thecvf.com/content_ICCV_2019/papers/Wang_RGB-Infrared_Cross-Modality_Person_Re-Identification_via_Joint_Pixel_and_Feature_Alignment_ICCV_2019_paper.pdf), [Code](https://github.com/wangguanan/AlignGAN)).
+* 2019-05-01: We implement PCB and achieve better performance than the offical one. ([Code](https://github.com/wangguanan/Pytorch-Person-ReID-Baseline-PCB-Beyond-Part-Models))
 
+## Update
+* 2020-03-27: this branch is  will not be updated, which based on python2.7 and torch-0.4.0. Please find new updating on the [master branch](https://github.com/wangguanan/Pytorch-Person-REID-Baseline-Bag-of-Tricks), which is based on python3.7 and torch-1.1.0.
+* 2019-06-18: we add visualization code to show ranked images 
 ## Dependencies
 * [Anaconda (Python 2.7)](https://www.anaconda.com/download/)
 * [PyTorch 0.4.0](http://pytorch.org/)
