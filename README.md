@@ -65,8 +65,8 @@ python3 main.py --mode visualize --visualize_mode inter-camera \
 # customed dataset structure
 |____ data_path/
      |____ person_id_1/
-          |____ 1.jpg
-          |____ 2.jpg
+          |____ pid_1_imgid_1.jpg
+          |____ pid_2_imgid_2.jpg
           |____ ......
      |____ person_id_2/
      |____ person_id_2/
@@ -87,7 +87,6 @@ python3 demo.py \
 * [x] Label smoothing
 * [x] Last stride
 * [x] BNNeck
-* [x] **Note that** our implementation uses neither the center loss nor re-ranking.
 
 ### 2. Settings
 * We conduct our experiments on 1 GTX1080ti GPU
