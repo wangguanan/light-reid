@@ -3,7 +3,7 @@
 * **Advantage**: This project provides a **more simple and clear implementation** by only using the best parameters and removing lots of unnecessary modules.
 
 ## News
-* 2019-01-01: **[AAAI'20]** Our new work about RGB-Infrared(IR) ReID for dark situation has been accepted by AAAI'19. Code is available at [here](https://github.com/wangguanan/JSIA-ReID).
+* 2020-01-01: **[AAAI'20]** Our new work about RGB-Infrared(IR) ReID for dark situation has been accepted by AAAI'19. Code is available at [here](https://github.com/wangguanan/JSIA-ReID).
 * 2019-10-25: **[ICCV'19]** Our new work about RGB-Infrared(IR) ReID for dark situation has been accepted by ICCV'19. Code is available at [here](https://github.com/wangguanan/AlignGAN).
 
 ## Update
