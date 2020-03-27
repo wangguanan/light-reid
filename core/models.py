@@ -3,7 +3,6 @@ import torch.nn as nn
 import torchvision
 
 
-
 def weights_init_kaiming(m):
     classname = m.__class__.__name__
     if classname.find('Linear') != -1:
@@ -28,6 +27,7 @@ def weights_init_classifier(m):
 
 
 class BNClassifier(nn.Module):
+    '''bn + fc'''
 
     def __init__(self, in_dim, class_num):
         super(BNClassifier, self).__init__()
@@ -71,7 +71,7 @@ class Model(nn.Module):
 
     def forward(self, x):
 
-        features = self.gap(self.resnet_conv(x)).squeeze()
+        features = self.gap(self.resnet_conv(x)).squeeze(dim=2).squeeze(dim=2)
         bned_features, cls_score = self.classifier(features)
 
         if self.training:

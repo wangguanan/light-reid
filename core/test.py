@@ -1,9 +1,8 @@
 import torch
-import numpy as np
-from tools import time_now, CatMeter, PersonReIDMAP
+from tools import time_now, CatMeter, ReIDEvaluator
 
 
-def test(config, base, loaders, test_dataset):
+def test(config, base, loaders):
 
 	base.set_eval()
 
@@ -12,9 +11,9 @@ def test(config, base, loaders, test_dataset):
 	gallery_features_meter, gallery_pids_meter, gallery_cids_meter = CatMeter(), CatMeter(), CatMeter()
 
 	# init dataset
-	if test_dataset == 'market':
+	if config.test_dataset == 'market':
 		loaders = [loaders.market_query_loader, loaders.market_gallery_loader]
-	elif test_dataset == 'duke':
+	elif config.test_dataset == 'duke':
 		loaders = [loaders.duke_query_loader, loaders.duke_gallery_loader]
 
 	# compute query and gallery features
@@ -40,10 +39,10 @@ def test(config, base, loaders, test_dataset):
 	gallery_features = gallery_features_meter.get_val_numpy()
 
 	# compute mAP and rank@k
-	result = PersonReIDMAP(
+	mAP, CMC = ReIDEvaluator(dist='cosine', mode=config.test_mode).evaluate(
 		query_features, query_cids_meter.get_val_numpy(), query_pids_meter.get_val_numpy(),
-		gallery_features, gallery_cids_meter.get_val_numpy(), gallery_pids_meter.get_val_numpy(), dist='cosine')
+		gallery_features, gallery_cids_meter.get_val_numpy(), gallery_pids_meter.get_val_numpy())
 
-	return result.mAP, list(result.CMC[0: 150])
+	return mAP, CMC[0: 150]
 
 

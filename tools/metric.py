@@ -1,31 +1,23 @@
 import torch
-
+import torch.nn.functional as F
 
 def cosine_dist(x, y):
 	'''
-	:param x: torch.tensor, 2d
-	:param y: torch.tensor, 2d
-	:return:
+	compute cosine distance between two matrix x and y
+	with size (n1, d) and (n2, d) and type torch.tensor
+	return a matrix (n1, n2)
 	'''
 
-	bs1 = x.size()[0]
-	bs2 = y.size()[0]
-
-	frac_up = torch.matmul(x, y.transpose(0, 1))
-	frac_down = (torch.sqrt(torch.sum(torch.pow(x, 2), 1))).view(bs1, 1).repeat(1, bs2) * \
-	            (torch.sqrt(torch.sum(torch.pow(y, 2), 1))).view(1, bs2).repeat(bs1, 1)
-	cosine = frac_up / frac_down
-
-	return cosine
+	x = F.normalize(x, dim=1)
+	y = F.normalize(y, dim=1)
+	return torch.matmul(x, y.transpose(0,1))
 
 
 def euclidean_dist(x, y):
 	"""
-	Args:
-	  x: pytorch Variable, with shape [m, d]
-	  y: pytorch Variable, with shape [n, d]
-	Returns:
-	  dist: pytorch Variable, with shape [m, n]
+	compute euclidean distance between two matrix x and y
+	with size (n1, d) and (n2, d) and type torch.tensor
+	return a matrix (n1, n2)
 	"""
 	m, n = x.size(0), y.size(0)
 	xx = torch.pow(x, 2).sum(1, keepdim=True).expand(m, n)

@@ -2,7 +2,7 @@ import torch
 from tools import CatMeter, cosine_dist, visualize_ranked_results
 
 
-def visualize_ranking_list(config, base, loaders, dataset):
+def visualize(config, base, loaders):
 
 	base.set_eval()
 
@@ -11,14 +11,15 @@ def visualize_ranking_list(config, base, loaders, dataset):
 	gallery_features_meter, gallery_pids_meter, gallery_cids_meter = CatMeter(), CatMeter(), CatMeter()
 
 	# init dataset
-	if dataset == 'market':
+	if config.visualize_dataset == 'market':
 		_datasets = [loaders.market_query_samples.samples, loaders.market_gallery_samples.samples]
 		_loaders = [loaders.market_query_loader, loaders.market_gallery_loader]
-		save_visualize_path = base.save_visualize_market_path
-	elif dataset == 'duke':
+	elif config.visualize_dataset == 'duke':
 		_datasets = [loaders.duke_query_samples.samples, loaders.duke_gallery_samples.samples]
 		_loaders = [loaders.duke_query_loader, loaders.duke_gallery_loader]
-		save_visualize_path = base.save_visualize_duke_path
+	elif config.visualize_dataset == 'customed':
+		_datasets = [loaders.query_samples, loaders.gallery_samples]
+		_loaders = [loaders.query_loader, loaders.gallery_loader]
 
 	# compute query and gallery features
 	with torch.no_grad():
@@ -41,7 +42,7 @@ def visualize_ranking_list(config, base, loaders, dataset):
 	# compute distance
 	query_features = query_features_meter.get_val()
 	gallery_features = gallery_features_meter.get_val()
-	distance = -cosine_dist(query_features, gallery_features).data.cpu().numpy()
+	distance = cosine_dist(query_features, gallery_features).data.cpu().numpy()
 
 	# visualize
-	visualize_ranked_results(distance, _datasets, save_visualize_path)
+	visualize_ranked_results(distance, _datasets, config.visualize_output_path, mode=config.visualize_mode)
