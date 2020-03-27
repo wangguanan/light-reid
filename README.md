@@ -9,29 +9,71 @@
 * 2019-05-01: We re-implement PCB and achieve better performance than the offical one. Code is available [here](https://github.com/wangguanan/Pytorch-Person-ReID-Baseline-PCB-Beyond-Part-Models).
 
 ## Dependencies
-* [Anaconda (Python 2.7)](https://www.anaconda.com/download/)
-* [PyTorch 0.4.0](http://pytorch.org/)
+* [Anaconda (Python 3.7)](https://www.anaconda.com/download/)
+* [PyTorch 1.1.0](http://pytorch.org/)
 * GPU Memory >= 10G
-* Memory >= 20G
+* Memory >= 10G
 
 ## Dataset Preparation
 * [Market-1501 Dataset](https://jingdongwang2017.github.io/Projects/ReID/Datasets/Market-1501.html) and [DukeMTMC-reID Dataset](https://github.com/layumi/DukeMTMC-reID_evaluation)
 * Download and extract both anywhere
 
 ## Run
+#### Train on Market-1501/DukeMTMC-reID
 ```
-# train
-python main.py --market_path market_path --duke_path duke_path --output_path output_path/ --mode train 
+python3 main.py --mode train \
+    --train_dataset market --test_dataset market \
+    --market_path /path/to/market/ \
+    --output_path ./results/market/ 
+python3 main.py --mode train \
+    --train_dataset duke --test_dataset duke \
+    --duke_path /path/to/duke/ \
+    --output_path ./results/duke/
 ```
 
+#### Test on Market-1501/DukeMTMC-reID
 ```
-# test, the output_path should be same with that in training process
-python main.py --market_path market_path --duke_path duke_path --output_path output_path/ --mode test --resume_test_epoch resume_test_epoch
+python3 main.py --mode test \
+    --train_dataset market --test_dataset market \
+    --resume_test_model /path/to/pretrained/model.pkl \ 
+    --output_path ./results/test-on-market/
+python3 main.py --mode test\
+    --train_dataset duke --test_dataset duke \
+    --resume_test_model /path/to/pretrained/model.pkl \ 
+    --output_path ./results/test-on-duke/
 ```
 
+#### Visualize Market-1501/DukeMTMC-reID
 ```
-# visualize the ranked images, the output_path should be same with that in training process
-python main.py --market_path market_path --duke_path duke_path --output_path output_path/ --mode visualize --resume_visualize_epoch resume_visualize_epoch
+python3 main.py --mode visualize --visualize_mode inter-camera \
+    --train_dataset market --visualize_dataset market \
+    --resume_visualize_model /path/to/pretrained/model.pkl \ 
+    --visualize_output_path ./results/vis-on-market/ 
+python3 main.py --mode visualize --visualize_mode inter-camera \
+    --train_dataset duke --visualize_dataset duke \
+    --resume_visualize_model /path/to/pretrained/model.pkl \ 
+    --visualize_output_path ./results/vis-on-duke/ 
+```
+
+#### Visualize customed dataset
+
+```
+# customed dataset structure
+|____ data_path/
+     |____ person_id_1/
+          |____ 1.jpg
+          |____ 2.jpg
+          |____ ......
+     |____ person_id_2/
+     |____ person_id_2/
+     |____ ......
+           
+```
+```
+python3 demo.py \
+    --resume_visualize_model /path/to/pretrained/model.pkl \
+    --query_path /path/to/query/dataset/ --gallery_path /path/to/gallery/dataset/ 
+    --visualize_output_path ./results/vis-on-cus/
 ```
 
 ## Experiments
@@ -42,7 +84,7 @@ python main.py --market_path market_path --duke_path duke_path --output_path out
 * [x] Label smoothing
 * [x] Last stride
 * [x] BNNeck
-* [x] **Note that** our implementation uses no the center loss and re-ranking.
+* [x] **Note that** our implementation uses neither the center loss nor re-ranking.
 
 ### 2. Settings
 * We conduct our experiments on 1 GTX1080ti GPU
