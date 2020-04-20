@@ -1,6 +1,7 @@
 '''
 given a pre-trained model, visualize a customed dataset
 pre-trained model can be got by running main.py in a train mode
+    or download from the link (see it in README.md)
 '''
 
 import argparse

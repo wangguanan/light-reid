@@ -1,3 +1,9 @@
+'''
+This file provides
+train, test, visualization operations on market and duke dataset
+'''
+
+
 import argparse
 import os
 import ast
