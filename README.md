@@ -64,17 +64,17 @@ python3 main.py --mode visualize --visualize_mode inter-camera \
     --visualize_output_path ./results/vis-on-duke/ 
 ```
 
-#### Visualize customed dataset
+#### Visualize Customed Dataset with Pretrained Model
 
 ```
 # customed dataset structure
 |____ data_path/
      |____ person_id_1/
           |____ pid_1_imgid_1.jpg
-          |____ pid_2_imgid_2.jpg
+          |____ pid_1_imgid_2.jpg
           |____ ......
      |____ person_id_2/
-     |____ person_id_2/
+     |____ person_id_3/
      |____ ......
 ```
 ```
