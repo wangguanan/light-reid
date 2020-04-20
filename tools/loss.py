@@ -41,7 +41,7 @@ class RankingLoss:
 	def __init__(self):
 		pass
 
-	def _label2similarity(self, label1, label2):
+	def _label2similarity(sekf, label1, label2):
 		'''
 		compute similarity matrix of label1 and label2
 		:param label1: torch.Tensor, [m]

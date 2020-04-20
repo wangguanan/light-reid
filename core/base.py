@@ -7,7 +7,7 @@ import torch.optim as optim
 from bisect import bisect_right
 import os
 
-from .models import Model
+from .model import Model
 from tools import CrossEntropyLabelSmooth, TripletLoss, os_walk
 
 
