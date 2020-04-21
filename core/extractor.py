@@ -45,12 +45,13 @@ class Extractor(Base):
 
     def np2tensor(self, image):
         '''
-        convert a numpy image (0,255) to a torch.tensor image (0,1)
+        convert a numpy hwc image (0,255)  to a torch.tensor chw image (0,1)
         Args:
             image(numpy): [c, h, w], in format of RGB, range [0, 255]
         '''
         assert isinstance(image, np.ndarray), "input must be a numpy array!"
         image = image.astype(np.float) / 255.
+        image = image.transpose([2,0,1])
         image = torch.from_numpy(image).float()
         return image
 
