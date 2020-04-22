@@ -15,6 +15,6 @@ parser.add_argument('--model_path', type=str, default='/data/projects/20200217_r
 config = parser.parse_args()
 
 ReIDExtractor = build_extractor(config, use_cuda=True)
-images = [np.random.randint(0, 255, [3, 22, 54]) for _ in range(1)]
+images = [np.random.randint(0, 255, [128,128,3]) for _ in range(1)]
 feature_list = ReIDExtractor.extract_list(images)
 print(feature_list)
