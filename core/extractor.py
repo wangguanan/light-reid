@@ -17,8 +17,8 @@ def build_extractor(config, use_cuda):
 
 class Extractor(Base):
     '''
-    given image(s) in format of a list, each element is a numpy of size [c,h,w] and range [0,225]
-    return their feature(s)(list)
+    given *RGB* image(s) in format of a list, each element is a numpy of size *[h,w,c]*, range *[0,225]*
+    return their feature(s)(list), each element is a numpy of size [feat_dim]
     '''
 
     def __init__(self, image_size, pid_num, model_path, use_cuda):
@@ -45,9 +45,9 @@ class Extractor(Base):
 
     def np2tensor(self, image):
         '''
-        convert a numpy hwc image (0,255)  to a torch.tensor chw image (0,1)
+        convert a numpy *hwc* image *(0,255)*  to a torch.tensor *chw* image *(0,1)*
         Args:
-            image(numpy): [c, h, w], in format of RGB, range [0, 255]
+            image(numpy): [h,w,c], in format of RGB, range [0, 255]
         '''
         assert isinstance(image, np.ndarray), "input must be a numpy array!"
         image = image.astype(np.float) / 255.
@@ -57,7 +57,7 @@ class Extractor(Base):
 
     def resize_images(self, images, image_size):
         '''resize a batch of images to image_size'''
-        images = F.interpolate(images, image_size, mode='bilinear')
+        images = F.interpolate(images, image_size, mode='bilinear', align_corners=True)
         return images
 
     def normalize_images(self, images, mean=[0.485, 0.456, 0.406], std=[0.485, 0.456, 0.406]):
@@ -74,9 +74,10 @@ class Extractor(Base):
 
     def extract_list(self, image_list):
         '''
-        given image(s) in format of a list, return their feature(s)(list)
+        given *RGB* image(s) in format of a list, each element is a numpy of size *[h,w,c]*, range *[0,225]*
+        return their feature(s)(list), each element is a numpy of size [feat_dim]
         Args:
-            image_list(list): every element is a numpy of size [c, h, w] format RGB and range [0,255]
+            image_list(list): every element is a numpy of size *[h,w,c]* format *RGB* and range *[0,255]*
         Return:
             feature_list(list): every element is a numpy of size [feature_dim]
         '''
