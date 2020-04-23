@@ -81,10 +81,9 @@ class Extractor(Base):
         Return:
             feature_list(list): every element is a numpy of size [feature_dim]
         '''
-        images = [self.np2tensor(image).unsqueeze(0) for image in image_list]
+        images = [self.resize_images(self.np2tensor(image).unsqueeze(0), self.image_size) for image in image_list]
         images = torch.cat(images, dim=0)
         images = images.to(self.device)
-        images = self.resize_images(images, self.image_size)
         images = self.normalize_images(images)
         with torch.no_grad():
             features = self.model(images)
