@@ -24,6 +24,9 @@
 * [Market-1501 Dataset](https://jingdongwang2017.github.io/Projects/ReID/Datasets/Market-1501.html) and [DukeMTMC-reID Dataset](https://github.com/layumi/DukeMTMC-reID_evaluation)
 * Download and extract both anywhere
 
+## Pretrained Models
+* pretrained on Market-1501 [[link]](https://drive.google.com/open?id=1UEginjwTwNDonO9Sl9DD9R0bYpiSRFu3)
+
 ## Run
 #### Train on Market-1501/DukeMTMC-reID
 ```
