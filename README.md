@@ -10,6 +10,7 @@
 * 2019-05-01: We implement PCB and achieve better performance than the offical one. ([Code](https://github.com/wangguanan/Pytorch-Person-ReID-Baseline-PCB-Beyond-Part-Models))
 
 ## Update
+* 2020-05-15: support msmt dataset
 * 2020-03-27: add demo.py to visualize customed dataset.
 * 2020-03-27: we change the dependency to _Python3.7_ and _PyTorch-1.1.0._ If you want the old version depending on _Python-2.7_ and _PyTorch-0.4.0_, please find on [verion_py27 branch](https://github.com/wangguanan/Pytorch-Person-REID-Baseline-Bag-of-Tricks/tree/version_py2.7).
 * 2019-06-18: we add visualization code to show ranked images 
