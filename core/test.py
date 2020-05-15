@@ -15,6 +15,10 @@ def test(config, base, loaders):
 		loaders = [loaders.market_query_loader, loaders.market_gallery_loader]
 	elif config.test_dataset == 'duke':
 		loaders = [loaders.duke_query_loader, loaders.duke_gallery_loader]
+	elif config.test_dataset == 'msmt':
+		loaders = [loaders.msmt_query_loader, loaders.msmt_gallery_loader]
+	else:
+		assert 0, 'test dataset error, expect market, duke or msmt, given {}'.format(config.test_dataset)
 
 	# compute query and gallery features
 	with torch.no_grad():

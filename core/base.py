@@ -7,7 +7,7 @@ import torch.optim as optim
 from bisect import bisect_right
 import os
 
-from .model import Model
+from .nets import Res50BNNeck, Res50IBNaBNNeck
 from tools import CrossEntropyLabelSmooth, TripletLoss, os_walk
 
 
@@ -18,6 +18,7 @@ class Base:
 
 	def __init__(self, config):
 
+		self.cnnbackbone = config.cnnbackbone
 		self.pid_num = config.pid_num
 		self.margin = config.margin
 
@@ -42,8 +43,14 @@ class Base:
 
 
 	def _init_model(self):
-		self.model = Model(class_num=self.pid_num)
+		if self.cnnbackbone == 'res50':
+			self.model = Res50BNNeck(class_num=self.pid_num)
+		elif self.cnnbackbone == 'res50ibna':
+			self.model = Res50IBNaBNNeck(class_num=self.pid_num)
+		else:
+			assert 0, 'cnnbackbone error'
 		self.model = nn.DataParallel(self.model).to(self.device)
+		self.model = self.model.to(self.device)
 
 
 	def _init_creiteron(self):

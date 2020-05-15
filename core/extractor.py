@@ -7,9 +7,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
-from .base import Base, DemoBase
-from .model import Model
-from tools import cosine_dist, euclidean_dist
+from .base import Base
+from .nets import Res50BNNeck, Res50IBNaBNNeck
 
 
 def build_extractor(config, use_cuda):
@@ -21,7 +20,8 @@ class Extractor(Base):
     return their feature(s)(list), each element is a numpy of size [feat_dim]
     '''
 
-    def __init__(self, image_size, pid_num, model_path, use_cuda):
+    def __init__(self, cnnbackbone, image_size, pid_num, model_path, use_cuda):
+        self.cnnbackbone = cnnbackbone
         self.image_size = image_size
         self.pid_num = pid_num
         self.model_path = model_path
@@ -40,8 +40,13 @@ class Extractor(Base):
             self.device = torch.device('cpu')
 
     def _init_model(self):
-        model = Model(class_num=self.pid_num)
-        self.model = nn.DataParallel(model).to(self.device)
+        if self.cnnbackbone == 'res50':
+            self.model = Res50BNNeck(class_num=self.pid_num)
+        elif self.cnnbackbone == 'res50ibna':
+            self.model = Res50IBNaBNNeck(class_num=self.pid_num)
+        else:
+            assert 0, 'cnnbackbone error'
+        self.model = nn.DataParallel(self.model).to(self.device)
 
     def np2tensor(self, image):
         '''

@@ -69,18 +69,26 @@ if __name__ == '__main__':
 
 	# dataset configuration
 	parser.add_argument('--market_path', type=str, default='/home/wangguanan/datasets/PersonReIDDatasets/Market/Market-1501-v15.09.15/')
-	parser.add_argument('--duke_path', type=str, default='/home/wangguanan/datasets/PersonReIDDatasets/Duke/occlude_DukeMTMC-reID/')
-	parser.add_argument('--train_dataset', type=str, default='market', help='market, duke')
-	parser.add_argument('--test_dataset', type=str, default='market', help='market, duke')
+	parser.add_argument('--duke_path', type=str, default='/home/wangguanan/datasets/PersonReID/Duke/DukeMTMC-reID/')
+	parser.add_argument('--msmt_path', type=str, default='/data/datasets/MSMT17_V1/')
+	parser.add_argument('--combine_all', type=ast.literal_eval, default=False, help='train+query+gallery as train, only available for msmt currently')
+	parser.add_argument('--train_dataset', type=str, default='market', help='market, duke, msmt')
+	parser.add_argument('--test_dataset', type=str, default='market', help='market, duke, msmt')
 	parser.add_argument('--image_size', type=int, nargs='+', default=[256, 128])
 	parser.add_argument('--p', type=int, default=16, help='person count in a batch')
 	parser.add_argument('--k', type=int, default=4, help='images count of a person in a batch')
 
+	# data augmentation
+	parser.add_argument('--use_rea', type=ast.literal_eval, default=True)
+	parser.add_argument('--use_colorjitor', type=ast.literal_eval, default=False)
+
 	# model configuration
-	parser.add_argument('--pid_num', type=int, default=751, help='751 for Market-1501, 702 for DukeMTMC-reID')
+	parser.add_argument('--cnnbackbone', type=str, default='res50', help='res50, res50ibna')
+	parser.add_argument('--pid_num', type=int, default=751, help='751 for Market-1501, 702 for DukeMTMC-reID, 1041 for MSMT, 3060 for MSMT(combine all)')
 	parser.add_argument('--margin', type=float, default=0.3, help='margin for the triplet loss with batch hard')
 
 	# train configuration
+	parser.add_argument('--steps', type=int, default=200, help='1 epoch include many steps')
 	parser.add_argument('--milestones', nargs='+', type=int, default=[40, 70], help='milestones for the learning rate decay')
 	parser.add_argument('--base_learning_rate', type=float, default=0.00035)
 	parser.add_argument('--weight_decay', type=float, default=0.0005)
