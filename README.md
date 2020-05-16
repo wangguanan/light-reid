@@ -10,7 +10,7 @@
 * 2019-05-01: We implement PCB and achieve better performance than the offical one. ([Code](https://github.com/wangguanan/Pytorch-Person-ReID-Baseline-PCB-Beyond-Part-Models))
 
 ## Update
-* 2020-05-15: support msmt dataset
+* 2020-05-15: support msmt dataset (optional combine all) and cnn backbone [IBN-Net](https://github.com/XingangPan/IBN-Net)
 * 2020-03-27: add demo.py to visualize customed dataset.
 * 2020-03-27: we change the dependency to _Python3.7_ and _PyTorch-1.1.0._ If you want the old version depending on _Python-2.7_ and _PyTorch-0.4.0_, please find on [verion_py27 branch](https://github.com/wangguanan/Pytorch-Person-REID-Baseline-Bag-of-Tricks/tree/version_py2.7).
 * 2019-06-18: we add visualization code to show ranked images 
@@ -22,14 +22,18 @@
 * Memory >= 10G
 
 ## Dataset Preparation
-* [Market-1501 Dataset](https://jingdongwang2017.github.io/Projects/ReID/Datasets/Market-1501.html) and [DukeMTMC-reID Dataset](https://github.com/layumi/DukeMTMC-reID_evaluation)
+* Market-1501 ([Project](http://www.liangzheng.com.cn/Project/project_reid.html), [Google Drive](https://drive.google.com/open?id=1M8m1SYjx15Yi12-XJ-TV6nVJ_ID1dNN5))
+* DukeMTMC-reID ([Project](https://github.com/sxzrt/DukeMTMC-reID_evaluation), [Google Drive](https://drive.google.com/open?id=11FxmKe6SZ55DSeKigEtkb-xQwuq6hOkE))
+* MSMT17 ([Project](https://www.pkuvmc.com/dataset.html), [Paper](https://arxiv.org/pdf/1711.08565.pdf), Google Drive \<please e-mail me for the link\>)
 * Download and extract both anywhere
 
-## Pretrained Models
-* pretrained on Market-1501 [[link]](https://drive.google.com/open?id=1UEginjwTwNDonO9Sl9DD9R0bYpiSRFu3)
+## Trained Models
+* Trained model on Market-1501 [[link]](https://drive.google.com/open?id=1UEginjwTwNDonO9Sl9DD9R0bYpiSRFu3)
+* Trained model on DukeMTMC-reID (comming soon)
+* Trained model on MSMT17 (comming soon)
 
 ## Run
-#### Train on Market-1501/DukeMTMC-reID/MTMC-17
+#### Train on Market-1501/DukeMTMC-reID/MTMC17
 ```
 python3 main.py --mode train \
     --train_dataset market --test_dataset market \
@@ -45,7 +49,15 @@ python3 main.py --mode train \
     --output_path ./results/msmt/
 ```
 
-#### Test on Market-1501/DukeMTMC-reID
+#### Train with ResNet50-IBNa backbone
+```
+python3 main.py --mode train -cnnbackbone res50ibna \
+    --train_dataset market --test_dataset market \
+    --market_path /path/to/market/dataset/ \
+    --output_path ./results/market/ 
+```
+
+#### Test on Market-1501/DukeMTMC-reID/MTMC-17
 ```
 python3 main.py --mode test \
     --train_dataset market --test_dataset market \
@@ -78,7 +90,7 @@ python3 main.py --mode visualize --visualize_mode inter-camera \
     --visualize_output_path ./results/vis-on-duke/ 
 ```
 
-#### Visualize Customed Dataset with Pretrained Model
+#### Visualize Customed Dataset with Trained Model
 
 ```
 # customed dataset structure
@@ -106,6 +118,7 @@ python3 demo.py \
 * [x] Label smoothing
 * [x] Last stride
 * [x] BNNeck
+* [x] ColorJitor
 
 ### 2. Settings
 * We conduct our experiments on 1 GTX1080ti GPU
