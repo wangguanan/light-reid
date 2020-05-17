@@ -42,20 +42,12 @@ class ReIDLoaders:
         self.combine_all = config.combine_all
         self.train_dataset = config.train_dataset
         self.test_dataset = config.test_dataset
-        assert self.train_dataset in self.datasets
+        for a_train_dataset in self.train_dataset:
+            assert a_train_dataset in self.datasets
 
         # batch size
         self.p = config.p
         self.k = config.k
-
-        # dataset paths
-        self.samples_path = {
-            'market_train': os.path.join(self.market_path, 'bounding_box_train/'),
-            'duke_train': os.path.join(self.duke_path, 'bounding_box_train/'),
-            'market_test_query': os.path.join(self.market_path, 'query/'),
-            'market_test_gallery': os.path.join(self.market_path, 'bounding_box_test/'),
-            'duke_test_query': os.path.join(self.duke_path, 'query/'),
-            'duke_test_gallery': os.path.join(self.duke_path, 'bounding_box_test/')}
 
         # load
         self._load()
@@ -64,7 +56,7 @@ class ReIDLoaders:
     def _load(self):
 
         '''init train dataset'''
-        train_samples = self._get_train_samples(self.train_dataset+'_train')
+        train_samples = self._get_train_samples(self.train_dataset)
         self.train_iter = self._get_uniform_iter(train_samples, self.transform_train, self.p, self.k)
 
         '''init test dataset'''
@@ -83,73 +75,59 @@ class ReIDLoaders:
 
 
     def _get_train_samples(self, train_dataset):
-        if train_dataset == 'market_train':
-            train_samples_path = self.samples_path[train_dataset]
-            samples = Samples4Market(train_samples_path).samples
-        elif train_dataset == 'duke_train':
-            train_samples_path = self.samples_path[train_dataset]
-            samples = Samples4Duke(train_samples_path).samples
-        elif 'msmt' in train_dataset:
-            msmt = Samples4MSMT17(self.msmt_path, self.combine_all)
-            samples = msmt.train
+        '''get train samples, support multi-dataset'''
+        samples_list = []
+        for a_train_dataset in train_dataset:
+            if a_train_dataset == 'market':
+                samples = Samples4Market(self.market_path, relabel=True, combineall=self.combine_all).train
+            elif a_train_dataset == 'duke':
+                samples = Samples4Duke(self.duke_path, relabel=True, combineall=self.combine_all).train
+            elif a_train_dataset == 'msmt':
+                samples = Samples4MSMT17(self.msmt_path, relabel=True, combineall=self.combine_all).train
+            samples_list.append(samples)
+        if len(train_dataset) > 1:
+            samples = combine_samples(samples_list)
+            samples = PersonReIDSamples._relabels(None, samples, 1)
+            PersonReIDSamples._show_info(None, samples, samples, samples)
         return samples
-
 
     def _get_test_samples(self, test_dataset):
         if test_dataset == 'market_test':
-            query_data_path = self.samples_path[test_dataset + '_query']
-            gallery_data_path = self.samples_path[test_dataset + '_gallery']
-            query_samples = Samples4Market(query_data_path, reorder=False).samples
-            gallery_samples = Samples4Market(gallery_data_path, reorder=False).samples
+            market = Samples4Market(self.market_path, relabel=True, combineall=self.combine_all)
+            query_samples = market.query
+            gallery_samples = market.gallery
         elif test_dataset == 'duke_test':
-            query_data_path = self.samples_path[test_dataset + '_query']
-            gallery_data_path = self.samples_path[test_dataset + '_gallery']
-            query_samples = Samples4Duke(query_data_path, reorder=False).samples
-            gallery_samples = Samples4Duke(gallery_data_path, reorder=False).samples
+            duke = Samples4Duke(self.duke_path, relabel=True, combineall=self.combine_all)
+            query_samples = duke.query
+            gallery_samples = duke.gallery
         elif 'msmt' in test_dataset:
-            msmt = Samples4MSMT17(self.msmt_path, self.combine_all)
+            msmt = Samples4MSMT17(self.msmt_path, combineall=self.combine_all)
             query_samples = msmt.query
             gallery_samples = msmt.gallery
         return query_samples, gallery_samples
-
 
     def _get_uniform_iter(self, samples, transform, p, k):
         '''
         load person reid data_loader from images_folder
         and uniformly sample according to class
-        :param images_folder_path:
-        :param transform:
-        :param p:
-        :param k:
-        :return:
         '''
         dataset = PersonReIDDataSet(samples, transform=transform)
         loader = data.DataLoader(dataset, batch_size=p * k, num_workers=8, drop_last=False, sampler=ClassUniformlySampler(dataset, class_position=1, k=k))
         iters = IterLoader(loader)
-
         return iters
 
-
     def _get_random_iter(self, samples, transform, batch_size):
-
         dataset = PersonReIDDataSet(samples, transform=transform)
         loader = data.DataLoader(dataset, batch_size=batch_size, num_workers=8, drop_last=False, shuffle=True)
         iters = IterLoader(loader)
-
         return iters
 
-
     def _get_random_loader(self, samples, transform, batch_size):
-
         dataset = PersonReIDDataSet(samples, transform=transform)
         loader = data.DataLoader(dataset, batch_size=batch_size, num_workers=8, drop_last=False, shuffle=True)
         return loader
 
-
     def _get_loader(self, samples, transform, batch_size):
-
         dataset = PersonReIDDataSet(samples, transform=transform)
         loader = data.DataLoader(dataset, batch_size=batch_size, num_workers=8, drop_last=False, shuffle=False)
         return loader
-
-
