@@ -48,6 +48,7 @@ class Extractor(Base):
             self.model = osnet_ain_x1_0(num_classes=self.pid_num, pretrained=False, loss='softmax')
         else:
             assert 0, 'cnnbackbone error'
+        self.model = self.model.to(self.device)
         # self.model = nn.DataParallel(self.model).to(self.device)
 
     def np2tensor(self, image):
