@@ -37,8 +37,7 @@ def main(config):
 			# save model
 			base.save_model(current_epoch)
 			# train
-			base.lr_scheduler.step(current_epoch)
-			_, results = train_an_epoch(config, base, loaders)
+			_, results = train_an_epoch(config, base, loaders, current_epoch)
 			logger('Time: {};  Epoch: {};  {}'.format(time_now(), current_epoch, results))
 
 		# test
@@ -71,9 +70,11 @@ if __name__ == '__main__':
 	parser.add_argument('--market_path', type=str, default='/home/wangguanan/datasets/PersonReIDDatasets/Market/Market-1501-v15.09.15/')
 	parser.add_argument('--duke_path', type=str, default='/home/wangguanan/datasets/PersonReID/Duke/DukeMTMC-reID/')
 	parser.add_argument('--msmt_path', type=str, default='/data/datasets/MSMT17_V1/')
+	parser.add_argument('--njust_path', type=str, default='/data/datasets/njust365/')
+	parser.add_argument('--wildtrack_path', type=str, default='/data/datasets/Wildtrack_crop_dataset/crop/')
 	parser.add_argument('--combine_all', type=ast.literal_eval, default=False, help='train+query+gallery as train')
-	parser.add_argument('--train_dataset', nargs='+', type=str, default=['market'], help='market, duke, msmt, support multi-dataset such as [market, duke]')
-	parser.add_argument('--test_dataset', type=str, default='market', help='market, duke, msmt')
+	parser.add_argument('--train_dataset', nargs='+', type=str, default=['market'], help='market/duke/msmt/njust_win/njust_spr/njust_both. support multi-dataset such as [market, duke]')
+	parser.add_argument('--test_dataset', type=str, default='market', help='market, duke, msmt, njust_win/njust_spr/njust_both, wildtrack')
 	parser.add_argument('--image_size', type=int, nargs='+', default=[256, 128])
 	parser.add_argument('--p', type=int, default=16, help='person count in a batch')
 	parser.add_argument('--k', type=int, default=4, help='images count of a person in a batch')
@@ -84,7 +85,7 @@ if __name__ == '__main__':
 
 	# model configuration
 	parser.add_argument('--cnnbackbone', type=str, default='res50', help='res50, res50ibna')
-	parser.add_argument('--pid_num', type=int, default=751, help='market:751(combineall-1501), duke:702(???), msmt:1041(3060)')
+	parser.add_argument('--pid_num', type=int, default=751, help='market:751(combineall-1503), duke:702(1812), msmt:1041(3060), njust:spr3869(5086),win,both(7729)')
 	parser.add_argument('--margin', type=float, default=0.3, help='margin for the triplet loss with batch hard')
 
 	# train configuration

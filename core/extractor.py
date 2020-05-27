@@ -8,11 +8,11 @@ import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
 from .base import Base
-from .nets import Res50BNNeck, Res50IBNaBNNeck
+from .nets import Res50BNNeck, Res50IBNaBNNeck, osnet_ain_x1_0
 
 
 def build_extractor(config, use_cuda):
-    return Extractor(config.image_size, config.pid_num, config.model_path, use_cuda)
+    return Extractor(config.cnnbackbone, config.image_size, config.model_path, use_cuda)
 
 class Extractor(Base):
     '''
@@ -20,12 +20,12 @@ class Extractor(Base):
     return their feature(s)(list), each element is a numpy of size [feat_dim]
     '''
 
-    def __init__(self, cnnbackbone, image_size, pid_num, model_path, use_cuda):
+    def __init__(self, cnnbackbone, image_size, model_path, use_cuda):
         self.cnnbackbone = cnnbackbone
         self.image_size = image_size
-        self.pid_num = pid_num
         self.model_path = model_path
         self.use_cuda = use_cuda
+        self.pid_num = 1
         # init model
         self._init_device(use_cuda)
         self._init_model()
@@ -44,9 +44,11 @@ class Extractor(Base):
             self.model = Res50BNNeck(class_num=self.pid_num)
         elif self.cnnbackbone == 'res50ibna':
             self.model = Res50IBNaBNNeck(class_num=self.pid_num)
+        elif self.cnnbackbone == 'osnetain':
+            self.model = osnet_ain_x1_0(num_classes=self.pid_num, pretrained=False, loss='softmax')
         else:
             assert 0, 'cnnbackbone error'
-        self.model = nn.DataParallel(self.model).to(self.device)
+        # self.model = nn.DataParallel(self.model).to(self.device)
 
     def np2tensor(self, image):
         '''

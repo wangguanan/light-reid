@@ -6,8 +6,9 @@ import torch.nn as nn
 import torch.optim as optim
 from bisect import bisect_right
 import os
+from collections import OrderedDict
 
-from .nets import Res50BNNeck, Res50IBNaBNNeck
+from .nets import Res50BNNeck, Res50IBNaBNNeck, osnet_ain_x1_0
 from tools import CrossEntropyLabelSmooth, TripletLoss, os_walk
 
 
@@ -18,20 +19,20 @@ class Base:
 
 	def __init__(self, config):
 
+		self.config = config
+		# Model Config
 		self.cnnbackbone = config.cnnbackbone
 		self.pid_num = config.pid_num
 		self.margin = config.margin
-
 		# Logger Configuration
 		self.max_save_model_num = config.max_save_model_num
 		self.output_path = config.output_path
-
 		# Train Configuration
 		self.base_learning_rate = config.base_learning_rate
 		self.weight_decay = config.weight_decay
 		self.milestones = config.milestones
 
-		# init model
+		# init
 		self._init_device()
 		self._init_model()
 		self._init_creiteron()
@@ -45,11 +46,14 @@ class Base:
 	def _init_model(self):
 		if self.cnnbackbone == 'res50':
 			self.model = Res50BNNeck(class_num=self.pid_num)
+			self.model = nn.DataParallel(self.model).to(self.device)
 		elif self.cnnbackbone == 'res50ibna':
 			self.model = Res50IBNaBNNeck(class_num=self.pid_num)
+			self.model = nn.DataParallel(self.model).to(self.device)
+		elif self.cnnbackbone == 'osnetain':
+			self.model = osnet_ain_x1_0(num_classes=self.pid_num, pretrained=True, loss='softmax')
 		else:
-			assert 0, 'cnnbackbone error'
-		self.model = nn.DataParallel(self.model).to(self.device)
+			assert 0, 'cnnbackbone error, expect res50, res50ibna, osnetain'
 		self.model = self.model.to(self.device)
 
 
@@ -59,15 +63,12 @@ class Base:
 
 
 	def _init_optimizer(self):
-		params = []
-		for key, value in self.model.named_parameters():
-			if not value.requires_grad:
-				continue
-			lr = self.base_learning_rate
-			weight_decay = self.weight_decay
-			params += [{"params": [value], "lr": lr, "weight_decay": weight_decay}]
-		self.optimizer = optim.Adam(params)
-		self.lr_scheduler = WarmupMultiStepLR(self.optimizer, self.milestones, gamma=0.1, warmup_factor=0.01, warmup_iters=10)
+		if 'res' in self.cnnbackbone:
+			self.optimizer = optim.Adam(self.model.parameters(), lr=self.base_learning_rate, weight_decay=self.weight_decay)
+			self.lr_scheduler = WarmupMultiStepLR(self.optimizer, self.milestones, gamma=0.1, warmup_factor=0.01, warmup_iters=10)
+		elif self.cnnbackbone == 'osnetain':
+			self.optimizer = optim.Adam(self.model.parameters(), lr=self.base_learning_rate, amsgrad=True, weight_decay=self.weight_decay)
+			self.lr_scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer=self.optimizer, T_max=self.config.total_train_epochs)
 
 
 	def save_model(self, save_epoch):
@@ -113,22 +114,39 @@ class Base:
 	def resume_model(self, resume_epoch):
 		'''resume model from resume_epoch'''
 		model_path = os.path.join(self.output_path, 'model_{}.pkl'.format(resume_epoch))
-		self.model.load_state_dict(torch.load(model_path))
+		self.model.load_state_dict(torch.load(model_path), strict=False)
 		print(('successfully resume model from {}'.format(model_path)))
 
 	def resume_from_model(self, model_path):
 		'''resume from model. model_path shoule be like /path/to/model.pkl'''
-		self.model.load_state_dict(torch.load(model_path))
-		print(('successfully resume model from {}'.format(model_path)))
+		# self.model.load_state_dict(torch.load(model_path), strict=False)
+		# print(('successfully resume model from {}'.format(model_path)))
+		state_dict = torch.load(model_path)
+		model_dict = self.model.state_dict()
+		new_state_dict = OrderedDict()
+		matched_layers, discarded_layers = [], []
+		for k, v in state_dict.items():
+			if k.startswith('module.'):
+				k = k[7:]  # discard module.
+			if k in model_dict and model_dict[k].size() == v.size():
+				new_state_dict[k] = v
+				matched_layers.append(k)
+			else:
+				discarded_layers.append(k)
+		model_dict.update(new_state_dict)
+		self.model.load_state_dict(model_dict)
+		if len(discarded_layers) > 0:
+			print('discarded layers: {}'.format(discarded_layers))
 
 	def set_train(self):
 		'''set model as train mode'''
 		self.model = self.model.train()
+		self.training = True
 
 	def set_eval(self):
 		'''set model as eval mode'''
 		self.model = self.model.eval()
-
+		self.training = False
 
 
 class DemoBase(Base):
@@ -142,7 +160,6 @@ class DemoBase(Base):
 		# init model
 		self._init_device()
 		self._init_model()
-
 
 
 class WarmupMultiStepLR(torch.optim.lr_scheduler._LRScheduler):

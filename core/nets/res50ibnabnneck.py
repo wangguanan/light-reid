@@ -191,7 +191,7 @@ def resnet50_ibn_a(pretrained=False, **kwargs):
         # model.load_state_dict(model_zoo.load_url(model_urls['resnet50']))
         # print(join(realpath(dirname(__file__)), '/models/resnet50_ibn_a.pth.tar'))
         # model.load_state_dict(torch.load(join(realpath(dirname(__file__)), 'models/resnet50_ibn_a.pth.tar')))
-        model.load_state_dict(torch.load(join(realpath(dirname(__file__)), 'models/r50_ibn_a.pth')))
+        model.load_state_dict(torch.load(join(realpath(dirname(__file__)), './models/r50_ibn_a.pth')))
         print('successfully load imagenet pre-trained resnet50-ibn model')
     return model
 

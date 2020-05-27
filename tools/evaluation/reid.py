@@ -53,12 +53,20 @@ class ReIDEvaluator:
             junk_index = np.append(junk_index_1, junk_index_2)
             index_wo_junk = self.notin1d(a_rank, junk_index)
             good_index = np.argwhere(query_pid == gallery_pids)
+            # self_junk = a_rank[0] if a_rank[0] == 1 or a_rank[0] == 0 else []# remove self
+            self_junk = a_rank[0]
+            index_wo_junk = np.delete(index_wo_junk, np.where(self_junk == index_wo_junk))
+            good_index = np.delete(good_index, np.where(self_junk == good_index))
         elif self.mode == 'all':
             junk_index = np.argwhere(gallery_pids == -1)
             index_wo_junk = self.notin1d(a_rank, junk_index)
-            good_index = self.in1d(np.argwhere(query_pid == gallery_pids))
+            good_index = np.argwhere(query_pid == gallery_pids)
+            # self_junk = a_rank[0] if a_rank[0] == 1 or a_rank[0] == 0 else []# remove self
+            self_junk = a_rank[0]
+            index_wo_junk = np.delete(index_wo_junk, np.where(self_junk == index_wo_junk))
+            good_index = np.delete(good_index, np.where(self_junk == good_index))
 
-        num_good = len(good_index)
+        # num_good = len(good_index)
         hit = np.in1d(index_wo_junk, good_index)
         index_hit = np.argwhere(hit == True).flatten()
         if len(index_hit) == 0:
@@ -66,11 +74,11 @@ class ReIDEvaluator:
             cmc = np.zeros([len(index_wo_junk)])
         else:
             precision = []
-            for i in range(num_good):
-                precision.append(float(i+1) / float((index_hit[i]+1)))
+            for i in range(len(index_hit)):
+                precision.append(float(i + 1) / float((index_hit[i] + 1)))
             AP = np.mean(np.array(precision))
             cmc = np.zeros([len(index_wo_junk)])
-            cmc[index_hit[0]: ] = 1
+            cmc[index_hit[0]:] = 1
         return AP, cmc
 
     def in1d(self, array1, array2, invert=False):

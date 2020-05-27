@@ -1,0 +1,16 @@
+Namespace(auto_resume_training_from_lastest_steps=True, base_learning_rate=0.00035, cnnbackbone='osnetain', combine_all=False, cuda='cuda', duke_path='/home/wangguanan/datasets/PersonReID/Duke/DukeMTMC-reID/', image_size=[256, 128], k=4, margin=0.3, market_path='/home/wangguanan/datasets/PersonReIDDatasets/Market/Market-1501-v15.09.15/', max_save_model_num=1, milestones=[40, 70], mode='test', msmt_path='/data/datasets/MSMT17_V1/', njust_path='/data/datasets/njust365/', output_path='./results/res50ibna_combineall_reafasle_colortrue/msmt+duke+none+none//test-on-wildtrack/', p=16, pid_num=751, resume_test_model='./results/res50ibna_combineall_reafasle_colortrue/msmt+duke+none+none//model_50.pkl', resume_visualize_model='/path/to/pretrained/model.pkl', steps=200, test_dataset='wildtrack', test_mode='inter-camera', total_train_epochs=120, train_dataset=['market'], use_colorjitor=False, use_rea=True, visualize_dataset='', visualize_mode='inter-camera', visualize_output_path='results/visualization/', weight_decay=0.0005, wildtrack_path='/data/datasets/Wildtrack_crop_dataset/crop/')
+Time: 2020-05-23 10:29:13; Test Dataset: wildtrack, 
+mAP: 0.2463305980284838 
+Rank: [0.339 0.416 0.46  0.497 0.517 0.529 0.541 0.553 0.56  0.575 0.582 0.591
+ 0.599 0.607 0.612 0.62  0.628 0.631 0.635 0.639 0.642 0.651 0.655 0.661
+ 0.665 0.667 0.672 0.676 0.679 0.68  0.682 0.683 0.686 0.689 0.69  0.69
+ 0.693 0.694 0.698 0.699 0.701 0.707 0.711 0.711 0.713 0.715 0.716 0.717
+ 0.718 0.718 0.72  0.722 0.722 0.724 0.724 0.727 0.727 0.727 0.727 0.727
+ 0.727 0.729 0.729 0.73  0.731 0.733 0.734 0.735 0.737 0.74  0.74  0.743
+ 0.744 0.745 0.746 0.746 0.748 0.75  0.751 0.751 0.751 0.754 0.754 0.754
+ 0.755 0.755 0.757 0.757 0.757 0.757 0.759 0.759 0.76  0.761 0.762 0.764
+ 0.764 0.765 0.767 0.767 0.768 0.769 0.769 0.769 0.77  0.77  0.77  0.771
+ 0.771 0.771 0.772 0.773 0.773 0.773 0.774 0.776 0.776 0.778 0.782 0.783
+ 0.783 0.784 0.784 0.787 0.787 0.788 0.789 0.79  0.79  0.79  0.79  0.79
+ 0.79  0.79  0.79  0.791 0.794 0.795 0.796 0.798 0.798 0.799 0.799 0.799
+ 0.8   0.8   0.8   0.8   0.8   0.801]

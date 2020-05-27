@@ -4,6 +4,8 @@ import copy
 import os
 import copy
 from prettytable import PrettyTable
+from easydict import EasyDict
+import random
 
 def os_walk(folder_dir):
     for root, dirs, files in os.walk(folder_dir):
@@ -52,8 +54,7 @@ class PersonReIDSamples:
         identi_id, camera_id = int(split_list[0]), int(split_list[1])
         return identi_id, camera_id
 
-    def _show_info(self, train, query, gallery):
-
+    def _show_info(self, train, query, gallery, name=None):
         def analyze(samples):
             pid_num = len(set([sample[1] for sample in samples]))
             cid_num = len(set([sample[2] for sample in samples]))
@@ -66,12 +67,11 @@ class PersonReIDSamples:
 
         # please kindly install prettytable: ```pip install prettyrable```
         table = PrettyTable(['set', 'images', 'identities', 'cameras'])
-        table.add_row([self.__class__.__name__, '', '', ''])
+        table.add_row([self.__class__.__name__ if name is None else name, '', '', ''])
         table.add_row(['train', str(train_info[0]), str(train_info[1]), str(train_info[2])])
         table.add_row(['query', str(query_info[0]), str(query_info[1]), str(query_info[2])])
         table.add_row(['gallery', str(gallery_info[0]), str(gallery_info[1]), str(gallery_info[2])])
         print(table)
-
 
 
 class Samples4Market(PersonReIDSamples):
@@ -155,12 +155,11 @@ class Samples4MSMT17(PersonReIDSamples):
         val = self._load_list(os.path.join(path, 'train/'), list_val_path)
         query = self._load_list(os.path.join(path, 'test/'), list_query_path)
         gallery = self._load_list(os.path.join(path, 'test/'), list_gallery_path)
-        train += copy.deepcopy(val)
+        train = copy.deepcopy(train) + copy.deepcopy(val)
         if combineall:
-            train += copy.deepcopy(query) + copy.deepcopy(gallery)
+            train = combine_samples([copy.deepcopy(train), copy.deepcopy(query)+copy.deepcopy(gallery)])
         if relabel:
             train = self._relabels(train, 1)
-
         self.train, self.query, self.gallery = train, query, gallery
         self._show_info(train, query, gallery)
 
@@ -176,6 +175,118 @@ class Samples4MSMT17(PersonReIDSamples):
             data.append([img_path, pid, camid])
         return data
 
+
+class Samples4NJUST365(PersonReIDSamples):
+    '''
+    load NJUST dataset
+    '''
+    def __init__(self, path, relabel=True, combineall=False, season=''):
+        assert season in ['win', 'spr', 'both']
+        # winter setting
+        if season == 'win' or season == 'both':
+            train_path = os.path.join(path, 'copy_dataset_win_train_backup/')
+            query_path = os.path.join(path, 'copy_dataset_win_test_query/')
+            gallery_path = os.path.join(path, 'copy_dataset_win_test_gallery/')
+            train = self._load_images_path(train_path)
+            query = self._load_querygallery_images_path(query_path)
+            gallery = self._load_querygallery_images_path(gallery_path)
+            if combineall:
+                train += copy.deepcopy(query) + copy.deepcopy(gallery)
+            self.win = EasyDict()
+            self.win.train, self.win.query, self.win.gallery = \
+                copy.deepcopy(train), copy.deepcopy(query), copy.deepcopy(gallery)
+            self.train, self.query, self.gallery = \
+                copy.deepcopy(train), copy.deepcopy(query), copy.deepcopy(gallery)
+        # spring setting
+        if season == 'spr' or season == 'both':
+            train_path = os.path.join(path, 'copy_dataset_spr_train/')
+            query_path = os.path.join(path, 'copy_dataset_spr_test_query/')
+            gallery_path = os.path.join(path, 'copy_dataset_spr_test_gallery/')
+            train = self._load_images_path(train_path)
+            query = self._load_querygallery_images_path(query_path)
+            gallery = self._load_querygallery_images_path(gallery_path)
+            if combineall:
+                train += copy.deepcopy(query) + copy.deepcopy(gallery)
+            if relabel:
+                train = self._relabels(train, 1)
+            self.spr = EasyDict()
+            self.spr.train, self.spr.query, self.spr.gallery = \
+                copy.deepcopy(train), copy.deepcopy(query), copy.deepcopy(gallery)
+            self.train, self.query, self.gallery = \
+                copy.deepcopy(train), copy.deepcopy(query), copy.deepcopy(gallery)
+        #
+        if season == 'both':
+            print('combine njust_spr and njust_win ')
+            # self.train = copy.deepcopy(self.win.train) + copy.deepcopy(self.spr.train)
+            # self.query = copy.deepcopy(self.win.query) + copy.deepcopy(self.spr.query)
+            # self.gallery = copy.deepcopy(self.win.gallery) + copy.deepcopy(self.spr.gallery)
+            self.train = combine_samples([copy.deepcopy(self.win.train), copy.deepcopy(self.spr.train)])
+            self.query = combine_samples([copy.deepcopy(self.win.query), copy.deepcopy(self.spr.query)])
+            self.gallery = combine_samples([copy.deepcopy(self.win.gallery), copy.deepcopy(self.spr.gallery)])
+        if relabel:
+            self.train = self._relabels(self.train, 1)
+        self._show_info(self.train, self.query, self.gallery, name='NJUST365-{}'.format(season))
+
+    def _load_images_path(self, folder_dir):
+        _, sub_dirs, _ = os_walk(folder_dir)
+        samples = []
+        for sub_dir in sub_dirs:
+            _, _, images = os_walk(os.path.join(folder_dir, sub_dir))
+            for image in images:
+                if '.jpg' in image or '.png' in image:
+                    pid = int(sub_dir)
+                    try:
+                        cid = int(image[5:7])
+                    except:
+                        continue
+                    samples.append([os.path.join(os.path.join(folder_dir, sub_dir), image), pid, cid])
+        return samples
+
+    def _load_querygallery_images_path(self, folder_dir):
+        _, _, images = os_walk(folder_dir)
+        samples = []
+        for image in images:
+            if '.jpg' in image:
+                pid = int(image.split('_')[0])
+                cid = int(image.split('_')[1][5:7])
+                samples.append([os.path.join(folder_dir, image), pid, cid])
+        return samples
+
+
+class Samples4WildTrack(PersonReIDSamples):
+
+    def __init__(self, folder_dir):
+        '''
+        :param folder_dir:
+        :return: [(path, identiti_id, camera_id)]
+        '''
+        samples = []
+        root_path, id_paths, _ = os_walk(folder_dir)
+        for id_path in id_paths:
+            # print(root_path, id_path)
+            _, _, files_name = os_walk(os.path.join(root_path, id_path))
+            for file_name in files_name:
+                if '.png' or '.jpg' in file_name:
+                    camera_id = self._analysis_file_name(file_name)
+                    img_path = os.path.join(root_path, id_path, file_name)
+                    # size = Image.open(img_path).size
+                    samples.append([img_path, int(id_path), int(camera_id)])
+
+        random.seed('wildtrack')
+        self.query_samples, self.gallery_samples = random.choices(samples, k=1000), samples
+        self._show_info(samples, self.query_samples, self.gallery_samples)
+
+    def _analysis_file_name(self, file_name):
+        camera_id = file_name.replace('.png', '').split('_')[0]
+        return camera_id
+
+    # def _vis_size_distri(self, samples):
+    #     pixels = [sample[3][1]*sample[3][0] for sample in samples]
+    #     plt.figure()
+    #     plt.hist(pixels, 500, range=[0,200000])
+    #     plt.savefig('./pixel_distri.png')
+
+
 def combine_samples(samples_list):
     '''combine more than one samples (e.g. market.train and duke.train) as a samples'''
     all_samples = []
@@ -189,6 +300,10 @@ def combine_samples(samples_list):
         max_pid = max([sample[1] for sample in all_samples])
         max_cid = max([sample[2] for sample in all_samples])
     return all_samples
+
+
+
+
 
 class PersonReIDDataSet:
 

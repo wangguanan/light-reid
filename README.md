@@ -3,6 +3,21 @@
 * **Advantage**: This project provides a **more simple and clear implementation** by only using the best parameters and removing lots of unnecessary modules.
 [](2.1-bot)
 
+## Properties
+* **Dataset**: Support multiple Datasets
+  - [x] Market-1501, DukeMTMC-reID and MSMT17
+  - [x] [Optional] Combine train/query/gallery as training set, i.e. ```train = train + query + gallery```
+  - [x] [Optional] Comine multiple datasets as a big dataset, e.g. ```dataset = market + duke + msmt```
+* **Models**: Support multiple CNN Backbones
+  - [x] ResNet50
+  - [x] ResNet50-ibna
+  - [x] OSNet-AIN
+* **Evaluation**: Support multiple evaluation protocols 
+  - [x] MAP and CMC
+  - [x] Precision and Recall
+  - [x] Inter-Camera, Intra-Camera, ALL
+  - [x] Visualize Ranking List
+
 ## News
 * 2020-03-27: **[CVPR'20]** Our new work about Occluded ReID has been accepted by CVPR'20. ([Paper](https://arxiv.org/abs/2003.08177))
 * 2020-01-01: **[AAAI'20]** Our new work about RGB-Infrared(IR) ReID for dark situation has been accepted by AAAI'20. ([Paper](https://arxiv.org/pdf/2002.04114.pdf), [Code](https://github.com/wangguanan/JSIA-ReID)).
@@ -51,6 +66,7 @@ python3 main.py --mode train \
 
 #### Train with ResNet50-IBNa backbone
 ```
+# download model to ./core/nets/models/ from https://drive.google.com/file/d/1_r4wp14hEMkABVow58Xr4mPg7gvgOMto/view
 python3 main.py --mode train -cnnbackbone res50ibna \
     --train_dataset market --test_dataset market \
     --market_path /path/to/market/dataset/ \

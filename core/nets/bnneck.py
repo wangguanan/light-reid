@@ -1,7 +1,5 @@
 import torch.nn as nn
 
-
-
 def weights_init_kaiming(m):
     classname = m.__class__.__name__
     if classname.find('Linear') != -1:
@@ -16,14 +14,12 @@ def weights_init_kaiming(m):
             nn.init.constant_(m.weight, 1.0)
             nn.init.constant_(m.bias, 0.0)
 
-
 def weights_init_classifier(m):
     classname = m.__class__.__name__
     if classname.find('Linear') != -1:
         nn.init.normal_(m.weight, std=0.001)
         if m.bias:
             nn.init.constant_(m.bias, 0.0)
-
 
 class BNClassifier(nn.Module):
     '''bn + fc'''
@@ -43,5 +39,7 @@ class BNClassifier(nn.Module):
 
     def forward(self, x):
         feature = self.bn(x)
+        if not self.training:
+            return feature, None
         cls_score = self.classifier(feature)
         return feature, cls_score
