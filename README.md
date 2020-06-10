@@ -73,6 +73,8 @@ python3 main.py --mode train -cnnbackbone res50ibna \
     --output_path ./results/market/ 
 ```
 
+#### Train 
+
 #### Test on Market-1501/DukeMTMC-reID/MTMC-17
 ```
 python3 main.py --mode test \
@@ -157,7 +159,7 @@ python3 demo.py \
 | Paper | - | 0.414(0.257) | | - | 0.543 (0.255) |  
 
 ### Results (different CNN Backbone)
-| cnn backbone | train       | cball | rea  | color | msmt            | market         | duke           | wt(inter)  | wt(all)    | model                                |
+| cnn backbone | train       | cball | rea  | color | msmt            | market         | duke           | wt(inter)  | wt(all)    | model ([BaiduPan](https://pan.baidu.com/s/1s1k_Gfzj9TvCIXJlqyJnEg), vskp)                                |
 | ------------ | ----------- | ----- | :--- | ----- | --------------- | -------------- | -------------- | ---------- | ---------- | ------------------------------------ |
 | res50ibna    | market      | √     | x    | √     | 28.6(10.6)      | ~~99.8(99.7)~~ | 58.1(38.1)     | 20.1(10.6) | 80.7(23.1) | res50ibna_market_cball_color.pth     |
 | res50ibna    | duke        | √     | x    | √     | -               | 67.0(36.4)     | ~~99.3(98.6)~~ | 35.2(15.3) | 87.0(30.0) | res50ibna_duke_cball_color.pth       |
@@ -166,7 +168,7 @@ python3 demo.py \
 | res50ibna    | msmt+market | √     | x    | √     | ~~95.0(87.90)~~ | ~~98.7(96.5)~~ | 73.2(57.0)     | 31.2(26.8) | 81.1(38.8) | res50ibna_msmtmarket_cball_color.pth |
 | osnetain     | msmt        | √     | x    | √     | ~~93.3(81.8)~~  | 71.2(43.4)     | 69.8(51.2)     | 27.2(22.0) | -          | osnetain_msmt_cball_color.pth        |
 | osnetain     | msmt+duke   | √     | x    | √     | 87.1(67.4)      | ~~96.2(88.7)~~ | ~~88.7(78.8)~~ | 39.5(26.8) | -          | osnetain_msmtduke_cball_color.pth    |
-| osnet        | msmt+market | √     | x    | √     | 93.0(80.4)      | ~~98.7(94.5)~~ | 72.5(54.7)     | 31.1(23.8) | -          | osnetain_msmtmarket_cball_color.pth    |
+| osnetain     | msmt+market | √     | x    | √     | 93.0(80.4)      | ~~98.7(94.5)~~ | 72.5(54.7)     | 31.1(23.8) | -          | osnetain_msmtmarket_cball_color.pth  |
 
 ### 4. Visualization of Ranked Images on Market-1501 Dataset (with REA)
 ![](https://github.com/wangguanan/Pytorch-Person-REID-Baseline-Bag-of-Tricks/blob/master/ranked_images/market/1351_c6s3_064142_00.jpg?raw=true)
