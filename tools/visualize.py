@@ -72,7 +72,7 @@ def visualize_ranked_results2(distmat, dataset, save_dir='', topk=20):
     print("Done")
 
 
-def visualize_ranked_results(distmat, dataset, save_dir='', topk=20, sort='descend', mode='inter-camera'):
+def visualize_ranked_results(distmat, dataset, save_dir='', topk=20, sort='descend', mode='inter-camera', only_show=None):
     """Visualizes ranked results.
     Args:
         dismat (numpy.ndarray): distance matrix of shape (nq, ng)
@@ -159,6 +159,8 @@ def visualize_ranked_results(distmat, dataset, save_dir='', topk=20, sort='desce
             elif mode == 'all':
                 valid = True
             if valid:
+                if only_show == 'pos' and qpid != gpid: continue
+                if only_show == 'neg' and qpid == gpid: continue
                 image_list.append(gimg_path)
                 hit_list.append(qpid == gpid)
                 text_list.append(distmat[q_idx, g_idx])

@@ -139,7 +139,8 @@ python3 demo.py \
 ### 2. Settings
 * We conduct our experiments on 1 GTX1080ti GPU
 
-### 3. Results (with REA)
+### 3. Experimental Results
+#### Results (with REA)
 
 | Repeat | market2market | market2duke | | duke2duke |  duke2market |
 | :---:                             | :---: | :---: | - |:---: | :---: |
@@ -149,13 +150,25 @@ python3 demo.py \
 | Average | 0.942 (0.858) | 0.289 (0.156) | | 0.868 (0.766) | 0.488 (0.218) |
 | Paper | 0.941 (0.857) | - | | 0.864 (0.764) |
 
-### 4. Results (without REA)
+### Results (without REA)
 | Repeat | market2market | market2duke | | duke2duke |  duke2market |
 | :---:                             | :---: | :---: | - |:---: | :---: |
 | 1 | 0.936 (0.824) | 0.427 (0.264) | | 0.849 (0.714) | 0.556 (0.269) |
 | Paper | - | 0.414(0.257) | | - | 0.543 (0.255) |  
 
-### 5. Visualization of Ranked Images on Market-1501 Dataset (with REA)
+### Results (different CNN Backbone)
+| cnn backbone | train       | cball | rea  | color | msmt            | market         | duke           | wt(inter)  | wt(all)    | model                                |
+| ------------ | ----------- | ----- | :--- | ----- | --------------- | -------------- | -------------- | ---------- | ---------- | ------------------------------------ |
+| res50ibna    | market      | √     | x    | √     | 28.6(10.6)      | ~~99.8(99.7)~~ | 58.1(38.1)     | 20.1(10.6) | 80.7(23.1) | res50ibna_market_cball_color.pth     |
+| res50ibna    | duke        | √     | x    | √     | -               | 67.0(36.4)     | ~~99.3(98.6)~~ | 35.2(15.3) | 87.0(30.0) | res50ibna_duke_cball_color.pth       |
+| res50ibna    | msmt        | √     | x    | √     | ~~96.5(91.4)~~  | 75.3(48.1)     | 71.9(54.7)     | 29.1(23.4) | 79.6(36.2) | res50ibna_msmt_cball_color.pth       |
+| res50ibna    | msmt+duke   | √     | x    | √     | ~~95.1(87.7)~~  | 77.7(51.3)     | ~~96.8(93.2)~~ | 35.4(28.7) | 82.6(40.6) | res50ibna_msmtduke_cball_color.pth   |
+| res50ibna    | msmt+market | √     | x    | √     | ~~95.0(87.90)~~ | ~~98.7(96.5)~~ | 73.2(57.0)     | 31.2(26.8) | 81.1(38.8) | res50ibna_msmtmarket_cball_color.pth |
+| osnetain     | msmt        | √     | x    | √     | ~~93.3(81.8)~~  | 71.2(43.4)     | 69.8(51.2)     | 27.2(22.0) | -          | osnetain_msmt_cball_color.pth        |
+| osnetain     | msmt+duke   | √     | x    | √     | 87.1(67.4)      | ~~96.2(88.7)~~ | ~~88.7(78.8)~~ | 39.5(26.8) | -          | osnetain_msmtduke_cball_color.pth    |
+| osnet        | msmt+market | √     | x    | √     | 93.0(80.4)      | ~~98.7(94.5)~~ | 72.5(54.7)     | 31.1(23.8) | -          | osnetain_msmtmarket_cball_color.pth    |
+
+### 4. Visualization of Ranked Images on Market-1501 Dataset (with REA)
 ![](https://github.com/wangguanan/Pytorch-Person-REID-Baseline-Bag-of-Tricks/blob/master/ranked_images/market/1351_c6s3_064142_00.jpg?raw=true)
 ![](https://github.com/wangguanan/Pytorch-Person-REID-Baseline-Bag-of-Tricks/blob/master/ranked_images/market/1354_c5s3_040965_00.jpg?raw=true)
 ![](https://github.com/wangguanan/Pytorch-Person-REID-Baseline-Bag-of-Tricks/blob/master/ranked_images/market/1357_c5s3_094087_00.jpg?raw=true)

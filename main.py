@@ -108,6 +108,7 @@ if __name__ == '__main__':
 						help='market, duke, only  only availiable under visualize model')
 	parser.add_argument('--visualize_mode', type=str, default='inter-camera',
 						help='inter-camera, intra-camera, all, only availiable under visualize model')
+	parser.add_argument('--visualize_mode_onlyshow', type=str, default='pos', help='pos, neg, none')
 	parser.add_argument('--visualize_output_path', type=str, default='results/visualization/',
 						help='path to save visualization results, only availiable under visualize model')
 

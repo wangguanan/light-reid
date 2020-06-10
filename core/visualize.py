@@ -12,10 +12,10 @@ def visualize(config, base, loaders):
 
 	# init dataset
 	if config.visualize_dataset == 'market':
-		_datasets = [loaders.market_query_samples.samples, loaders.market_gallery_samples.samples]
+		_datasets = [loaders.market_query_samples, loaders.market_gallery_samples]
 		_loaders = [loaders.market_query_loader, loaders.market_gallery_loader]
 	elif config.visualize_dataset == 'duke':
-		_datasets = [loaders.duke_query_samples.samples, loaders.duke_gallery_samples.samples]
+		_datasets = [loaders.duke_query_samples, loaders.duke_gallery_samples]
 		_loaders = [loaders.duke_query_loader, loaders.duke_gallery_loader]
 	elif config.visualize_dataset == 'customed':
 		_datasets = [loaders.query_samples, loaders.gallery_samples]
@@ -27,6 +27,7 @@ def visualize(config, base, loaders):
 			for data in loader:
 				# compute feautres
 				images, pids, cids = data
+				images = images.cuda()
 				features = base.model(images)
 				# save as query features
 				if loader_id == 0:
@@ -45,4 +46,4 @@ def visualize(config, base, loaders):
 	distance = cosine_dist(query_features, gallery_features).data.cpu().numpy()
 
 	# visualize
-	visualize_ranked_results(distance, _datasets, config.visualize_output_path, mode=config.visualize_mode)
+	visualize_ranked_results(distance, _datasets, config.visualize_output_path, mode=config.visualize_mode, only_show=config.visualize_mode_onlyshow)
