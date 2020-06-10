@@ -40,7 +40,7 @@
 * Market-1501 ([Project](http://www.liangzheng.com.cn/Project/project_reid.html), [Google Drive](https://drive.google.com/open?id=1M8m1SYjx15Yi12-XJ-TV6nVJ_ID1dNN5))
 * DukeMTMC-reID ([Project](https://github.com/sxzrt/DukeMTMC-reID_evaluation), [Google Drive](https://drive.google.com/open?id=11FxmKe6SZ55DSeKigEtkb-xQwuq6hOkE))
 * MSMT17 ([Project](https://www.pkuvmc.com/dataset.html), [Paper](https://arxiv.org/pdf/1711.08565.pdf), Google Drive \<please e-mail me for the link\>)
-* Download and extract both anywhere
+* WildTrack ([Project](https://www.epfl.ch/labs/cvlab/data/data-wildtrack/), [Paper](http://openaccess.thecvf.com/content_cvpr_2018/papers/Chavdarova_WILDTRACK_A_Multi-Camera_CVPR_2018_paper.pdf))
 
 ## Trained Models
 * Trained model on Market-1501 [[link]](https://drive.google.com/open?id=1UEginjwTwNDonO9Sl9DD9R0bYpiSRFu3)
@@ -152,13 +152,13 @@ python3 demo.py \
 | Average | 0.942 (0.858) | 0.289 (0.156) | | 0.868 (0.766) | 0.488 (0.218) |
 | Paper | 0.941 (0.857) | - | | 0.864 (0.764) |
 
-### Results (without REA)
+#### Results (without REA)
 | Repeat | market2market | market2duke | | duke2duke |  duke2market |
 | :---:                             | :---: | :---: | - |:---: | :---: |
 | 1 | 0.936 (0.824) | 0.427 (0.264) | | 0.849 (0.714) | 0.556 (0.269) |
 | Paper | - | 0.414(0.257) | | - | 0.543 (0.255) |  
 
-### Results (different CNN Backbone)
+#### Results (different CNN Backbone)
 | cnn backbone | train       | cball | rea  | color | msmt            | market         | duke           | wt(inter)  | wt(all)    | model ([BaiduPan](https://pan.baidu.com/s/1s1k_Gfzj9TvCIXJlqyJnEg), vskp)                                |
 | ------------ | ----------- | ----- | :--- | ----- | --------------- | -------------- | -------------- | ---------- | ---------- | ------------------------------------ |
 | res50ibna    | market      | √     | x    | √     | 28.6(10.6)      | ~~99.8(99.7)~~ | 58.1(38.1)     | 20.1(10.6) | 80.7(23.1) | res50ibna_market_cball_color.pth     |
