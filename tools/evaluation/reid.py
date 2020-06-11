@@ -109,3 +109,49 @@ class ReIDEvaluator:
     def euclidean_dist(self, x, y):
         '''compute eculidean distance between two martrix x and y with sizes (n1, d), (n2, d)'''
         return sk_metrics.pairwise.euclidean_distances(x, y)
+
+
+
+class PrecisionRecall(ReIDEvaluator):
+
+    def __init__(self, dist, mode):
+        assert dist in ['cosine', 'euclidean']
+        self.dist = dist
+        assert mode in ['intra-camera', 'inter-camera', 'all']
+        self.mode = mode
+
+    def evaluate(self, thresholds, query_features, query_camids, query_pids, gallery_features, gallery_camids, gallery_pids):
+
+        '''compute distance matrix'''
+        if self.dist is 'cosine':
+            scores = self.cosine_dist(query_features, gallery_features)
+        elif self.dist is 'euclidean':
+            scores = self.euclidean_dist(query_features, gallery_features)
+
+        pid_similarity = (np.expand_dims(query_pids, axis=0).transpose([1,0]) == np.expand_dims(gallery_pids, axis=0)).astype(np.float)
+        cid_similarity = (np.expand_dims(query_camids, axis=0).transpose([1,0]) == np.expand_dims(gallery_camids, axis=0)).astype(np.float)
+
+        pres, recalls = [], []
+        for threshold in thresholds:
+            if self.dist == 'cosine':
+                hits = scores >= threshold
+            elif self.dist == 'euclidean':
+                hits = scores <= threshold
+            else:
+                assert 0, 'dist type error'
+
+            if self.mode == 'all':
+                pre = (pid_similarity * hits).sum() / hits.sum()
+                recall = (pid_similarity * hits).sum() / pid_similarity.sum()
+            elif self.mode == 'intra-camera':
+                pre = (pid_similarity * cid_similarity * hits).sum() / (cid_similarity * hits).sum()
+                recall = (pid_similarity * cid_similarity * hits).sum() / (pid_similarity * cid_similarity).sum()
+            elif self.mode == 'inter-camera':
+                pre = (pid_similarity * (1-cid_similarity) * hits).sum() / ((1-cid_similarity) * hits).sum()
+                recall = (pid_similarity * (1-cid_similarity) * hits).sum() / (pid_similarity * (1-cid_similarity)).sum()
+            else:
+                assert 0, 'mode type error'
+
+            pres.append(pre)
+            recalls.append(recall)
+        return pres, recalls, thresholds

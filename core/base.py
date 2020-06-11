@@ -44,14 +44,13 @@ class Base:
 
 
 	def _init_model(self):
+		pretrained = False if self.config.mode != 'train' else True
 		if self.cnnbackbone == 'res50':
-			self.model = Res50BNNeck(class_num=self.pid_num)
-			self.model = nn.DataParallel(self.model).to(self.device)
+			self.model = Res50BNNeck(class_num=self.pid_num, pretrained=pretrained).to(self.device)
 		elif self.cnnbackbone == 'res50ibna':
-			self.model = Res50IBNaBNNeck(class_num=self.pid_num)
-			self.model = nn.DataParallel(self.model).to(self.device)
+			self.model = Res50IBNaBNNeck(class_num=self.pid_num, pretrained=pretrained).to(self.device)
 		elif self.cnnbackbone == 'osnetain':
-			self.model = osnet_ain_x1_0(num_classes=self.pid_num, pretrained=True, loss='softmax')
+			self.model = osnet_ain_x1_0(num_classes=self.pid_num, pretrained=pretrained, loss='softmax')
 		else:
 			assert 0, 'cnnbackbone error, expect res50, res50ibna, osnetain'
 		self.model = self.model.to(self.device)

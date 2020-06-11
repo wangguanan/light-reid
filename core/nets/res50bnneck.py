@@ -5,12 +5,12 @@ from .bnneck import BNClassifier
 
 class Res50BNNeck(nn.Module):
 
-    def __init__(self, class_num):
+    def __init__(self, class_num, pretrained=True):
         super(Res50BNNeck, self).__init__()
 
         self.class_num = class_num
         # backbone and optimize its architecture
-        resnet = torchvision.models.resnet50(pretrained=True)
+        resnet = torchvision.models.resnet50(pretrained=pretrained)
         resnet.layer4[0].conv2.stride = (1,1)
         resnet.layer4[0].downsample[0].stride = (1,1)
 

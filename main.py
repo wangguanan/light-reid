@@ -7,7 +7,7 @@ train, test, visualization operations on market and duke dataset
 import argparse
 import os
 import ast
-from core import ReIDLoaders, Base, train_an_epoch, test, visualize
+from core import ReIDLoaders, Base, train_an_epoch, test, plot_prerecall_curve, visualize
 from tools import make_dirs, Logger, os_walk, time_now
 
 
@@ -48,8 +48,11 @@ def main(config):
 
 	elif config.mode == 'test':	# test mode
 		base.resume_from_model(config.resume_test_model)
-		mAP, CMC = test(config, base, loaders)
+		mAP, CMC, pres, recalls, thresholds = test(config, base, loaders)
 		logger('Time: {}; Test Dataset: {}, \nmAP: {} \nRank: {}'.format(time_now(), config.test_dataset, mAP, CMC))
+		logger('Time: {}; Test Dataset: {}, \nprecision: {} \nrecall: {}\nthresholds: {}'.format(
+			time_now(), config.test_dataset, mAP, CMC, pres, recalls, thresholds))
+		plot_prerecall_curve(config, pres, recalls, thresholds, mAP, CMC, 'none')
 
 
 	elif config.mode == 'visualize': # visualization mode

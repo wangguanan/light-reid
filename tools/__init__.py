@@ -1,6 +1,6 @@
 from .logger import *
 from .utils import *
-from .evaluation import accuracy, ReIDEvaluator
+from .evaluation import accuracy, ReIDEvaluator, PrecisionRecall
 from .transforms2 import *
 from .meter import *
 from .loss import *

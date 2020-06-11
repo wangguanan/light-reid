@@ -222,12 +222,12 @@ def resnet152_ibn_a(pretrained=False, **kwargs):
 
 class Res50IBNaBNNeck(nn.Module):
 
-    def __init__(self, class_num):
+    def __init__(self, class_num, pretrained=True):
         super(Res50IBNaBNNeck, self).__init__()
 
         self.class_num = class_num
         # backbone and optimize its architecture
-        resnet = resnet50_ibn_a(pretrained=True)
+        resnet = resnet50_ibn_a(pretrained=pretrained)
         resnet.layer4[0].conv2.stride = (1, 1)
         resnet.layer4[0].downsample[0].stride = (1, 1)
 

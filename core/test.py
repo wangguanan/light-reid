@@ -1,6 +1,8 @@
 import torch
-from tools import time_now, CatMeter, ReIDEvaluator
-
+from tools import time_now, CatMeter, ReIDEvaluator, PrecisionRecall
+import numpy as np
+import matplotlib.pyplot as plt
+import os
 
 def test(config, base, loaders):
 
@@ -56,6 +58,23 @@ def test(config, base, loaders):
 		query_features, query_cids_meter.get_val_numpy(), query_pids_meter.get_val_numpy(),
 		gallery_features, gallery_cids_meter.get_val_numpy(), gallery_pids_meter.get_val_numpy())
 
-	return mAP, CMC[0: 150]
+	# compute precision-recall curve
+	thresholds = np.linspace(1.0, 0.0, num=101)
+	pres, recalls, thresholds = PrecisionRecall(dist='cosine', mode=config.test_mode).evaluate(
+		thresholds, query_features, query_cids_meter.get_val_numpy(), query_pids_meter.get_val_numpy(),
+		gallery_features, gallery_cids_meter.get_val_numpy(), gallery_pids_meter.get_val_numpy())
 
+	return mAP, CMC[0: 150], pres, recalls, thresholds
+
+
+def plot_prerecall_curve(config, pres, recalls, thresholds, mAP, CMC, label):
+
+	plt.plot(recalls, pres, label='{model},map:{map},cmc135:{cmc}'.format(
+		model=label, map=round(mAP, 2), cmc=[round(CMC[0], 2), round(CMC[2], 2), round(CMC[4], 2)]))
+	plt.xlabel('recall')
+	plt.ylabel('precision')
+	plt.title('precision-recall curve')
+	plt.legend()
+	plt.grid()
+	plt.savefig(os.path.join(config.output_path, 'precisio-recall-curve.png'))
 

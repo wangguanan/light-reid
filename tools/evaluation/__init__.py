@@ -1,2 +1,2 @@
 from .classification import accuracy
-from .reid import ReIDEvaluator
+from .reid import ReIDEvaluator, PrecisionRecall
