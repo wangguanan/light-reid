@@ -21,6 +21,8 @@ class Extractor(Base):
     '''
 
     def __init__(self, cnnbackbone, image_size, model_path, use_cuda):
+
+        self.mode = 'extract'
         self.cnnbackbone = cnnbackbone
         self.image_size = image_size
         self.model_path = model_path
