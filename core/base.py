@@ -21,6 +21,7 @@ class Base:
 
 		self.config = config
 		# Model Config
+		self.mode = config.mode
 		self.cnnbackbone = config.cnnbackbone
 		self.pid_num = config.pid_num
 		self.margin = config.margin
@@ -44,11 +45,11 @@ class Base:
 
 
 	def _init_model(self):
-		pretrained = False if self.config.mode != 'train' else True
+		pretrained = False if self.mode != 'train' else True
 		if self.cnnbackbone == 'res50':
-			self.model = Res50BNNeck(class_num=self.pid_num, pretrained=pretrained).to(self.device)
+			self.model = Res50BNNeck(class_num=self.pid_num, pretrained=pretrained)
 		elif self.cnnbackbone == 'res50ibna':
-			self.model = Res50IBNaBNNeck(class_num=self.pid_num, pretrained=pretrained).to(self.device)
+			self.model = Res50IBNaBNNeck(class_num=self.pid_num, pretrained=pretrained)
 		elif self.cnnbackbone == 'osnetain':
 			self.model = osnet_ain_x1_0(num_classes=self.pid_num, pretrained=pretrained, loss='softmax')
 		else:
@@ -155,6 +156,8 @@ class DemoBase(Base):
 	'''
 
 	def __init__(self, config):
+		self.mode = 'demo'
+		self.cnnbackbone = config.cnnbackbone
 		self.pid_num = config.pid_num
 		# init model
 		self._init_device()
