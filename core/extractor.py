@@ -42,16 +42,16 @@ class Extractor(Base):
             self.device = torch.device('cpu')
 
     def _init_model(self):
+        pretrained = False if self.mode != 'train' else True
         if self.cnnbackbone == 'res50':
-            self.model = Res50BNNeck(class_num=self.pid_num)
+            self.model = Res50BNNeck(class_num=self.pid_num, pretrained=pretrained)
         elif self.cnnbackbone == 'res50ibna':
-            self.model = Res50IBNaBNNeck(class_num=self.pid_num)
+            self.model = Res50IBNaBNNeck(class_num=self.pid_num, pretrained=pretrained)
         elif self.cnnbackbone == 'osnetain':
-            self.model = osnet_ain_x1_0(num_classes=self.pid_num, pretrained=False, loss='softmax')
+            self.model = osnet_ain_x1_0(num_classes=self.pid_num, pretrained=pretrained, loss='softmax')
         else:
-            assert 0, 'cnnbackbone error'
+            assert 0, 'cnnbackbone error, expect res50, res50ibna, osnetain'
         self.model = self.model.to(self.device)
-        # self.model = nn.DataParallel(self.model).to(self.device)
 
     def np2tensor(self, image):
         '''
