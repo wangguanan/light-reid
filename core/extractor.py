@@ -70,7 +70,7 @@ class Extractor(Base):
         images = F.interpolate(images, image_size, mode='bilinear', align_corners=True)
         return images
 
-    def normalize_images(self, images, mean=[0.485, 0.456, 0.406], std=[0.485, 0.456, 0.406]):
+    def normalize_images(self, images, mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]):
         '''
         Args:
             images(torch.tensor): size [bs, c, h, w], range [0,1]

@@ -42,8 +42,9 @@ def main(config):
 
 		# test
 		base.save_model(config.total_train_epochs)
-		mAP, CMC = test(config, base, loaders)
+		mAP, CMC, pres, recalls, thresholds = test(config, base, loaders)
 		logger('Time: {}; Test Dataset: {}, \nmAP: {} \nRank: {}'.format(time_now(), config.test_dataset, mAP, CMC))
+		plot_prerecall_curve(config, pres, recalls, thresholds, mAP, CMC, 'none')
 
 
 	elif config.mode == 'test':	# test mode
