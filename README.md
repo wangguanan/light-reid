@@ -64,6 +64,8 @@ python3 main.py --mode train \
     --output_path ./results/msmt/
 ```
 
+
+
 #### Train with ResNet50-IBNa backbone
 ```
 # download model to ./core/nets/models/ from https://drive.google.com/file/d/1_r4wp14hEMkABVow58Xr4mPg7gvgOMto/view
@@ -73,7 +75,14 @@ python3 main.py --mode train -cnnbackbone res50ibna \
     --output_path ./results/market/ 
 ```
 
-#### Train 
+#### Train with OSNet-AIN backbone
+```
+# download model to ./core/nets/models/ from https://mega.nz/#!YTZFnSJY!wlbo_5oa2TpDAGyWCTKTX1hh4d6DvJhh_RUA2z6i_so
+python3 main.py --mode train -cnnbackbone osnetain \
+    --train_dataset market --test_dataset market \
+    --market_path /path/to/market/dataset/ \
+    --output_path ./results/market/ 
+```
 
 #### Test on Market-1501/DukeMTMC-reID/MTMC-17
 ```
