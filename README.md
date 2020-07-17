@@ -1,5 +1,5 @@
 ## light-reid
-a toolbox for light-reid learning, including 
+a toolbox for light-reid learning, including:
 - [x] **light model**: model distillation and pruning (1.5x-2x faster)
 - [x] **light feature**: binary code learning (10x faster)
 - [x] **light retrieval**: coarse2fine retrieval (5x faster)
