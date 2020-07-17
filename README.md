@@ -6,8 +6,8 @@ a toolbox for light-reid learning, including:
 
 ### Update
 - 2020.07.17: We release a toolbox for light-reid learning, getting >50x faster speed. Code comming soon.
-* 2020-03-27: We adapt bag-of-tricks-reid to python3.7, and support IBN-Net, MSMT17, combineall, multi-dataset train. Please see branch [version_py3.7 bot](https://github.com/wangguanan/light-reid/tree/version_py3.7_bot).
-- 2019: We give a simple and clear implementation of bag-of-tricks-reid with python2.7. Please see branch [version_py2.7](https://github.com/wangguanan/light-reid/tree/version_py2.7).
+* 2020.03.27: We adapt bag-of-tricks-reid to python3.7, and support IBN-Net, MSMT17, combineall, multi-dataset train. Please see branch [version_py3.7 bot](https://github.com/wangguanan/light-reid/tree/version_py3.7_bot).
+- 2019.03: We give a simple and clear implementation of bag-of-tricks-reid with python2.7. Please see branch [version_py2.7](https://github.com/wangguanan/light-reid/tree/version_py2.7).
 
 ### News
 * 2020-07-04: **[ECCV'20]** Our new work about Fast ReID has been accepted by ECCV'20. ([Paper] comming soon)
