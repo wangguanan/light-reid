@@ -1,12 +1,12 @@
 ## light-reid
 a toolbox of light-reid learning for faster inference, including:
-- [x] **light model**: model distillation and pruning (1.5x-2x faster)
-- [x] **light feature**: binary code learning (10x faster)
-- [x] **light retrieval**: coarse2fine retrieval (5x faster)
+- [x] **light model**: model distillation and pruning (1.5x-2x faster feature extraction)
+- [x] **light feature**: binary code learning (10x faster retrieval)
+- [x] **light retrieval**: coarse2fine retrieval (5x faster retrieval)
 
 ### Update
 - 2020.07.17: We release a toolbox of light-reid learning for faster inference, getting >50x faster speed. Code comming soon.
-* 2020.03.27: We adapt bag-of-tricks-reid to python3.7, and support IBN-Net, MSMT17, combineall, multi-dataset train. Please see branch [version_py3.7 bot](https://github.com/wangguanan/light-reid/tree/version_py3.7_bot).
+* 2020.03.27: We adapt bag-of-tricks-reid to python3.7, and support IBN-Net, MSMT17, combineall, multi-dataset train. Please see branch [version_py3.7_bot](https://github.com/wangguanan/light-reid/tree/version_py3.7_bot).
 - 2019.03: We give a simple and clear implementation of bag-of-tricks-reid with python2.7. Please see branch [version_py2.7](https://github.com/wangguanan/light-reid/tree/version_py2.7).
 
 ### News
