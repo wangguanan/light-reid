@@ -36,7 +36,7 @@ conda activate lightreid
 # install dependencies
 pip install -r requirements.txt
 
-# nstall torch and torchvision (select the proper cuda version to suit your machine)
+# install torch and torchvision (select the proper cuda version to suit your machine)
 conda install pytorch==1.4.0 torchvision -c pytorch
 ```
 
