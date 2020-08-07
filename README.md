@@ -25,10 +25,19 @@ it features
 
 ## Set Up
 ```shell script
+# cd to your preferred directory and clone this repo
+git clone https://github.com/wangguanan/light-reid.git
+
+# create environment
+cd light-reid
 conda create -n lightreid python=3.7
 conda activate lightreid
+
+# install dependencies
+pip install -r requirements.txt
+
+# nstall torch and torchvision (select the proper cuda version to suit your machine)
 conda install pytorch==1.4.0 torchvision -c pytorch
-pip install matplotlib scipy Pillow numpy prettytable easydict scikit-learn gdown hexhamming progressbar2 pip install pyyaml
 ```
 
 

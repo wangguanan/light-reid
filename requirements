@@ -1,0 +1,13 @@
+matplotlib
+scipy
+Pillow
+numpy
+prettytable
+easydict
+scikit-learn
+gdown
+hexhamming
+progressbar2
+pip
+install
+pyyaml
