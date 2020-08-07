@@ -1,0 +1,190 @@
+ ******************** light-reid settings ********************
+ light_model:  False
+ light_feat:  True
+ light_search:  False
+ ******************** light-reid settings ********************
+ epoch: 0 time: 2020-08-06 15:31:14 results: CrossEntropyLabelSmooth: 6.6155014;  TripletLoss: 2.49352;  Accuracy: [0.37902227];  
+ epoch: 1 time: 2020-08-06 15:32:09 results: CrossEntropyLabelSmooth: 6.4727564;  TripletLoss: 1.2892168;  Accuracy: [16.460396];  
+ epoch: 2 time: 2020-08-06 15:33:04 results: CrossEntropyLabelSmooth: 5.819154;  TripletLoss: 0.50533533;  Accuracy: [30.940594];  
+ epoch: 3 time: 2020-08-06 15:34:00 results: CrossEntropyLabelSmooth: 4.656892;  TripletLoss: 0.28644085;  Accuracy: [46.232983];  
+ epoch: 4 time: 2020-08-06 15:34:56 results: CrossEntropyLabelSmooth: 3.466444;  TripletLoss: 0.20887597;  Accuracy: [67.52011];  
+ epoch: 5 time: 2020-08-06 15:35:52 results: CrossEntropyLabelSmooth: 2.5369205;  TripletLoss: 0.13510153;  Accuracy: [81.07983];  
+ epoch: 6 time: 2020-08-06 15:36:47 results: CrossEntropyLabelSmooth: 1.988759;  TripletLoss: 0.10508739;  Accuracy: [87.66244];  
+ epoch: 7 time: 2020-08-06 15:37:43 results: CrossEntropyLabelSmooth: 1.69636;  TripletLoss: 0.07856596;  Accuracy: [91.87035];  
+ epoch: 8 time: 2020-08-06 15:38:40 results: CrossEntropyLabelSmooth: 1.5570567;  TripletLoss: 0.067298815;  Accuracy: [93.95111];  
+ epoch: 9 time: 2020-08-06 15:39:36 results: CrossEntropyLabelSmooth: 1.5039347;  TripletLoss: 0.05930919;  Accuracy: [94.73236];  
+ extract_feat_time: 33.440860986709595 eval_time: 19.738054752349854
+ 0.6810731606468702 [0.84916865 0.90053444 0.92339667 ... 1.         1.         1.        ]
+ epoch: 10 time: 2020-08-06 15:41:26 results: CrossEntropyLabelSmooth: 1.4608945;  TripletLoss: 0.064223655;  Accuracy: [95.32797];  
+ epoch: 11 time: 2020-08-06 15:42:22 results: CrossEntropyLabelSmooth: 1.4210278;  TripletLoss: 0.052234102;  Accuracy: [96.062805];  
+ epoch: 12 time: 2020-08-06 15:43:18 results: CrossEntropyLabelSmooth: 1.3715392;  TripletLoss: 0.04414197;  Accuracy: [96.92141];  
+ epoch: 13 time: 2020-08-06 15:44:15 results: CrossEntropyLabelSmooth: 1.3430041;  TripletLoss: 0.034497082;  Accuracy: [97.54022];  
+ epoch: 14 time: 2020-08-06 15:45:12 results: CrossEntropyLabelSmooth: 1.3202667;  TripletLoss: 0.034262035;  Accuracy: [97.756805];  
+ epoch: 15 time: 2020-08-06 15:46:08 results: CrossEntropyLabelSmooth: 1.3103149;  TripletLoss: 0.030513171;  Accuracy: [98.03527];  
+ epoch: 16 time: 2020-08-06 15:47:04 results: CrossEntropyLabelSmooth: 1.3119587;  TripletLoss: 0.03062649;  Accuracy: [97.81095];  
+ epoch: 17 time: 2020-08-06 15:48:02 results: CrossEntropyLabelSmooth: 1.3147805;  TripletLoss: 0.03651558;  Accuracy: [97.780014];  
+ epoch: 18 time: 2020-08-06 15:48:58 results: CrossEntropyLabelSmooth: 1.3078506;  TripletLoss: 0.034647036;  Accuracy: [97.79548];  
+ epoch: 19 time: 2020-08-06 15:49:54 results: CrossEntropyLabelSmooth: 1.3130747;  TripletLoss: 0.037568472;  Accuracy: [97.72587];  
+ extract_feat_time: 33.46981954574585 eval_time: 20.775261878967285
+ 0.7139485646723882 [0.87885986 0.92072447 0.9361639  ... 1.         1.         1.        ]
+ epoch: 20 time: 2020-08-06 15:51:44 results: CrossEntropyLabelSmooth: 1.2984424;  TripletLoss: 0.034757055;  Accuracy: [98.05074];  
+ epoch: 21 time: 2020-08-06 15:52:42 results: CrossEntropyLabelSmooth: 1.2892594;  TripletLoss: 0.035477947;  Accuracy: [98.09715];  
+ epoch: 22 time: 2020-08-06 15:53:39 results: CrossEntropyLabelSmooth: 1.2797005;  TripletLoss: 0.032961182;  Accuracy: [98.32147];  
+ epoch: 23 time: 2020-08-06 15:54:36 results: CrossEntropyLabelSmooth: 1.2908529;  TripletLoss: 0.035611;  Accuracy: [98.05848];  
+ epoch: 24 time: 2020-08-06 15:55:34 results: CrossEntropyLabelSmooth: 1.3037133;  TripletLoss: 0.04352489;  Accuracy: [97.68719];  
+ epoch: 25 time: 2020-08-06 15:56:32 results: CrossEntropyLabelSmooth: 1.2942613;  TripletLoss: 0.04151521;  Accuracy: [97.94245];  
+ epoch: 26 time: 2020-08-06 15:57:30 results: CrossEntropyLabelSmooth: 1.2909162;  TripletLoss: 0.04037915;  Accuracy: [98.05074];  
+ epoch: 27 time: 2020-08-06 15:58:29 results: CrossEntropyLabelSmooth: 1.283635;  TripletLoss: 0.037435472;  Accuracy: [98.112625];  
+ epoch: 28 time: 2020-08-06 15:59:26 results: CrossEntropyLabelSmooth: 1.2800695;  TripletLoss: 0.037213754;  Accuracy: [98.1513];  
+ epoch: 29 time: 2020-08-06 16:00:24 results: CrossEntropyLabelSmooth: 1.2889895;  TripletLoss: 0.041294385;  Accuracy: [98.00433];  
+ extract_feat_time: 33.73022222518921 eval_time: 23.224642515182495
+ 0.7109533262346666 [0.8726247  0.91775534 0.9361639  ... 1.         1.         1.        ]
+ epoch: 30 time: 2020-08-06 16:02:20 results: CrossEntropyLabelSmooth: 1.2768036;  TripletLoss: 0.037342664;  Accuracy: [98.21318];  
+ epoch: 31 time: 2020-08-06 16:03:19 results: CrossEntropyLabelSmooth: 1.2727519;  TripletLoss: 0.035068937;  Accuracy: [98.406555];  
+ epoch: 32 time: 2020-08-06 16:04:16 results: CrossEntropyLabelSmooth: 1.2692418;  TripletLoss: 0.035691887;  Accuracy: [98.37562];  
+ epoch: 33 time: 2020-08-06 16:05:13 results: CrossEntropyLabelSmooth: 1.267545;  TripletLoss: 0.041024365;  Accuracy: [98.49938];  
+ epoch: 34 time: 2020-08-06 16:06:11 results: CrossEntropyLabelSmooth: 1.2799293;  TripletLoss: 0.039252687;  Accuracy: [98.159035];  
+ epoch: 35 time: 2020-08-06 16:07:08 results: CrossEntropyLabelSmooth: 1.2752074;  TripletLoss: 0.04134324;  Accuracy: [98.05848];  
+ epoch: 36 time: 2020-08-06 16:08:05 results: CrossEntropyLabelSmooth: 1.2641971;  TripletLoss: 0.039819878;  Accuracy: [98.50712];  
+ epoch: 37 time: 2020-08-06 16:09:03 results: CrossEntropyLabelSmooth: 1.2576152;  TripletLoss: 0.040569805;  Accuracy: [98.55353];  
+ epoch: 38 time: 2020-08-06 16:10:01 results: CrossEntropyLabelSmooth: 1.2594417;  TripletLoss: 0.0400198;  Accuracy: [98.42203];  
+ epoch: 39 time: 2020-08-06 16:10:59 results: CrossEntropyLabelSmooth: 1.2618394;  TripletLoss: 0.04081241;  Accuracy: [98.4375];  
+ extract_feat_time: 34.12265920639038 eval_time: 22.1950523853302
+ 0.720965979187587 [0.87470309 0.92013064 0.93735154 ... 1.         1.         1.        ]
+ epoch: 40 time: 2020-08-06 16:12:54 results: CrossEntropyLabelSmooth: 1.1817235;  TripletLoss: 0.022846665;  Accuracy: [99.412125];  
+ epoch: 41 time: 2020-08-06 16:13:53 results: CrossEntropyLabelSmooth: 1.1488172;  TripletLoss: 0.018579245;  Accuracy: [99.73701];  
+ epoch: 42 time: 2020-08-06 16:14:53 results: CrossEntropyLabelSmooth: 1.136216;  TripletLoss: 0.016745469;  Accuracy: [99.76021];  
+ epoch: 43 time: 2020-08-06 16:15:52 results: CrossEntropyLabelSmooth: 1.1274527;  TripletLoss: 0.0123622855;  Accuracy: [99.78342];  
+ epoch: 44 time: 2020-08-06 16:16:52 results: CrossEntropyLabelSmooth: 1.1213561;  TripletLoss: 0.011697533;  Accuracy: [99.70606];  
+ epoch: 45 time: 2020-08-06 16:17:52 results: CrossEntropyLabelSmooth: 1.1177106;  TripletLoss: 0.010949448;  Accuracy: [99.77568];  
+ epoch: 46 time: 2020-08-06 16:18:50 results: CrossEntropyLabelSmooth: 1.1117932;  TripletLoss: 0.010751942;  Accuracy: [99.82983];  
+ epoch: 47 time: 2020-08-06 16:19:47 results: CrossEntropyLabelSmooth: 1.1074501;  TripletLoss: 0.008402086;  Accuracy: [99.86076];  
+ epoch: 48 time: 2020-08-06 16:20:44 results: CrossEntropyLabelSmooth: 1.10542;  TripletLoss: 0.008727577;  Accuracy: [99.79115];  
+ epoch: 49 time: 2020-08-06 16:21:42 results: CrossEntropyLabelSmooth: 1.1030468;  TripletLoss: 0.0076833675;  Accuracy: [99.922646];  
+ extract_feat_time: 33.89294362068176 eval_time: 21.72281527519226
+ 0.8191852245104058 [0.92606888 0.9557601  0.9682304  ... 1.         1.         1.        ]
+ epoch: 50 time: 2020-08-06 16:23:37 results: CrossEntropyLabelSmooth: 1.1033329;  TripletLoss: 0.0073391334;  Accuracy: [99.79888];  
+ epoch: 51 time: 2020-08-06 16:24:35 results: CrossEntropyLabelSmooth: 1.100731;  TripletLoss: 0.00837372;  Accuracy: [99.8453];  
+ epoch: 52 time: 2020-08-06 16:25:33 results: CrossEntropyLabelSmooth: 1.099265;  TripletLoss: 0.0076310337;  Accuracy: [99.86076];  
+ epoch: 53 time: 2020-08-06 16:26:32 results: CrossEntropyLabelSmooth: 1.0965239;  TripletLoss: 0.005956825;  Accuracy: [99.86076];  
+ epoch: 54 time: 2020-08-06 16:27:31 results: CrossEntropyLabelSmooth: 1.0954479;  TripletLoss: 0.006929564;  Accuracy: [99.89171];  
+ epoch: 55 time: 2020-08-06 16:28:33 results: CrossEntropyLabelSmooth: 1.0921217;  TripletLoss: 0.0073031737;  Accuracy: [99.82983];  
+ epoch: 56 time: 2020-08-06 16:29:32 results: CrossEntropyLabelSmooth: 1.0907416;  TripletLoss: 0.00585081;  Accuracy: [99.89171];  
+ epoch: 57 time: 2020-08-06 16:30:33 results: CrossEntropyLabelSmooth: 1.091107;  TripletLoss: 0.0056659956;  Accuracy: [99.86076];  
+ epoch: 58 time: 2020-08-06 16:31:32 results: CrossEntropyLabelSmooth: 1.0899189;  TripletLoss: 0.005612406;  Accuracy: [99.945854];  
+ epoch: 59 time: 2020-08-06 16:32:33 results: CrossEntropyLabelSmooth: 1.089539;  TripletLoss: 0.0059746797;  Accuracy: [99.88397];  
+ extract_feat_time: 33.68152689933777 eval_time: 20.771137952804565
+ 0.8343868294796611 [0.93111639 0.9608076  0.97327791 ... 1.         1.         1.        ]
+ epoch: 60 time: 2020-08-06 16:34:25 results: CrossEntropyLabelSmooth: 1.0848051;  TripletLoss: 0.004487803;  Accuracy: [99.93812];  
+ epoch: 61 time: 2020-08-06 16:35:22 results: CrossEntropyLabelSmooth: 1.0866578;  TripletLoss: 0.004995507;  Accuracy: [99.945854];  
+ epoch: 62 time: 2020-08-06 16:36:22 results: CrossEntropyLabelSmooth: 1.0866039;  TripletLoss: 0.0063000517;  Accuracy: [99.93812];  
+ epoch: 63 time: 2020-08-06 16:37:20 results: CrossEntropyLabelSmooth: 1.0845436;  TripletLoss: 0.0046306923;  Accuracy: [99.93812];  
+ epoch: 64 time: 2020-08-06 16:38:20 results: CrossEntropyLabelSmooth: 1.0823208;  TripletLoss: 0.0041801757;  Accuracy: [99.96132];  
+ epoch: 65 time: 2020-08-06 16:39:20 results: CrossEntropyLabelSmooth: 1.0854197;  TripletLoss: 0.0056021265;  Accuracy: [99.88397];  
+ epoch: 66 time: 2020-08-06 16:40:20 results: CrossEntropyLabelSmooth: 1.0806178;  TripletLoss: 0.004552078;  Accuracy: [99.91491];  
+ epoch: 67 time: 2020-08-06 16:41:20 results: CrossEntropyLabelSmooth: 1.0813948;  TripletLoss: 0.005076768;  Accuracy: [99.922646];  
+ epoch: 68 time: 2020-08-06 16:42:24 results: CrossEntropyLabelSmooth: 1.0803354;  TripletLoss: 0.005231325;  Accuracy: [99.91491];  
+ epoch: 69 time: 2020-08-06 16:43:24 results: CrossEntropyLabelSmooth: 1.0812633;  TripletLoss: 0.004585711;  Accuracy: [99.899445];  
+ extract_feat_time: 34.14378786087036 eval_time: 23.46435785293579
+ 0.8435618723415089 [0.93497625 0.96021378 0.9706057  ... 1.         1.         1.        ]
+ epoch: 70 time: 2020-08-06 16:45:22 results: CrossEntropyLabelSmooth: 1.0770954;  TripletLoss: 0.003713256;  Accuracy: [99.88397];  
+ epoch: 71 time: 2020-08-06 16:46:21 results: CrossEntropyLabelSmooth: 1.0778061;  TripletLoss: 0.004595977;  Accuracy: [99.95359];  
+ epoch: 72 time: 2020-08-06 16:47:22 results: CrossEntropyLabelSmooth: 1.078581;  TripletLoss: 0.004425649;  Accuracy: [99.93812];  
+ epoch: 73 time: 2020-08-06 16:48:21 results: CrossEntropyLabelSmooth: 1.0772312;  TripletLoss: 0.0044700764;  Accuracy: [99.8685];  
+ epoch: 74 time: 2020-08-06 16:49:18 results: CrossEntropyLabelSmooth: 1.0749861;  TripletLoss: 0.0047903643;  Accuracy: [99.91491];  
+ epoch: 75 time: 2020-08-06 16:50:15 results: CrossEntropyLabelSmooth: 1.0760453;  TripletLoss: 0.0039408687;  Accuracy: [99.89171];  
+ epoch: 76 time: 2020-08-06 16:51:16 results: CrossEntropyLabelSmooth: 1.0748898;  TripletLoss: 0.00463276;  Accuracy: [99.899445];  
+ epoch: 77 time: 2020-08-06 16:52:14 results: CrossEntropyLabelSmooth: 1.0730954;  TripletLoss: 0.003611305;  Accuracy: [99.93038];  
+ epoch: 78 time: 2020-08-06 16:53:13 results: CrossEntropyLabelSmooth: 1.0729865;  TripletLoss: 0.0033938757;  Accuracy: [99.945854];  
+ epoch: 79 time: 2020-08-06 16:54:12 results: CrossEntropyLabelSmooth: 1.071895;  TripletLoss: 0.0037665146;  Accuracy: [99.876236];  
+ extract_feat_time: 32.95781707763672 eval_time: 21.877007246017456
+ 0.848150973811256 [0.93853919 0.96258907 0.97357482 ... 1.         1.         1.        ]
+ epoch: 80 time: 2020-08-06 16:56:07 results: CrossEntropyLabelSmooth: 1.0720494;  TripletLoss: 0.0038816824;  Accuracy: [99.93038];  
+ epoch: 81 time: 2020-08-06 16:57:07 results: CrossEntropyLabelSmooth: 1.0716295;  TripletLoss: 0.0040224274;  Accuracy: [99.90717];  
+ epoch: 82 time: 2020-08-06 16:58:06 results: CrossEntropyLabelSmooth: 1.0678734;  TripletLoss: 0.0025340468;  Accuracy: [99.90717];  
+ epoch: 83 time: 2020-08-06 16:59:06 results: CrossEntropyLabelSmooth: 1.0699327;  TripletLoss: 0.0039589927;  Accuracy: [99.922646];  
+ epoch: 84 time: 2020-08-06 17:00:06 results: CrossEntropyLabelSmooth: 1.0688577;  TripletLoss: 0.002837086;  Accuracy: [99.922646];  
+ epoch: 85 time: 2020-08-06 17:01:05 results: CrossEntropyLabelSmooth: 1.0688803;  TripletLoss: 0.002934704;  Accuracy: [99.899445];  
+ epoch: 86 time: 2020-08-06 17:02:04 results: CrossEntropyLabelSmooth: 1.0675231;  TripletLoss: 0.0034993899;  Accuracy: [99.922646];  
+ epoch: 87 time: 2020-08-06 17:03:02 results: CrossEntropyLabelSmooth: 1.0695447;  TripletLoss: 0.0032117693;  Accuracy: [99.93812];  
+ epoch: 88 time: 2020-08-06 17:03:59 results: CrossEntropyLabelSmooth: 1.0662483;  TripletLoss: 0.0032814282;  Accuracy: [99.93812];  
+ epoch: 89 time: 2020-08-06 17:04:57 results: CrossEntropyLabelSmooth: 1.0671605;  TripletLoss: 0.003365361;  Accuracy: [99.922646];  
+ extract_feat_time: 34.62573003768921 eval_time: 21.838364124298096
+ 0.8459085244683443 [0.9388361  0.96347981 0.97179335 ... 1.         1.         1.        ]
+ epoch: 90 time: 2020-08-06 17:06:52 results: CrossEntropyLabelSmooth: 1.0616279;  TripletLoss: 0.0031213642;  Accuracy: [99.969055];  
+ epoch: 91 time: 2020-08-06 17:07:52 results: CrossEntropyLabelSmooth: 1.0591971;  TripletLoss: 0.003589061;  Accuracy: [99.95359];  
+ epoch: 92 time: 2020-08-06 17:08:53 results: CrossEntropyLabelSmooth: 1.0570656;  TripletLoss: 0.0028013645;  Accuracy: [99.93038];  
+ epoch: 93 time: 2020-08-06 17:09:53 results: CrossEntropyLabelSmooth: 1.0541128;  TripletLoss: 0.0028759358;  Accuracy: [99.945854];  
+ epoch: 94 time: 2020-08-06 17:10:52 results: CrossEntropyLabelSmooth: 1.0538083;  TripletLoss: 0.0025214374;  Accuracy: [99.97679];  
+ epoch: 95 time: 2020-08-06 17:11:52 results: CrossEntropyLabelSmooth: 1.0538194;  TripletLoss: 0.002262995;  Accuracy: [99.97679];  
+ epoch: 96 time: 2020-08-06 17:12:54 results: CrossEntropyLabelSmooth: 1.0529304;  TripletLoss: 0.0026971207;  Accuracy: [99.969055];  
+ epoch: 97 time: 2020-08-06 17:13:54 results: CrossEntropyLabelSmooth: 1.0537527;  TripletLoss: 0.0026641798;  Accuracy: [99.945854];  
+ epoch: 98 time: 2020-08-06 17:14:54 results: CrossEntropyLabelSmooth: 1.0518672;  TripletLoss: 0.0028551954;  Accuracy: [99.95359];  
+ epoch: 99 time: 2020-08-06 17:15:55 results: CrossEntropyLabelSmooth: 1.053014;  TripletLoss: 0.003124713;  Accuracy: [99.96132];  
+ extract_feat_time: 34.21200084686279 eval_time: 20.500433921813965
+ 0.8535988306600626 [0.94477435 0.96526128 0.97238717 ... 1.         1.         1.        ]
+ epoch: 100 time: 2020-08-06 17:17:47 results: CrossEntropyLabelSmooth: 1.0520216;  TripletLoss: 0.0024224666;  Accuracy: [99.98453];  
+ epoch: 101 time: 2020-08-06 17:18:45 results: CrossEntropyLabelSmooth: 1.0501351;  TripletLoss: 0.0015679318;  Accuracy: [99.95359];  
+ epoch: 102 time: 2020-08-06 17:19:44 results: CrossEntropyLabelSmooth: 1.0488309;  TripletLoss: 0.0014955181;  Accuracy: [99.96132];  
+ epoch: 103 time: 2020-08-06 17:20:44 results: CrossEntropyLabelSmooth: 1.0502889;  TripletLoss: 0.0022482967;  Accuracy: [99.95359];  
+ epoch: 104 time: 2020-08-06 17:21:43 results: CrossEntropyLabelSmooth: 1.049926;  TripletLoss: 0.0024355724;  Accuracy: [99.96132];  
+ epoch: 105 time: 2020-08-06 17:22:43 results: CrossEntropyLabelSmooth: 1.0490357;  TripletLoss: 0.0017103523;  Accuracy: [99.96132];  
+ epoch: 106 time: 2020-08-06 17:23:44 results: CrossEntropyLabelSmooth: 1.0491772;  TripletLoss: 0.0020244718;  Accuracy: [99.969055];  
+ epoch: 107 time: 2020-08-06 17:24:45 results: CrossEntropyLabelSmooth: 1.048864;  TripletLoss: 0.0020426577;  Accuracy: [99.97679];  
+ epoch: 108 time: 2020-08-06 17:25:47 results: CrossEntropyLabelSmooth: 1.0495262;  TripletLoss: 0.0019798304;  Accuracy: [99.96132];  
+ epoch: 109 time: 2020-08-06 17:26:47 results: CrossEntropyLabelSmooth: 1.048811;  TripletLoss: 0.0018905213;  Accuracy: [99.97679];  
+ extract_feat_time: 34.93583631515503 eval_time: 19.133514642715454
+ 0.8550105147704045 [0.94032067 0.96288599 0.97238717 ... 1.         1.         1.        ]
+ epoch: 110 time: 2020-08-06 17:28:39 results: CrossEntropyLabelSmooth: 1.0480579;  TripletLoss: 0.0017308898;  Accuracy: [99.969055];  
+ epoch: 111 time: 2020-08-06 17:29:37 results: CrossEntropyLabelSmooth: 1.0477549;  TripletLoss: 0.0018348461;  Accuracy: [99.99226];  
+ epoch: 112 time: 2020-08-06 17:30:36 results: CrossEntropyLabelSmooth: 1.0492523;  TripletLoss: 0.0025978298;  Accuracy: [99.969055];  
+ epoch: 113 time: 2020-08-06 17:31:34 results: CrossEntropyLabelSmooth: 1.0469402;  TripletLoss: 0.0014334839;  Accuracy: [99.98453];  
+ epoch: 114 time: 2020-08-06 17:32:32 results: CrossEntropyLabelSmooth: 1.047416;  TripletLoss: 0.0017084613;  Accuracy: [99.969055];  
+ epoch: 115 time: 2020-08-06 17:33:29 results: CrossEntropyLabelSmooth: 1.0486046;  TripletLoss: 0.0025153556;  Accuracy: [99.97679];  
+ epoch: 116 time: 2020-08-06 17:34:27 results: CrossEntropyLabelSmooth: 1.0469378;  TripletLoss: 0.002172487;  Accuracy: [99.969055];  
+ epoch: 117 time: 2020-08-06 17:35:25 results: CrossEntropyLabelSmooth: 1.047824;  TripletLoss: 0.0017100653;  Accuracy: [99.96132];  
+ epoch: 118 time: 2020-08-06 17:36:23 results: CrossEntropyLabelSmooth: 1.0489829;  TripletLoss: 0.0019855083;  Accuracy: [99.945854];  
+ epoch: 119 time: 2020-08-06 17:37:20 results: CrossEntropyLabelSmooth: 1.0473099;  TripletLoss: 0.001941804;  Accuracy: [99.97679];  
+ 2020-08-06 17:37:21 restore from ./results/lightmodel(False)-lightfeat(True)-lightsearch(False)/model_120.pth
+ extract_feat_time: 33.405579805374146 eval_time: 18.004976272583008
+ 0.8567024600186199 [0.93972684 0.96288599 0.97387173 ... 1.         1.         1.        ]
+ ******************** light-reid settings ********************
+ light_model:  False
+ light_feat:  True
+ light_search:  False
+ ******************** light-reid settings ********************
+ 2020-08-06 19:29:51 restore from ./results/lightmodel(False)-lightfeat(True)-lightsearch(False)/model_120.pth
+ 2020-08-06 19:29:54 restore from ./results/lightmodel(False)-lightfeat(True)-lightsearch(False)/model_120.pth
+ extract_feat_time: 31.39544439315796 eval_time: 13.585620164871216
+ 0.8567024600186199 [0.93972684 0.96288599 0.97387173 ... 1.         1.         1.        ]
+ ******************** light-reid settings ********************
+ light_model:  False
+ light_feat:  True
+ light_search:  False
+ ******************** light-reid settings ********************
+ 2020-08-06 19:40:15 restore from ./results/lightmodel(False)-lightfeat(True)-lightsearch(False)/model_120.pth
+ ******************** light-reid settings ********************
+ light_model:  False
+ light_feat:  True
+ light_search:  False
+ ******************** light-reid settings ********************
+ 2020-08-06 19:40:29 restore from ./results/lightmodel(False)-lightfeat(True)-lightsearch(False)/model_120.pth
+ 2020-08-06 19:40:32 restore from ./results/lightmodel(False)-lightfeat(True)-lightsearch(False)/model_120.pth
+ extract_feat_time: 31.729271173477173 eval_time: 133.24543714523315
+ 0.8567915377661643 [0.93972684 0.9631829  0.97416865 ... 1.         1.         1.        ]
+ ******************** light-reid settings ********************
+ light_model:  False
+ light_feat:  True
+ light_search:  False
+ ******************** light-reid settings ********************
+ 2020-08-06 19:58:45 restore from ./results/lightmodel(False)-lightfeat(True)-lightsearch(False)/model_120.pth
+ 2020-08-06 19:58:50 restore from ./results/lightmodel(False)-lightfeat(True)-lightsearch(False)/model_120.pth
+ ******************** light-reid settings ********************
+ light_model:  False
+ light_feat:  True
+ light_search:  False
+ ******************** light-reid settings ********************
+ 2020-08-06 20:02:55 restore from ./results/lightmodel(False)-lightfeat(True)-lightsearch(False)/model_120.pth
+ 2020-08-06 20:02:58 restore from ./results/lightmodel(False)-lightfeat(True)-lightsearch(False)/model_120.pth
+ extract_feat_time: 30.405605792999268 eval_time: 139.02955102920532
+ 0.8567915377661643 [0.93972684 0.9631829  0.97416865 ... 1.         1.         1.        ]

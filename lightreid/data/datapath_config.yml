@@ -1,0 +1,5 @@
+# default dataset paths
+# please udpate to your own paths
+MARKET_PATH: 'light-reid/datasets/Market-1501/'
+DUKE_PATH: 'light-reid/datasets/DukeMTMC-reID/'
+MSMT_PATH: 'light-reid/datasets/MSMT17/'
