@@ -33,7 +33,7 @@ pip install matplotlib scipy Pillow numpy prettytable easydict scikit-learn gdow
 
 
 ## Quick Start 
-5 steps to implement a SOTA reid model [[readme](./QUICK_START.md)]
+5 steps to implement a SOTA reid model [[readme](./examples/bagtricks/main.py)]
 
 
 ## Experimental Results and Trained Models
