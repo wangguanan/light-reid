@@ -15,6 +15,7 @@ it features
 - [2020.03]: We implement [BagTricks](https://ieeexplore.ieee.org/document/8930088) and support IBN-Net, MSMT17, combineall, multi-dataset train. Please see branch [version_py3.7_bot](https://github.com/wangguanan/light-reid/tree/version_py3.7_bot).
 - [2019.03]: We give a clearn implemention of  [BagTricks](https://ieeexplore.ieee.org/document/8930088) with python2.7. Please see branch [version_py2.7](https://github.com/wangguanan/light-reid/tree/version_py2.7).
 
+
 ## Find our Works
 * [2020.07]: **[ECCV'20]** Our work about Fast ReID has been accepted by ECCV'20. ([Paper] comming soon)
 * [2020.03]: **[CVPR'20]** Our work about Occluded ReID has been accepted by CVPR'20. ([Paper](https://arxiv.org/abs/2003.08177), [Code](https://github.com/wangguanan/HOReID)).
@@ -43,6 +44,17 @@ conda install pytorch==1.4.0 torchvision -c pytorch
 
 ## Quick Start 
 [5 steps](./examples/bagtricks/main.py) to implement a SOTA reid model 
+
+
+## Implemented reid methods
+
+- [x] [bagtricks](./examples/bagtricks) ([paper](https://ieeexplore.ieee.org/document/8930088))
+
+todo
+- [ ] agw
+- [ ] sbs
+- [ ] pcb
+- [ ] mgn
 
 
 ## Experimental Results and Trained Models
