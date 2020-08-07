@@ -25,7 +25,7 @@ it features
 
 ## Installation
 ```shell script
-# cd to your preferred directory and clone this repo
+# clone this repo
 git clone https://github.com/wangguanan/light-reid.git
 
 # create environment
