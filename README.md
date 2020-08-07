@@ -23,7 +23,7 @@ it features
 * [2019.05]: We implement PCB and achieve better performance than the offical one. ([Code](https://github.com/wangguanan/Pytorch-Person-ReID-Baseline-PCB-Beyond-Part-Models))
 
 
-## Set Up
+## Installation
 ```shell script
 # cd to your preferred directory and clone this repo
 git clone https://github.com/wangguanan/light-reid.git
