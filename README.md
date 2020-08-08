@@ -46,27 +46,15 @@ conda install pytorch==1.4.0 torchvision -c pytorch
 [5 steps](./examples/bagtricks/main.py) to implement a SOTA reid model 
 
 
-## Implemented reid methods
+## Implemented reid methods 
 
-- [x] [bagtricks](./examples/bagtricks) ([paper](https://ieeexplore.ieee.org/document/8930088))
+- [x] [bagtricks](./examples/bagtricks)
 
-todo
-- [ ] agw
+TODO
 - [ ] sbs
+- [ ] agw
 - [ ] pcb
 - [ ] mgn
-
-
-## Experimental Results and Trained Models
-
-### Market-1501
-
-comming soon
-
-### DukeMTMC-reID
-
-comming soon
-
 
 ## Contact
 If you have any question about the project, please feel free to contact me.
