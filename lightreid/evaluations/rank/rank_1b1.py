@@ -3,7 +3,9 @@ import copy
 from hexhamming import hamming_distance
 import progressbar
 from sklearn import metrics as sk_metrics
+import time
 
+import multiprocessing
 
 __all__ = ['CmcMapEvaluator1b1']
 
@@ -14,6 +16,12 @@ class FileTransferFrequency(progressbar.FileTransferSpeed):
         speed = elapsed / float(value)
         return speed * 1000, 1
 
+
+def func(x, sub_y, start_idx, suby_len):
+    result = [None for _ in range(suby_len)]
+    for idx, yi in enumerate(sub_y):
+        result[idx] = (hamming_distance(x, yi), start_idx+idx)
+    return result
 
 class CmcMapEvaluator1b1:
     '''
@@ -46,6 +54,7 @@ class CmcMapEvaluator1b1:
         ])
 
 
+
     def compute(self, query_feats, query_camids, query_pids, gallery_feats, gallery_camids, gallery_pids):
         '''rank and evaluate'''
 
@@ -66,10 +75,34 @@ class CmcMapEvaluator1b1:
                 gallery_feats = gallery_hex
 
         # rank
-        all_rank_list = []
+        all_rank_list = np.zeros([len(query_pids), len(gallery_pids)])
         for query_idx in self.bar_rank(range(len(query_pids))):
             rank_list = self.rank(query_idx, query_feats, gallery_feats)
-            all_rank_list.append(rank_list)
+            all_rank_list[query_idx, :] = rank_list
+
+        # # rank with multiprocessing
+        # pool = multiprocessing.Pool()
+        # # cpus = multiprocessing.cpu_count()
+        # cpus = 4
+        # gallery_len = len(gallery_feats)
+        # split_len = int(gallery_len / cpus)
+        #
+        # split_startend_idx = []
+        # start_idx = 0
+        # while True:
+        #     end_idx = start_idx + split_len
+        #     if end_idx >= gallery_len:
+        #         end_idx = gallery_len
+        #         split_startend_idx.append((start_idx, end_idx, end_idx-start_idx))
+        #         break
+        #     else:
+        #         split_startend_idx.append((start_idx, end_idx, split_len))
+        #     start_idx = end_idx
+        #
+        # all_rank_list = np.zeros([len(query_pids), len(gallery_pids)])
+        # for query_idx in self.bar_rank(range(len(query_pids))):
+        #     rank_list = self.rank(query_idx, query_feats, gallery_feats, split_startend_idx, pool)
+        #     all_rank_list[query_idx, :] = rank_list
 
         # evaluate
         APs, CMC = [], []
@@ -88,11 +121,15 @@ class CmcMapEvaluator1b1:
 
         return MAP, CMC
 
-    def rank(self, query_idx, query_features, gallery_features):
+    def rank(self, query_idx, query_features, gallery_features, split_startend_idx=None, pool=None):
         if self.metric is 'hamming':
             code_len = 4*len(query_features[0])
-            _, rank_results = self.hammingsimilarity_countingsort(
-                query_features[query_idx], gallery_features, code_len, threshold=None)
+            if pool is None:
+                _, rank_results = self.hammingsimilarity_countingsort(
+                    query_features[query_idx], gallery_features, code_len, None)
+            else:
+                _, rank_results = self.hammingsimilarity_countingsort_multiprocess(
+                    query_features[query_idx], gallery_features, code_len, split_startend_idx, pool)
         elif self.metric is 'cosine':
             distance = sk_metrics.pairwise.cosine_distances(np.expand_dims(query_features[query_idx, :], axis=0), gallery_features).squeeze(axis=0)
             rank_results = np.argsort(distance)
@@ -181,3 +218,34 @@ class CmcMapEvaluator1b1:
                 top_result = copy.deepcopy(final_result)
         return top_result, final_result
 
+
+    def hammingsimilarity_countingsort_multiprocess(self, x, y, max_dist, split_startend_idx, pool):
+        '''
+        jointly compute hamming distance and counting sort
+        return the sorting results, and the top result whose distances are less than the threshold
+        :param x: hex_str, e.g. 'f012d208' (a 32bits binary code)
+        :param y: list, whose elements are hex_str
+        :param max_dist: int, equal to code length
+        :param threshold: int, the samples with distances less than it should be further refined
+        '''
+
+        results = []
+        for start_idx, end_idx, suby_len in split_startend_idx:
+            sub_y = y[start_idx: end_idx]
+            result = pool.apply_async(func, args=(x, sub_y, start_idx, suby_len,))
+            results.append(result)
+
+        # pool.close()
+        # pool.join()
+
+        xxx = [[] for _ in range(max_dist + 1)]
+        for result in results:
+            result = result.get()
+            for x,y in result:
+                xxx[x].append(y)
+
+        results = []
+        for xx in xxx:
+            results += xx
+
+        return None, results

@@ -51,11 +51,11 @@ class Engine(object):
         self.light_model = light_model
         self.light_feat = light_feat
         self.light_search = light_search
-        self.logging('****'*5 + ' light-reid settings ' + '****'*5)
+        self.logging('\n' + '****'*5 + ' light-reid settings ' + '****'*5)
         self.logging('light_model:  {}'.format(light_model))
         self.logging('light_feat:  {}'.format(light_feat))
         self.logging('light_search:  {}'.format(light_search))
-        self.logging('****'*5 + ' light-reid settings ' + '****'*5)
+        self.logging('****'*5 + ' light-reid settings ' + '****'*5 + '\n')
 
         # if enable light_model, learn small model with distillation
         # update model to a small model (res18)
@@ -89,8 +89,8 @@ class Engine(object):
         if self.light_feat:
             self.model.enable_tanh()
             self.eval_metric = 'hamming'
-            self.logging('[light_feat was enabled] model will learn binary codes, and be evluated with hamming distance')
-            self.logging('[light_feat was enabled] update eval_metric from {} to hamming'.format(eval_metric))
+            self.logging('[light_feat was enabled] model learn binary codes, and is evluated with hamming distance')
+            self.logging('[light_feat was enabled] update eval_metric from {} to hamming by setting self.eval_metric=hamming'.format(eval_metric))
 
 
         # if enable light_search,
@@ -111,7 +111,7 @@ class Engine(object):
                 {'criterion': lightreid.losses.ProbSelfDistillLoss(), 'weight': 1.0},
                 {'criterion': lightreid.losses.SIMSelfDistillLoss(), 'weight': 1000.0},
             ])
-            self.logging('[light_search was enabled]  add ProbSelfDistillLoss and SIMSelfDistillLoss')
+            self.logging('[light_search was enabled] add ProbSelfDistillLoss and SIMSelfDistillLoss')
 
         self.model = self.model.to(self.device)
 

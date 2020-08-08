@@ -23,16 +23,17 @@ class PyramidHead(nn.Module):
     def __init__(self, in_dim, out_dims, class_num):
         super(PyramidHead, self).__init__()
         self.in_dim = in_dim
-        self.out_dims = out_dims
+        self.eval_dims = out_dims
         self.class_num = class_num
+        self.train_dims = [2048, 1024, 512, 256, 128, 64, 32]
 
         setattr(self, 'neck{}'.format(int(in_dim)), BNHead(int(in_dim), self.class_num))
-        for idx, dim in enumerate(self.out_dims):
+        for idx, dim in enumerate(self.train_dims):
             if idx == 0:
                 setattr(self, 'fc{}'.format(int(dim)), nn.Linear(in_dim, int(dim)))
                 setattr(self, 'neck{}'.format(int(dim)), BNHead(int(dim), self.class_num))
             else:
-                setattr(self, 'fc{}'.format(int(dim)), nn.Linear(int(self.out_dims[idx - 1]), int(dim)))
+                setattr(self, 'fc{}'.format(int(dim)), nn.Linear(int(self.train_dims[idx - 1]), int(dim)))
                 setattr(self, 'neck{}'.format(int(dim)), BNHead(int(dim), self.class_num))
 
     def forward(self, feats, y=None, use_tanh=False):
@@ -47,10 +48,13 @@ class PyramidHead(nn.Module):
             binary_codes = neck(feats, use_tanh=use_tanh)
             binary_codes_list = [binary_codes]
 
-        for idx, dim in enumerate(self.out_dims):
+        for idx, dim in enumerate(self.train_dims):
             fc = getattr(self, 'fc{}'.format(int(dim)))
             neck = getattr(self, 'neck{}'.format(int(dim)))
-            feats = fc(feats.detach())
+            if feats.shape[1] in self.eval_dims:
+                feats = fc(feats.detach())
+            else:
+                feats = fc(feats)
 
             if self.training:
                 bn_feats, logits = neck(feats, use_tanh=use_tanh)
@@ -63,4 +67,5 @@ class PyramidHead(nn.Module):
         if self.training:
             return feats_list, logits_list
         else:
-            return binary_codes_list
+            binary_codes_list = binary_codes_list[1:]
+            return [val for val in binary_codes_list if val.shape[1] in self.eval_dims]
