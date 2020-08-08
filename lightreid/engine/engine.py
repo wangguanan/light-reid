@@ -236,7 +236,7 @@ class Engine(object):
         # extract features
         query_feats, query_pids, query_camids, t1 = self.extract_feats(self.datamanager.query_loader)
         gallery_feats, gallery_pids, gallery_camids, t2 = self.extract_feats(self.datamanager.gallery_loader)
-        self.logging('feature extraction time is {}s per batch(128)'.format((t1+t2)/2))
+        self.logging('feature extraction time is {}s per batch(64)'.format((t1+t2)/2))
 
         # compute mAP and rank@k
         if isinstance(query_feats, np.ndarray): #

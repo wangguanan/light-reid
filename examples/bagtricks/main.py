@@ -45,10 +45,10 @@ solver = lightreid.engine.Engine(
     results_dir=args.results_dir, datamanager=datamanager, model=model, criterion=criterion, optimizer=optimizer, use_gpu=True,
     light_model=args.lightmodel, light_feat=args.lightfeat, light_search=args.lightsearch)
 # train
-solver.train(eval_freq=10)
+# solver.train(eval_freq=10)
 # test
 solver.resume_latest_model()
 solver.eval(onebyone=True)
 # visualize
-solver.visualize()
+# solver.visualize()
 
