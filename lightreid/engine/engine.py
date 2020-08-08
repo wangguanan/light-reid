@@ -30,7 +30,7 @@ class Engine(object):
             light_search(bool): if True, use pyramid head lean multiple codes, and search with coarse2fine.
     '''
 
-    def __init__(self, results_dir, datamanager, model, criterion, optimizer, use_gpu,
+    def __init__(self, results_dir, datamanager, model, criterion, optimizer, use_gpu, eval_metric='cosine',
                  light_model=False, light_feat=False, light_search=False):
 
         # base settings
@@ -41,6 +41,7 @@ class Engine(object):
         self.criterion = criterion
         self.optimizer = optimizer
         self.device = torch.device('cuda') if use_gpu else torch.device('cpu')
+        self.eval_metric = eval_metric
 
         self.loss_meter = MultiItemAverageMeter()
         os.makedirs(self.results_dir, exist_ok=True)
@@ -85,11 +86,12 @@ class Engine(object):
         # if enable light_feat,
         # learn binary codes NOT real-value features
         # evaluate with hamming metric, NOT cosine NEITHER euclidean metrics
-        self.eval_metric = 'cosine'
         if self.light_feat:
             self.model.enable_tanh()
             self.eval_metric = 'hamming'
             self.logging('[light_feat was enabled] model will learn binary codes, and be evluated with hamming distance')
+            self.logging('[light_feat was enabled] update eval_metric from {} to hamming'.format(eval_metric))
+
 
         # if enable light_search,
         # learn binary codes of multiple length with pyramid-head

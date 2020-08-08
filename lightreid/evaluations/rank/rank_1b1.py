@@ -94,10 +94,10 @@ class CmcMapEvaluator1b1:
             _, rank_results = self.hammingsimilarity_countingsort(
                 query_features[query_idx], gallery_features, code_len, threshold=None)
         elif self.metric is 'cosine':
-            distance = sk_metrics.pairwise.cosine_distances(np.expand_dims(query_features[query_idx, :], axis=0), gallery_features)
+            distance = sk_metrics.pairwise.cosine_distances(np.expand_dims(query_features[query_idx, :], axis=0), gallery_features).squeeze(axis=0)
             rank_results = np.argsort(distance)
         elif self.metric is 'euclidean':
-            distance = sk_metrics.pairwise.euclidean_distances(np.expand_dims(query_features[query_idx, :], axis=0), gallery_features)
+            distance = sk_metrics.pairwise.euclidean_distances(np.expand_dims(query_features[query_idx, :], axis=0), gallery_features).squeeze(axis=0)
             rank_results = np.argsort(distance)
         return rank_results
 
