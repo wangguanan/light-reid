@@ -43,6 +43,7 @@ class PyramidHead(nn.Module):
         if self.training:
             bn_feats, logits = neck(feats, use_tanh=use_tanh)
             feats_list = [feats]
+            bnfeats_list = [bn_feats]
             logits_list = [logits]
         else:
             binary_codes = neck(feats, use_tanh=use_tanh)
@@ -51,21 +52,19 @@ class PyramidHead(nn.Module):
         for idx, dim in enumerate(self.train_dims):
             fc = getattr(self, 'fc{}'.format(int(dim)))
             neck = getattr(self, 'neck{}'.format(int(dim)))
-            if feats.shape[1] in self.eval_dims:
-                feats = fc(feats.detach())
-            else:
-                feats = fc(feats)
+            feats = fc(feats.detach())
 
             if self.training:
                 bn_feats, logits = neck(feats, use_tanh=use_tanh)
-                feats_list.append(bn_feats)
+                feats_list.append(feats)
+                bnfeats_list.append(bn_feats)
                 logits_list.append(logits)
             else:
                 binary_codes = neck(feats, use_tanh=use_tanh)
                 binary_codes_list.append(binary_codes)
 
         if self.training:
-            return feats_list, logits_list
+            return feats_list, bnfeats_list, logits_list
         else:
             binary_codes_list = binary_codes_list[1:]
             return [val for val in binary_codes_list if val.shape[1] in self.eval_dims]

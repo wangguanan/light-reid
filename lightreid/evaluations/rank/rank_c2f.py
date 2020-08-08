@@ -61,9 +61,8 @@ class CmcMapEvaluatorC2F:
         assert query_feat_lens == gallery_feat_lens, \
             'query_feat_lens and gallery_feat_lens should be equal, but got {} and {}'.format(
                 query_feat_lens, gallery_feat_lens)
-        xx = [2048, 512, 128, 32]
-        query_feats_list = [query_feats_list[idx] for idx in np.argsort(query_feat_lens) if query_feats_list[idx].shape[1] in xx]
-        gallery_feats_list = [gallery_feats_list[idx] for idx in np.argsort(query_feat_lens) if gallery_feats_list[idx].shape[1] in xx]
+        query_feats_list = [query_feats_list[idx] for idx in np.argsort(query_feat_lens)]
+        gallery_feats_list = [gallery_feats_list[idx] for idx in np.argsort(query_feat_lens)]
 
         # compute threshold
         thresholds = ThresholdOptimization(beta=2).optimize(query_feats_list, gallery_feats_list, query_pids, gallery_pids)

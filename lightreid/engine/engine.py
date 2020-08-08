@@ -173,21 +173,21 @@ class Engine(object):
         '''
 
         # automatically resume from the latest model
-        epoch = 0
+        start_epoch = 0
         if auto_resume:
-            epoch = self.resume_latest_model()
-            epoch = 0 if epoch is None else epoch
+            start_epoch = self.resume_latest_model()
+            start_epoch = 0 if start_epoch is None else start_epoch
         # train loop
-        for epoch in range(epoch, self.optimizer.max_epochs):
+        for curr_epoch in range(start_epoch, self.optimizer.max_epochs):
             # save model
-            self.save_model(epoch)
+            self.save_model(curr_epoch)
             # evaluate final model
-            if eval_freq is not None and epoch%eval_freq==0 and epoch>0:
+            if eval_freq is not None and curr_epoch%eval_freq==0 and curr_epoch>0:
                 self.eval(onebyone=False)
             # train
-            results = self.train_an_epoch(epoch)
+            results = self.train_an_epoch(curr_epoch)
             # logging
-            self.logging(EPOCH=epoch, TIME=time_now(), RESULTS=results)
+            self.logging(EPOCH=curr_epoch, TIME=time_now(), RESULTS=results)
         # save final model
         self.save_model(self.optimizer.max_epochs)
         # evaluate final model
@@ -204,15 +204,15 @@ class Engine(object):
             imgs, pids, camids = imgs.to(self.device), pids.to(self.device), camids.to(self.device)
             # forward
             fix_cnn = epoch < self.optimizer.fix_cnn_epochs if hasattr(self, 'fix_cnn_epochs') else False
-            feats, logits = self.model(imgs, pids, fixcnn=fix_cnn)
+            feats, bnfeats, logits = self.model(imgs, pids, fixcnn=fix_cnn)
             acc = accuracy(logits, pids, [1])[0]
             # teacher model
             if self.light_model:
                 with torch.no_grad():
-                    feats_t, logits_t = self.model_t(imgs, pids, teacher_mode=True)
-                loss, loss_dict = self.criterion.compute(feats=feats, logits=logits, pids=pids, feats_t=feats_t, logits_t=logits_t)
+                    feats_t, bnfeats_t, logits_t = self.model_t(imgs, pids, teacher_mode=True)
+                loss, loss_dict = self.criterion.compute(feats=feats, head_feats=bnfeats, logits=logits, pids=pids, feats_t=feats_t, logits_t=logits_t)
             else:
-                loss, loss_dict = self.criterion.compute(feats=feats, logits=logits, pids=pids)
+                loss, loss_dict = self.criterion.compute(feats=feats, head_feats=bnfeats, logits=logits, pids=pids)
             loss_dict['Accuracy'] = acc
             # optimize
             self.optimizer.optimizer.zero_grad()

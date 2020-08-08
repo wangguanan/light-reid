@@ -28,27 +28,31 @@ class BaseReIDModel(nn.Module):
             y(torch.tensor): input labels, used for such as circle loss
         '''
         # cnn backbone
-        feat_map = self.backbone(x)
+        feats_map = self.backbone(x)
         if fixcnn:
-            feat_map = feat_map.detach()
+            feats_map = feats_map.detach()
         # pooling
-        feat_vec = self.pooling(feat_map).squeeze(3).squeeze(2)
+        feats_vec = self.pooling(feats_map).squeeze(3).squeeze(2)
 
         # teacher mode
         if teacher_mode:
-            _, logits = self.head(feat_vec, y, use_tanh=self.use_tanh, teacher_mode=True)
-            return feat_vec, logits
+            headfeat_vec, logits = self.head(feats_vec, y, use_tanh=self.use_tanh, teacher_mode=True)
+            return feats_vec, headfeat_vec, logits
 
         # return
         if self.training:
-            _, logits = self.head(feat_vec, y, use_tanh=self.use_tanh)
-            return feat_vec, logits
+            if self.head.__class__.__name__ == 'BNHead':
+                headfeats_vec, logits = self.head(feats_vec, y, use_tanh=self.use_tanh)
+                return feats_vec, headfeats_vec, logits
+            elif self.head.__class__.__name__ == 'PyramidHead':
+                feats_list, headfeats_list, logits_list = self.head(feats_vec, y, use_tanh=self.use_tanh)
+                return feats_list, headfeats_list, logits_list
         else:
             if test_feat_from_head:
-                bnfeat_vec = self.head(feat_vec, y, use_tanh=self.use_tanh)
-                return bnfeat_vec
+                headfeat_vec = self.head(feats_vec, y, use_tanh=self.use_tanh)
+                return headfeat_vec
             else:
-                return feat_vec
+                return feats_vec
 
     def enable_tanh(self):
         self.use_tanh = True
@@ -73,19 +77,3 @@ class PCBReIDModel(BaseReIDModel):
         else:
             feat = self.head(feat_vec, y)
             return feat
-
-
-class TeacherReIDModel(BaseReIDModel):
-    """
-    Architecture for Teacher ReID Model
-    return feat_vec and logits under training mode
-    """
-
-    def forward(self, x, y=None, enable_tanh=False):
-        # conn backbone
-        feat_map = self.backbone(x)
-        # pooling
-        feat_vec = self.pooling(feat_map).squeeze(3).squeeze(2)
-        # return
-        bnfeat_vec, logits = self.head(feat_vec, y, enable_tanh=enable_tanh, teacher_mode=True)
-        return feat_vec, logits

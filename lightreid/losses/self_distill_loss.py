@@ -23,7 +23,7 @@ class ProbSelfDistillLoss:
 
     def __call__(self, logits_list):
         s_logits_list = logits_list[1:]
-        t_logits_list = [logits_list[0]] * len(s_logits_list)
+        t_logits_list = [logits_list[0].detach() for _ in range(len(s_logits_list))]
         return self.prob_distill_loss(s_logits_list, t_logits_list)
 
     def prob_distill_loss(self, s_logits_list, t_logits_list):
@@ -64,7 +64,7 @@ class SIMSelfDistillLoss:
 
     def __call__(self, feats_list):
         s_feats_list = feats_list[1:]
-        t_feats_list = [feats_list[0]] * len(s_feats_list)
+        t_feats_list = [feats_list[0].detach() for _ in range(len(s_feats_list))]
         return self.sim_distill_loss(s_feats_list, t_feats_list)
 
     def sim_distill_loss(self, s_feats_list, t_feats_list):

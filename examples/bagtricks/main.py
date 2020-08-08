@@ -50,5 +50,5 @@ solver.train(eval_freq=10)
 solver.resume_latest_model()
 solver.eval(onebyone=True)
 # visualize
-solver.visualize()
+# solver.visualize()
 

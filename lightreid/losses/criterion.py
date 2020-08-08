@@ -19,7 +19,7 @@ class Criterion(object):
     CRITERION_FACTORY = [
         'CrossEntropyLoss', 'CrossEntropyLabelSmooth', 'TripletLoss', 'FocalLoss', 'CenterLoss',
         'ProbSelfDistillLoss', 'SIMSelfDistillLoss', 'KLLoss']
-    VALUE_FACTORY = ['feats', 'logits', 'pids', 'camids', 'feats_t', 'logits_t']
+    VALUE_FACTORY = ['feats', 'head_feats', 'logits', 'pids', 'camids', 'feats_t', 'logits_t']
 
     def __init__(self, criterion_list):
         # check criterion class
@@ -64,10 +64,10 @@ class Criterion(object):
                 else: # for single-head model (e,g, ide, bot)
                     loss = weight * criterion(kwargs['feats'], kwargs['pids'])
 
-            elif criterion.__class__.__name__ in ['SimSelfDistillLoss']:
-                assert 'feats' in kwargs.keys(), \
+            elif criterion.__class__.__name__ in ['SIMSelfDistillLoss']:
+                assert 'head_feats' in kwargs.keys(), \
                     'SimDistillLoss expect feats as inputs, but got {}'.format(kwargs.keys())
-                loss = weight * criterion(feats_list=kwargs['feats'])
+                loss = weight * criterion(feats_list=kwargs['head_feats'])
 
             elif criterion.__class__.__name__ in ['ProbSelfDistillLoss']:
                 assert 'logits' in kwargs.keys(), \
@@ -80,7 +80,12 @@ class Criterion(object):
                 else:
                     loss = weight * criterion(logits_s=kwargs['logits'], logits_t=kwargs['logits_t'].detach())
 
+            else:
+                assert 0, 'expect criterion in {} but got {}'.format(Criterion.CRITERION_FACTORY, criterion)
+
+
             overall_loss += loss
             loss_dict[criterion.__class__.__name__] = loss.data
+            del loss
 
         return overall_loss, loss_dict
