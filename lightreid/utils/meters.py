@@ -3,6 +3,7 @@
 @contact:   guan.wang0706@gmail.com
 """
 
+import numpy as np
 import torch
 
 
@@ -53,10 +54,10 @@ class MultiItemAverageMeter:
         keys = list(self.content.keys())
         values = []
         for key in keys:
-            try:
-                values.append(self.content[key]['avg'].data.cpu().numpy())
-            except:
-                values.append(self.content[key]['avg'])
+            val = self.content[key]['avg']
+            if isinstance(val, torch.Tensor):
+                val = val.data.cpu().numpy()
+            values.append(val)
         return keys, values
 
     def get_str(self):
@@ -67,8 +68,28 @@ class MultiItemAverageMeter:
         for key, value in zip(keys, values):
             result += key
             result += ': '
+            if isinstance(value, np.ndarray):
+                value = np.round(value, 5)
             result += str(value)
-            result += ';  '
+            result += '; '
 
         return result
 
+
+class AverageMeter:
+    """
+    Average Meter
+    """
+    def __init__(self):
+        self.reset()
+
+    def reset(self):
+        self.sum = 0
+        self.count = 0
+
+    def update(self, val):
+        self.sum += val
+        self.count += 1
+
+    def get_val(self):
+        return self.sum / self.count

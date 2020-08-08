@@ -8,7 +8,7 @@ import os
 import time
 import torch
 from lightreid.evaluations import PreRecEvaluator, CmcMapEvaluator, CmcMapEvaluator1b1, CmcMapEvaluatorC2F, accuracy
-from lightreid.utils import MultiItemAverageMeter, CatMeter, Logging, time_now, os_walk
+from lightreid.utils import MultiItemAverageMeter, CatMeter, AverageMeter, Logging, time_now, os_walk
 from lightreid.visualizations import visualize_ranked_results
 import lightreid
 
@@ -25,14 +25,13 @@ class Engine(object):
             optimizer(lightreid.optim.Optimizer):
             use_gpu(bool): use CUDA if True
         optional:
-            light_model(bool): if True, use distillation to learn a small model. If True, model_teacher must be given.
+            light_model(bool): if True, use distillation to learn a small model.
             light_feat(bool): if True, learn binary codes and evaluate with hamming distance.
             light_search(bool): if True, use pyramid head lean multiple codes, and search with coarse2fine.
-            model_teacher(str): teacher model path, must be given if light_model is True.
     '''
 
     def __init__(self, results_dir, datamanager, model, criterion, optimizer, use_gpu,
-                 light_model=False, light_feat=False, light_search=False, model_teacher=''):
+                 light_model=False, light_feat=False, light_search=False):
 
         # base settings
         self.results_dir = results_dir + \
@@ -58,14 +57,30 @@ class Engine(object):
         self.logging('****'*5 + ' light-reid settings ' + '****'*5)
 
         # if enable light_model, learn small model with distillation
-        # load teacher model from model_teacher
-        # add KLLoss(distillation loss) of criterion
+        # update model to a small model (res18)
+        # load teacher model from model_teacher (should be trained before)
+        # add KLLoss(distillation loss) to criterion
         if self.light_model:
-            assert model_teacher is not '', 'light_model was enabled, model_teacher must be given but got {}'.format(model_teacher)
-            model_t = torch.load(model_teacher)
+            # load teacher model
+            teacher_path = os.path.join(results_dir, 'lightmodel(False)-lightfeat(False)-lightsearch(False)/final_model.pth.tar')
+            assert os.path.exists(teacher_path), \
+                'lightmodel was enabled, expect {} as a teachder but file not exists'.format(self.model_teachder)
+            model_t = torch.load(teacher_path)
             self.model_t = model_t.to(self.device).eval()
+            self.logging('[light_model was enabled] load teacher model from {}'.format(teacher_path))
+            # modify model to a small model (ResNet18 as default here)
+            pretrained, last_stride_one = self.model.backbone.pretrained, self.model.backbone.last_stride_one
+            self.model.backbone.__init__('resnet18', pretrained, last_stride_one)
+            self.model.head.__init__(self.model.backbone.dim, self.model.head.class_num)
+            self.logging('[light_model was enabled] modify model to ResNet18')
+            # update optimizer
+            optimizer_defaults = self.optimizer.optimizer.defaults
+            self.optimizer.optimizer.__init__(self.model.parameters(), **optimizer_defaults)
+            self.logging('[light_model was enabled] update optimizer parameters')
+            # add KLLoss to criterion
             self.criterion.criterion_list.append(
                 {'criterion': lightreid.losses.KLLoss(t=4), 'weight': 1.0})
+            self.logging('[light_model was enabled] add KLLoss for model distillation')
 
         # if enable light_feat,
         # learn binary codes NOT real-value features
@@ -74,31 +89,35 @@ class Engine(object):
         if self.light_feat:
             self.model.enable_tanh()
             self.eval_metric = 'hamming'
+            self.logging('[light_feat was enabled] model will learn binary codes, and be evluated with hamming distance')
 
         # if enable light_search,
         # learn binary codes of multiple length with pyramid-head
         # and search with coarse2fine strategy
         if self.light_search:
-            # update head to pyramid-head
+            # modify head to pyramid-head
             in_dim, class_num = self.model.head.in_dim, self.model.head.class_num
             self.model.head = lightreid.models.PyramidHead(
                 in_dim=in_dim, out_dims=[2048, 512, 128, 32], class_num=class_num)
+            self.logging('[light_search was enabled] learn multiple codes with {}'.format(self.model.head.__class__.__name__))
             # update optimizer parameters
             optimizer_defaults = self.optimizer.optimizer.defaults
             self.optimizer.optimizer.__init__(self.model.parameters(), **optimizer_defaults)
-            # update loss
+            self.logging('[light_search was enabled] update optimizer parameters')
+            # add self-ditillation loss loss for pyramid-haed
             self.criterion.criterion_list.extend([
                 {'criterion': lightreid.losses.ProbSelfDistillLoss(), 'weight': 1.0},
                 {'criterion': lightreid.losses.SIMSelfDistillLoss(), 'weight': 1000.0},
             ])
+            self.logging('[light_search was enabled]  add ProbSelfDistillLoss and SIMSelfDistillLoss')
 
-        self.model = model.to(self.device)
+        self.model = self.model.to(self.device)
 
 
     def save_model(self, save_epoch):
         """
         save model parameters (only state_dict) in self.results_dir/model_{epoch}.pth
-        save model (architecture and state_dict) in self.results_dir/final_model.pth.tar
+        save model (architecture and state_dict) in self.results_dir/final_model.pth.tar, may be used as a teacher
         """
         model_path = os.path.join(self.results_dir, 'model_{}.pth'.format(save_epoch))
         torch.save(self.model.state_dict(), model_path)
@@ -160,16 +179,17 @@ class Engine(object):
         for epoch in range(epoch, self.optimizer.max_epochs):
             # save model
             self.save_model(epoch)
-            # eval
+            # evaluate final model
             if eval_freq is not None and epoch%eval_freq==0 and epoch>0:
-                self.eval()
+                self.eval(onebyone=False)
             # train
             results = self.train_an_epoch(epoch)
             # logging
-            self.logging(epoch=epoch, time=time_now(), results=results)
+            self.logging(EPOCH=epoch, TIME=time_now(), RESULTS=results)
         # save final model
         self.save_model(self.optimizer.max_epochs)
-
+        # evaluate final model
+        self.eval(onebyone=False)
 
     def train_an_epoch(self, epoch):
 
@@ -214,10 +234,9 @@ class Engine(object):
         self.set_eval()
 
         # extract features
-        t_start = time.time()
-        query_feats, query_pids, query_camids = self.extract_feats(self.datamanager.query_loader)
-        gallery_feats, gallery_pids, gallery_camids = self.extract_feats(self.datamanager.gallery_loader)
-        t_feat = time.time()
+        query_feats, query_pids, query_camids, t1 = self.extract_feats(self.datamanager.query_loader)
+        gallery_feats, gallery_pids, gallery_camids, t2 = self.extract_feats(self.datamanager.gallery_loader)
+        self.logging('feature extraction time is {}s per batch(128)'.format((t1+t2)/2))
 
         # compute mAP and rank@k
         if isinstance(query_feats, np.ndarray): #
@@ -233,7 +252,6 @@ class Engine(object):
                 mAP, CMC = CmcMapEvaluatorC2F(metric=metric, mode='inter-camera').compute(
                     query_feats, query_camids, query_pids,
                     gallery_feats, gallery_camids, gallery_pids)
-        t_eval = time.time()
 
         # compute precision-recall curve
         if return_pr:
@@ -243,7 +261,6 @@ class Engine(object):
                 gallery_feats, gallery_camids, gallery_pids)
             pr_evaluator.plot_prerecall_curve(self.results_dir, pres, recalls)
 
-        self.logging(extract_feat_time=t_feat-t_start, eval_time=t_eval-t_feat)
         self.logging(mAP, CMC)
 
         return mAP, CMC[0: 150]
@@ -269,6 +286,8 @@ class Engine(object):
 
 
     def extract_feats(self, loader, feat_from_head=True):
+
+        time_meter = AverageMeter()
         self.set_eval()
 
         # compute features
@@ -278,7 +297,9 @@ class Engine(object):
             for batch in loader:
                 imgs, pids, cids = batch
                 imgs, pids, cids = imgs.to(self.device), pids.to(self.device), cids.to(self.device)
+                ts = time.time()
                 feats = self.model(imgs, test_feat_from_head=feat_from_head)
+                time_meter.update(time.time()-ts)
                 if isinstance(feats, torch.Tensor):
                     if features_meter is None:
                         features_meter = CatMeter()
@@ -300,5 +321,5 @@ class Engine(object):
         pids = pids_meter.get_val_numpy()
         camids = camids_meter.get_val_numpy()
 
-        return feats, pids, camids
+        return feats, pids, camids, time_meter.get_val()
 

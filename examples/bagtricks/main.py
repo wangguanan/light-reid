@@ -1,5 +1,4 @@
 import argparse, ast
-import os
 import sys
 sys.path.append('../..')
 import torch
@@ -9,10 +8,9 @@ import lightreid
 
 # Settings
 parser = argparse.ArgumentParser()
-parser.add_argument('--results_dir', type=str, default='./results/')
-parser.add_argument('--lightmodel', type=ast.literal_eval, default=False)
-parser.add_argument('--teacher_model', type=str, default='path/to/teacher/model.pth.tar', help='should be given if lightmodel is True')
-parser.add_argument('--lightfeat', type=ast.literal_eval, default=False)
+parser.add_argument('--results_dir', type=str, default='./results/', help='path to save outputs')
+parser.add_argument('--lightmodel', type=ast.literal_eval, default=False, help='train a small model with model distillation')
+parser.add_argument('--lightfeat', type=ast.literal_eval, default=False, help='learn binary codes NOT real-value code')
 parser.add_argument('--lightsearch', type=ast.literal_eval, default=False, help='lightfeat should be True if lightsearch is True')
 args = parser.parse_args()
 
@@ -45,7 +43,7 @@ optimizer = lightreid.optim.Optimizer(optimizer=optimizer, lr_scheduler=lr_sched
 # run
 solver = lightreid.engine.Engine(
     results_dir=args.results_dir, datamanager=datamanager, model=model, criterion=criterion, optimizer=optimizer, use_gpu=True,
-    light_model=args.lightmodel, model_teacher=args.teacher_model, light_feat=args.lightfeat, light_search=args.lightsearch)
+    light_model=args.lightmodel, light_feat=args.lightfeat, light_search=args.lightsearch)
 # train
 solver.train(eval_freq=10)
 # test

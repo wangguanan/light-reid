@@ -12,10 +12,9 @@ class Logging:
     def __call__(self, *args, **kwargs):
         line = ''
         for value in args:
-            line += ' ' + str(value)
+            line += '' + str(value) + ' '
         for key, value in kwargs.items():
-            line += ' ' + str(key) + ': ' + str(value)
+            line += ' [' + str(key) + ': ' + str(value) + '] '
         with open(self.log_file, 'a') as f:
             f.writelines(line+'\n')
         print(line)
-

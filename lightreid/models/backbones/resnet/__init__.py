@@ -19,6 +19,9 @@ class ResNet(nn.Module):
         super(ResNet, self).__init__()
 
         self.name = name
+        self.pretrained = pretrained
+        self.last_stride_one = last_stride_one
+
         if self.name == 'resnet18':
             resnet = torchvision.models.resnet18(pretrained=pretrained)
             self.dim = 512
