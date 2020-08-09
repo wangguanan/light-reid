@@ -10,5 +10,5 @@ CUDA_VISIBLE_DEVICES=0 python main.py --results_dir ./results/ --lightfeat True
 ## enable lightfeat and lightsearch, learn binary codes and search with coarse2fine
 CUDA_VISIBLE_DEVICES=0 python main.py --results_dir ./results/ --lightfeat True --lightsearch True
 
-## enable lightfeat and lightsearch, learn binary codes and search with coarse2fine
+## enable lightmodel, lightfeat and lightsearch, learn resnet18, binary codes and search with coarse2fine
 CUDA_VISIBLE_DEVICES=0 python main.py --results_dir ./results/ --lightmodel True --lightfeat True --lightsearch True
