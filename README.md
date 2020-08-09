@@ -1,8 +1,8 @@
 # light-reid
 a toolbox of light reid for fast feature extraction and search 
-- [x] light-model: model distillation (2x-3x faster feature extraction)
-- [x] light-feature: binary code learning (10x faster retrieval)
-- [x] light-search: coarse2fine search (5x faster retrieval)
+- [x] light-model: model distillation (3x faster feature extraction)
+- [x] light-feature: binary code learning (6x faster retrieval)
+- [x] light-search: coarse2fine search (2x faster retrieval)
 
 it features
 - [x] easy switch between light and non-light reid
