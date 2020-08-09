@@ -1,4 +1,4 @@
-import os
+import argparse, ast
 import sys
 sys.path.append('../..')
 import torch
@@ -6,12 +6,20 @@ import torch.nn as nn
 import lightreid
 
 
+# Settings
+parser = argparse.ArgumentParser()
+parser.add_argument('--results_dir', type=str, default='./results/', help='path to save outputs')
+parser.add_argument('--lightmodel', type=ast.literal_eval, default=False, help='train a small model with model distillation')
+parser.add_argument('--lightfeat', type=ast.literal_eval, default=False, help='learn binary codes NOT real-value code')
+parser.add_argument('--lightsearch', type=ast.literal_eval, default=False, help='lightfeat should be True if lightsearch is True')
+args = parser.parse_args()
+
+
 # build dataset
-MARKET_PAH = '/raid/Monday/DataSets/Market-1501/Market-1501-v15.09.15/'
-DUKE_PATH = '/raid/Monday/DataSets/duke/DukeMTMC-reID/'
+DUKE_PATH = '/raid/Monday/datasets/DukeMTMC-reID/'
 datamanager = lightreid.data.DataManager(
-    sources=[lightreid.data.Market1501(data_path=MARKET_PAH, combineall=False)],
-    target=lightreid.data.Market1501(data_path=MARKET_PAH, combineall=False),
+    sources=[lightreid.data.DukeMTMCreID(data_path=DUKE_PATH, combineall=False)],
+    target=lightreid.data.DukeMTMCreID(data_path=DUKE_PATH, combineall=False),
     transforms_train=lightreid.data.build_transforms(img_size=[384, 128], transforms_list=['autoaug', 'rea'], total_epochs=90),
     transforms_test=lightreid.data.build_transforms(img_size=[384, 128], transforms_list=[]),
     sampler='pk', p=4, k=16)
@@ -19,7 +27,7 @@ datamanager = lightreid.data.DataManager(
 # build model
 backbone = lightreid.models.backbones.resnet50(pretrained=True, last_stride_one=True)
 pooling = lightreid.models.GeneralizedMeanPoolingP()
-head = lightreid.models.BNNeckHead(backbone.dim, class_num=datamanager.class_num,
+head = lightreid.models.BNHead(backbone.dim, class_num=datamanager.class_num,
        classifier=lightreid.models.Circle(backbone.dim, datamanager.class_num, scale=64, margin=0.35))
 model = lightreid.models.BaseReIDModel(backbone=backbone, pooling=pooling, head=head)
 
@@ -39,5 +47,13 @@ optimizer = lightreid.optim.Optimizer(optimizer=optimizer, lr_scheduler=lr_sched
 # run
 solver = lightreid.engine.Engine(
     results_dir='./results2/', datamanager=datamanager, model=model, criterion=criterion, optimizer=optimizer, use_gpu=True)
-solver.train()
-solver.eval()
+solver = lightreid.engine.Engine(
+    results_dir=args.results_dir, datamanager=datamanager, model=model, criterion=criterion, optimizer=optimizer, use_gpu=True,
+    light_model=args.lightmodel, light_feat=args.lightfeat, light_search=args.lightsearch)
+# train
+solver.train(eval_freq=10)
+# test
+solver.resume_latest_model()
+solver.eval(onebyone=True)
+# visualize
+# solver.visualize()
