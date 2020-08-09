@@ -236,9 +236,10 @@ class Engine(object):
         self.set_eval()
 
         # extract features
-        query_feats, query_pids, query_camids, t1 = self.extract_feats(self.datamanager.query_loader)
-        gallery_feats, gallery_pids, gallery_camids, t2 = self.extract_feats(self.datamanager.gallery_loader)
-        self.logging('feature extraction time is {}s per batch(64)'.format((t1+t2)/2))
+        time_meter = AverageMeter()
+        query_feats, query_pids, query_camids = self.extract_feats(self.datamanager.query_loader, time_meter=time_meter)
+        gallery_feats, gallery_pids, gallery_camids = self.extract_feats(self.datamanager.gallery_loader, time_meter=time_meter)
+        self.logging('[Feature Extraction] feature extraction time per batch (64) is {}s'.format(time_meter.get_val()))
 
         # compute mAP and rank@k
         if isinstance(query_feats, np.ndarray): #
@@ -287,9 +288,8 @@ class Engine(object):
             topk=20, mode='inter-camera', show='all')
 
 
-    def extract_feats(self, loader, feat_from_head=True):
+    def extract_feats(self, loader, feat_from_head=True, time_meter=None):
 
-        time_meter = AverageMeter()
         self.set_eval()
 
         # compute features
@@ -299,9 +299,13 @@ class Engine(object):
             for batch in loader:
                 imgs, pids, cids = batch
                 imgs, pids, cids = imgs.to(self.device), pids.to(self.device), cids.to(self.device)
-                ts = time.time()
+                if time_meter is not None:
+                    torch.cuda.synchronize()
+                    ts = time.time()
                 feats = self.model(imgs, test_feat_from_head=feat_from_head)
-                time_meter.update(time.time()-ts)
+                if time_meter is not None:
+                    torch.cuda.synchronize()
+                    time_meter.update(time.time()-ts)
                 if isinstance(feats, torch.Tensor):
                     if features_meter is None:
                         features_meter = CatMeter()
@@ -323,5 +327,5 @@ class Engine(object):
         pids = pids_meter.get_val_numpy()
         camids = camids_meter.get_val_numpy()
 
-        return feats, pids, camids, time_meter.get_val()
+        return feats, pids, camids
 
