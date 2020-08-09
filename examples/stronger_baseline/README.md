@@ -1,6 +1,6 @@
-# BagTrick
+# StrongerBaseline(SBS)
 
-implement and speedup StrongerBaseline with light-reid
+implement and speedup StrongerBaseline(SBS) with light-reid
 
 ## Experimental Results and Trained Models
 

@@ -1,8 +1,11 @@
 from .random_erasing import RandomErasing
 from .pad_crop import padcrop
+from .autoaugment import ImageNetPolicy
 import torchvision.transforms as transforms
 
+
 __transforms_factory_before = {
+    'autoaug': ImageNetPolicy,
     'randomflip': transforms.RandomHorizontalFlip(p=0.5),
     'padcrop': padcrop,
     'colorjitor': transforms.ColorJitter(brightness=0.25, contrast=0.15, saturation=0.25, hue=0),

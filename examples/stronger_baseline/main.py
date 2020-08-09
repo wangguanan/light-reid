@@ -16,11 +16,11 @@ args = parser.parse_args()
 
 
 # build dataset
-DUKE_PATH = '/raid/Monday/datasets/DukeMTMC-reID/'
+DUKE_PATH = '/home/Monday/datasets/DukeMTMC-reID'
 datamanager = lightreid.data.DataManager(
     sources=[lightreid.data.DukeMTMCreID(data_path=DUKE_PATH, combineall=False)],
     target=lightreid.data.DukeMTMCreID(data_path=DUKE_PATH, combineall=False),
-    transforms_train=lightreid.data.build_transforms(img_size=[384, 128], transforms_list=['autoaug', 'rea'], total_epochs=90),
+    transforms_train=lightreid.data.build_transforms(img_size=[384, 128], transforms_list=['rea'], total_epochs=90),
     transforms_test=lightreid.data.build_transforms(img_size=[384, 128], transforms_list=[]),
     sampler='pk', p=4, k=16)
 
@@ -45,8 +45,6 @@ lr_scheduler = lightreid.optim.DelayedCosineAnnealingLR(
 optimizer = lightreid.optim.Optimizer(optimizer=optimizer, lr_scheduler=lr_scheduler, max_epochs=90, fix_cnn_epochs=10)
 
 # run
-solver = lightreid.engine.Engine(
-    results_dir='./results2/', datamanager=datamanager, model=model, criterion=criterion, optimizer=optimizer, use_gpu=True)
 solver = lightreid.engine.Engine(
     results_dir=args.results_dir, datamanager=datamanager, model=model, criterion=criterion, optimizer=optimizer, use_gpu=True,
     light_model=args.lightmodel, light_feat=args.lightfeat, light_search=args.lightsearch)

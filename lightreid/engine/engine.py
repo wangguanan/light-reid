@@ -72,7 +72,11 @@ class Engine(object):
             # modify model to a small model (ResNet18 as default here)
             pretrained, last_stride_one = self.model.backbone.pretrained, self.model.backbone.last_stride_one
             self.model.backbone.__init__('resnet18', pretrained, last_stride_one)
-            self.model.head.__init__(self.model.backbone.dim, self.model.head.class_num)
+            self.model.head.__init__(self.model.backbone.dim, self.model.head.class_num, self.model.head.classifier)
+            if self.model.head.classifier.__class__.__name__ == 'Circle':
+                self.model.head.classifier.__init__(
+                    self.model.backbone.dim, self.model.head.classifier._num_classes, self.model.head.classifier._s, self.model.head.classifier._m)
+            print(self.model)
             self.logging('[light_model was enabled] modify model to ResNet18')
             # update optimizer
             optimizer_defaults = self.optimizer.optimizer.defaults
@@ -165,11 +169,11 @@ class Engine(object):
         '''
         self.model = self.model.eval()
 
-    def train(self, auto_resume=True, eval_freq=None):
+    def train(self, auto_resume=True, eval_freq=0):
         '''
         Args:
             auto_resume(boolean): automatically resume latest model from self.result_dir/model_{latest_epoch}.pth if True.
-            eval_freq(int or None): if type is int, evaluate every eval_freq, else if is None, never evaluate.
+            eval_freq(int): if type is int, evaluate every eval_freq. default is 0.
         '''
 
         # automatically resume from the latest model
@@ -182,7 +186,7 @@ class Engine(object):
             # save model
             self.save_model(curr_epoch)
             # evaluate final model
-            if eval_freq is not None and curr_epoch%eval_freq==0 and curr_epoch>0:
+            if eval_freq >0 and curr_epoch%eval_freq==0 and curr_epoch>0:
                 self.eval(onebyone=False)
             # train
             results = self.train_an_epoch(curr_epoch)

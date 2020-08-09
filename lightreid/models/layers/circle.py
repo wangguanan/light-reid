@@ -13,14 +13,14 @@ from typing import Optional
 
 
 class Circle(nn.Module):
-    def __init__(self, in_feat, class_num, scale, margin):
+    def __init__(self, in_features, out_features, scale, margin):
         super().__init__()
-        self.in_feat = in_feat
-        self._num_classes = class_num
+        self.in_feat = in_features
+        self._num_classes = out_features
         self._s = scale
         self._m = margin
 
-        self.weight = Parameter(torch.Tensor(class_num, in_feat))
+        self.weight = Parameter(torch.Tensor(out_features, in_features))
         nn.init.kaiming_uniform_(self.weight, a=math.sqrt(5))
 
     def forward(self, features, targets):
