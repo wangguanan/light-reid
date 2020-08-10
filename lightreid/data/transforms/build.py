@@ -24,13 +24,16 @@ def build_transforms(img_size, transforms_list, **kwargs):
             'Expect transforms in {} and {}, got {}'.format(__transforms_factory_before.keys(), __transforms_factory_after.keys(), transform)
 
     for key in kwargs.keys():
-        assert key in __KWARGS, 'expect {} but got {}'.format(__KWARGS, key)
+        assert key in __KWARGS, 'expect parameter in {} but got {}'.format(__KWARGS, key)
 
     results = [transforms.Resize(img_size, interpolation=3)]
     for transform in transforms_list:
         if transform in __transforms_factory_before.keys():
             if transform == 'padcrop':
                 results.append(__transforms_factory_before[transform](img_size))
+            elif transform == 'autoaug':
+                assert 'total_epochs' in kwargs.keys(), 'autoaug was used, parameter total_epochs should be given'
+                results.append(__transforms_factory_before[transform](total_iter=kwargs['total_epochs']))
             else:
                 results.append(__transforms_factory_before[transform])
 

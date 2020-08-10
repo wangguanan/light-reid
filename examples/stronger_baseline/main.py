@@ -20,7 +20,7 @@ DUKE_PATH = '/home/Monday/datasets/DukeMTMC-reID'
 datamanager = lightreid.data.DataManager(
     sources=[lightreid.data.DukeMTMCreID(data_path=DUKE_PATH, combineall=False)],
     target=lightreid.data.DukeMTMCreID(data_path=DUKE_PATH, combineall=False),
-    transforms_train=lightreid.data.build_transforms(img_size=[384, 128], transforms_list=['rea'], total_epochs=90),
+    transforms_train=lightreid.data.build_transforms(img_size=[384, 128], transforms_list=['autoaug', 'rea'], total_epochs=90*200),
     transforms_test=lightreid.data.build_transforms(img_size=[384, 128], transforms_list=[]),
     sampler='pk', p=4, k=16)
 
