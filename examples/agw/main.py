@@ -15,40 +15,30 @@ parser.add_argument('--lightsearch', type=ast.literal_eval, default=False, help=
 args = parser.parse_args()
 
 # build dataset
-P, K, EPOCHS = 4, 16, 90
-
 DUKE_PATH = '/home/Monday/datasets/DukeMTMC-reID'
-sources = [lightreid.data.DukeMTMCreID(data_path=DUKE_PATH, combineall=False)]
-target = lightreid.data.DukeMTMCreID(data_path=DUKE_PATH, combineall=False)
-print(len(sources[0].train) / (P*K) * 90)
-transforms_train = lightreid.data.build_transforms(img_size=[384, 128], transforms_list=['autoaug', 'rea'], total_epochs=len(sources[0].train) / (P*K) * 90)
-transforms_test = lightreid.data.build_transforms(img_size=[384, 128], transforms_list=[])
 datamanager = lightreid.data.DataManager(
-    sources=sources,
-    target=target,
-    transforms_train=transforms_train,
-    transforms_test=transforms_test,
-    sampler='pk', p=P, k=K)
+    sources=[lightreid.data.DukeMTMCreID(data_path=DUKE_PATH, combineall=False)],
+    target=lightreid.data.DukeMTMCreID(data_path=DUKE_PATH, combineall=False),
+    transforms_train=lightreid.data.build_transforms(img_size=[256, 128], transforms_list=['randomflip', 'padcrop', 'rea']),
+    transforms_test=lightreid.data.build_transforms(img_size=[256, 128], transforms_list=[]),
+    sampler='pk', p=16, k=4)
 
 # build model
 backbone = lightreid.models.backbones.resnet50(pretrained=True, last_stride_one=True)
-pooling = lightreid.models.GeneralizedMeanPoolingP()
-head = lightreid.models.BNHead(backbone.dim, class_num=datamanager.class_num,
-       classifier=lightreid.models.Circle(backbone.dim, datamanager.class_num, scale=64, margin=0.35))
+pooling = nn.AdaptiveAvgPool2d(1)
+head = lightreid.models.BNHead(in_dim=backbone.dim, class_num=datamanager.class_num)
 model = lightreid.models.BaseReIDModel(backbone=backbone, pooling=pooling, head=head)
 
 # build loss
 criterion = lightreid.losses.Criterion([
-    {'criterion': lightreid.losses.CrossEntropyLabelSmooth(num_classes=datamanager.class_num, epsilon=0.1), 'weight': 1.0},
-    {'criterion': lightreid.losses.TripletLoss(margin='soft', metric='euclidean'), 'weight': 1.0},
+    {'criterion': lightreid.losses.CrossEntropyLabelSmooth(num_classes=datamanager.class_num), 'weight': 1.0},
+    {'criterion': lightreid.losses.TripletLoss(margin=0.3, metric='euclidean'), 'weight': 1.0},
 ])
 
 # build optimizer
 optimizer = torch.optim.Adam(model.parameters(), lr=0.00035, weight_decay=5e-4)
-lr_scheduler = lightreid.optim.DelayedCosineAnnealingLR(
-    optimizer, delay_epochs=45, max_epochs=EPOCHS, eta_min_lr=0.00000077,
-    warmup_factor=0.01, warmup_epochs=10, warmup_method='linear')
-optimizer = lightreid.optim.Optimizer(optimizer=optimizer, lr_scheduler=lr_scheduler, max_epochs=90, fix_cnn_epochs=10)
+lr_scheduler = lightreid.optim.WarmupMultiStepLR(optimizer, milestones=[40, 90], gamma=0.1, warmup_factor=0.01, warmup_iters=10)
+optimizer = lightreid.optim.Optimizer(optimizer=optimizer, lr_scheduler=lr_scheduler, max_epochs=120)
 
 # run
 solver = lightreid.engine.Engine(
@@ -61,3 +51,4 @@ solver.resume_latest_model()
 solver.eval(onebyone=True)
 # visualize
 # solver.visualize()
+
