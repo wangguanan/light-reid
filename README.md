@@ -50,7 +50,7 @@ conda install pytorch==1.4.0 torchvision -c pytorch
 
 - [x] [bagtricks](./examples/bagtricks)
 - [ ] [sbs](./examples/stronger_baseline) (constructing)
-- [ ] agw (todo）
+- [ ] [agw](./examples/agw) (constructing）
 - [ ] pcb (todo)
 - [ ] mgn (todo)
 
