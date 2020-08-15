@@ -49,12 +49,17 @@ conda install pytorch==1.4.0 torchvision -c pytorch
 ## Implemented reid methods 
 
 - [x] [bagtricks](./examples/bagtricks)
-- [ ] [sbs](./examples/stronger_baseline) (constructing)
 - [ ] [agw](./examples/agw) (constructing）
+- [ ] [sbs](./examples/stronger_baseline) (constructing)
 - [ ] pcb (todo)
 - [ ] mgn (todo)
 
-## Contact
-If you have any question about the project, please feel free to contact me.
+## Acknowledge
 
+Our [light-reid](https://github.com/wangguanan/light-reid) partially refers open-sourced 
+[torch-reid](https://github.com/KaiyangZhou/deep-person-reid) and 
+[fast-reid](https://github.com/JDAI-CV/fast-reid),
+we thank their awesome contribution to reid community. 
+
+If you have any question about this reid toolbox, please feel free to contact me.
 E-mail: guan.wang0706@gmail.com
