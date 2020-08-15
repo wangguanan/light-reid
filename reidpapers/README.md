@@ -1,5 +1,5 @@
-# ReID paper readings
+# reid papers 
 
-It summarises recent reid papers published on TOP CV conference,
-including CVPR, ICCV and ECCV.
+this repo summarises recent reid papers published on TOP CV conference,
+including but not limited to CVPR, ICCV and ECCV.
 
