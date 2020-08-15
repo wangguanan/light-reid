@@ -44,7 +44,7 @@ class AGWEngine(Engine):
             # load teacher model
             teacher_path = os.path.join(results_dir, 'lightmodel(False)-lightfeat(False)-lightsearch(False)/final_model.pth.tar')
             assert os.path.exists(teacher_path), \
-                'lightmodel was enabled, expect {} as a teachder but file not exists'.format(self.model_teachder)
+                'lightmodel was enabled, expect {} as a teachder but file not exists'.format(teacher_path)
             model_t = torch.load(teacher_path)
             self.model_t = model_t.to(self.device).eval()
             self.logging('[light_model was enabled] load teacher model from {}'.format(teacher_path))

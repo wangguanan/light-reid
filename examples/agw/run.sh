@@ -2,7 +2,7 @@ GPUID=1
 
 # dukemtmcreid dataset
 ## train a vanilla model
-CUDA_VISIBLE_DEVICES=$GPUID python main.py --dataset dukemtmcreid --results_dir ./results/dukemtmcreid/
+#CUDA_VISIBLE_DEVICES=$GPUID python main.py --dataset dukemtmcreid --results_dir ./results/dukemtmcreid/
 # enable lightmodel, enhance with model distillation
 CUDA_VISIBLE_DEVICES=$GPUID python main.py --dataset dukemtmcreid --results_dir ./results/dukemtmcreid/ --lightmodel True
 ## enable lightfeat, learn binary codes
@@ -13,7 +13,7 @@ CUDA_VISIBLE_DEVICES=$GPUID python main.py --dataset dukemtmcreid --results_dir 
 CUDA_VISIBLE_DEVICES=$GPUID python main.py --dataset dukemtmcreid --results_dir ./results/dukemtmcreid/ --lightmodel True --lightfeat True --lightsearch True
 
 # market1501 dataset
-## train a vanilla model
+# train a vanilla model
 CUDA_VISIBLE_DEVICES=$GPUID python main.py --dataset market1501 --results_dir ./results/market1501/
 # enable lightmodel, enhance with model distillation
 CUDA_VISIBLE_DEVICES=$GPUID python main.py --dataset market1501 --results_dir ./results/market1501/ --lightmodel True
