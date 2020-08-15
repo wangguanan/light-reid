@@ -46,10 +46,13 @@ lr_scheduler = lightreid.optim.WarmupMultiStepLR(optimizer, milestones=[40, 70],
 optimizer = lightreid.optim.Optimizer(optimizer=optimizer, lr_scheduler=lr_scheduler, max_epochs=120)
 
 # run
-solver = AGWEngine(
+# solver = AGWEngine(
+#     results_dir=args.results_dir, datamanager=datamanager, model=model, criterion=criterion, optimizer=optimizer, use_gpu=True,
+#     light_model=args.lightmodel, light_feat=args.lightfeat, light_search=args.lightsearch,
+#     kl_t=args.kl_t, circle_s=args.circle_scale, circle_m=args.circle_margin)
+solver = lightreid.engine.Engine(
     results_dir=args.results_dir, datamanager=datamanager, model=model, criterion=criterion, optimizer=optimizer, use_gpu=True,
-    light_model=args.lightmodel, light_feat=args.lightfeat, light_search=args.lightsearch,
-    kl_t=args.kl_t, circle_s=args.circle_scale, circle_m=args.circle_margin)
+    light_model=args.lightmodel, light_feat=args.lightfeat, light_search=args.lightsearch)
 # train
 solver.train(eval_freq=10)
 # test
