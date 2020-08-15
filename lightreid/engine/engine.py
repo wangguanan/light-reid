@@ -34,8 +34,8 @@ class Engine(object):
                  light_model=False, light_feat=False, light_search=False):
 
         # base settings
-        self.results_dir = results_dir + \
-                           'lightmodel({})-lightfeat({})-lightsearch({})'.format(light_model, light_feat, light_search)
+        self.results_dir = os.path.join(results_dir,
+            'lightmodel({})-lightfeat({})-lightsearch({})'.format(light_model, light_feat, light_search))
         self.datamanager = datamanager
         self.model = model
         self.criterion = criterion
@@ -67,7 +67,7 @@ class Engine(object):
             assert os.path.exists(teacher_path), \
                 'lightmodel was enabled, expect {} as a teachder but file not exists'.format(self.model_teachder)
             model_t = torch.load(teacher_path)
-            self.model_t = model_t.to(self.device).eval()
+            self.model_t = model_t.to(self.device).eval() # set teacher as evaluation mode
             self.logging('[light_model was enabled] load teacher model from {}'.format(teacher_path))
             # modify model to a small model (ResNet18 as default here)
             pretrained, last_stride_one = self.model.backbone.pretrained, self.model.backbone.last_stride_one
@@ -76,7 +76,10 @@ class Engine(object):
             if self.model.head.classifier.__class__.__name__ == 'Circle':
                 self.model.head.classifier.__init__(
                     self.model.backbone.dim, self.model.head.classifier._num_classes, self.model.head.classifier._s, self.model.head.classifier._m)
-            print(self.model)
+            elif self.model.head.classifier.__class__.__name__ == 'Linear':
+                self.model.head.classifier.__init__(self.model.backbone.dim, self.model.head.classifier.out_features, self.model.head.classifier.bias)
+            else:
+                assert 0, 'classifier error'
             self.logging('[light_model was enabled] modify model to ResNet18')
             # update optimizer
             optimizer_defaults = self.optimizer.optimizer.defaults
@@ -103,8 +106,9 @@ class Engine(object):
         if self.light_search:
             # modify head to pyramid-head
             in_dim, class_num = self.model.head.in_dim, self.model.head.class_num
-            self.model.head = lightreid.models.PyramidHead(
-                in_dim=in_dim, out_dims=[2048, 512, 128, 32], class_num=class_num)
+            head_type, classifier_type = self.model.head.__class__.__name__, self.model.head.classifier.__class__.__name__
+            self.model.head = lightreid.models.CodePyramid(
+                in_dim=in_dim, out_dims=[2048, 512, 128, 32], class_num=class_num, head=head_type, classifier=classifier_type)
             self.logging('[light_search was enabled] learn multiple codes with {}'.format(self.model.head.__class__.__name__))
             # update optimizer parameters
             optimizer_defaults = self.optimizer.optimizer.defaults
@@ -209,14 +213,14 @@ class Engine(object):
             # forward
             fix_cnn = epoch < self.optimizer.fix_cnn_epochs if hasattr(self, 'fix_cnn_epochs') else False
             feats, bnfeats, logits = self.model(imgs, pids, fixcnn=fix_cnn)
-            acc = accuracy(logits, pids, [1])[0]
+            acc = accuracy(logits[0], pids, [1])[0]
             # teacher model
             if self.light_model:
                 with torch.no_grad():
-                    feats_t, bnfeats_t, logits_t = self.model_t(imgs, pids, teacher_mode=True)
-                loss, loss_dict = self.criterion.compute(feats=feats, head_feats=bnfeats, logits=logits, pids=pids, feats_t=feats_t, logits_t=logits_t)
+                    feats_t, headfeats_t, logits_t = self.model_t(imgs, pids, teacher_mode=True)
+                loss, loss_dict = self.criterion.compute(feats=feats, head_feats=bnfeats, logits=logits[0], pids=pids, logits_s=logits[1], logits_t=logits_t[1])
             else:
-                loss, loss_dict = self.criterion.compute(feats=feats, head_feats=bnfeats, logits=logits, pids=pids)
+                loss, loss_dict = self.criterion.compute(feats=feats, head_feats=bnfeats, logits=logits[0], pids=pids)
             loss_dict['Accuracy'] = acc
             # optimize
             self.optimizer.optimizer.zero_grad()
@@ -269,7 +273,6 @@ class Engine(object):
             pr_evaluator.plot_prerecall_curve(self.results_dir, pres, recalls)
 
         self.logging(mAP, CMC)
-
         return mAP, CMC[0: 150]
 
 
