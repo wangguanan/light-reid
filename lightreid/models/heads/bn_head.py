@@ -5,6 +5,7 @@
 
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 from lightreid.utils import weights_init_kaiming, weights_init_classifier
 
 class BNHead(nn.Module):
@@ -40,7 +41,8 @@ class BNHead(nn.Module):
                 logits = self.classifier(bn_feats, y)
             else:
                 logits = self.classifier(bn_feats)
-            return bn_feats, logits
+            logits2 = F.linear(bn_feats, self.classifier.weight)
+            return bn_feats, (logits, logits2)
 
         # eval
         if not self.training:
@@ -54,4 +56,5 @@ class BNHead(nn.Module):
             logits = self.classifier(bn_feats, y)
         else:
             logits = self.classifier(bn_feats)
-        return bn_feats, logits
+        logits2 = F.linear(bn_feats, self.classifier.weight)
+        return bn_feats,  (logits, logits2)

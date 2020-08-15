@@ -9,6 +9,7 @@ import lightreid
 # Settings
 parser = argparse.ArgumentParser()
 parser.add_argument('--results_dir', type=str, default='./results/', help='path to save outputs')
+parser.add_argument('--dataset', type=str, default='dukemtmcreid', help='path to save outputs')
 parser.add_argument('--lightmodel', type=ast.literal_eval, default=False, help='train a small model with model distillation')
 parser.add_argument('--lightfeat', type=ast.literal_eval, default=False, help='learn binary codes NOT real-value code')
 parser.add_argument('--lightsearch', type=ast.literal_eval, default=False, help='lightfeat should be True if lightsearch is True')
@@ -16,18 +17,15 @@ args = parser.parse_args()
 
 # build dataset
 P, K, EPOCHS = 4, 16, 90
-
 DUKE_PATH = '/home/Monday/datasets/DukeMTMC-reID'
-sources = [lightreid.data.DukeMTMCreID(data_path=DUKE_PATH, combineall=False)]
-target = lightreid.data.DukeMTMCreID(data_path=DUKE_PATH, combineall=False)
-print(len(sources[0].train) / (P*K) * 90)
-transforms_train = lightreid.data.build_transforms(img_size=[384, 128], transforms_list=['autoaug', 'rea'], total_epochs=len(sources[0].train) / (P*K) * 90)
+sources = lightreid.data.build_train_dataset([args.dataset])
+target = lightreid.data.build_test_dataset(args.dataset)
+transforms_train = lightreid.data.build_transforms(
+    img_size=[384, 128], transforms_list=['autoaug', 'randomflip', 'padcrop', 'rea'], total_epochs=len(sources[0].train) / (P*K) * EPOCHS)
 transforms_test = lightreid.data.build_transforms(img_size=[384, 128], transforms_list=[])
 datamanager = lightreid.data.DataManager(
-    sources=sources,
-    target=target,
-    transforms_train=transforms_train,
-    transforms_test=transforms_test,
+    sources=sources, target=target,
+    transforms_train=transforms_train, transforms_test=transforms_test,
     sampler='pk', p=P, k=K)
 
 # build model
@@ -45,10 +43,10 @@ criterion = lightreid.losses.Criterion([
 
 # build optimizer
 optimizer = torch.optim.Adam(model.parameters(), lr=0.00035, weight_decay=5e-4)
-lr_scheduler = lightreid.optim.DelayedCosineAnnealingLR(
-    optimizer, delay_epochs=45, max_epochs=EPOCHS, eta_min_lr=0.00000077,
+lr_scheduler = lightreid.optim.WarmupCosineAnnealingLR(
+    optimizer, delay_epochs=30, max_epochs=EPOCHS, eta_min_lr=0.00000077,
     warmup_factor=0.01, warmup_epochs=10, warmup_method='linear')
-optimizer = lightreid.optim.Optimizer(optimizer=optimizer, lr_scheduler=lr_scheduler, max_epochs=90, fix_cnn_epochs=10)
+optimizer = lightreid.optim.Optimizer(optimizer=optimizer, lr_scheduler=lr_scheduler, max_epochs=60, fix_cnn_epochs=10)
 
 # run
 solver = lightreid.engine.Engine(

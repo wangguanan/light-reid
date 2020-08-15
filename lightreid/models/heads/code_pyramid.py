@@ -6,9 +6,10 @@
 import torch
 import torch.nn as nn
 from .bn_head import BNHead
+import lightreid
 
 
-class PyramidHead(nn.Module):
+class CodePyramid(nn.Module):
     """Pyramid Head.
     Learn multiple codes of different lengths.
 
@@ -20,21 +21,27 @@ class PyramidHead(nn.Module):
         out_dims (list): out feature dimensions, e.g. out_dims=[2048, 512, 128, 32]
     """
 
-    def __init__(self, in_dim, out_dims, class_num):
-        super(PyramidHead, self).__init__()
+    def __init__(self, in_dim, out_dims, class_num, head='BNHead', classifier='Linear'):
+        super(CodePyramid, self).__init__()
         self.in_dim = in_dim
         self.eval_dims = out_dims
         self.class_num = class_num
         self.train_dims = [2048, 1024, 512, 256, 128, 64, 32]
 
+        assert head in ['BNHead'], 'expect head in [\'BNHead\'] but got {}'.format(head)
+        assert classifier in ['Linear', 'Circle'], 'expect classifier in [\'Linear\', \'Circle\'], but got {}'.format(classifier)
+
         setattr(self, 'neck{}'.format(int(in_dim)), BNHead(int(in_dim), self.class_num))
         for idx, dim in enumerate(self.train_dims):
             if idx == 0:
                 setattr(self, 'fc{}'.format(int(dim)), nn.Linear(in_dim, int(dim)))
-                setattr(self, 'neck{}'.format(int(dim)), BNHead(int(dim), self.class_num))
             else:
                 setattr(self, 'fc{}'.format(int(dim)), nn.Linear(int(self.train_dims[idx - 1]), int(dim)))
-                setattr(self, 'neck{}'.format(int(dim)), BNHead(int(dim), self.class_num))
+            if classifier == 'Circle':
+                neck = BNHead(int(dim), self.class_num, lightreid.models.Circle(in_dim, self.class_num, scale=64, margin=0.35))
+            elif classifier == 'Linear':
+                neck = BNHead(int(dim), self.class_num)
+            setattr(self, 'neck{}'.format(int(dim)), neck)
 
     def forward(self, feats, y=None, use_tanh=False):
 
@@ -44,7 +51,7 @@ class PyramidHead(nn.Module):
             bn_feats, logits = neck(feats, use_tanh=use_tanh)
             feats_list = [feats]
             bnfeats_list = [bn_feats]
-            logits_list = [logits]
+            logits_list = [[logits[0]], [logits[1]]]
         else:
             binary_codes = neck(feats, use_tanh=use_tanh)
             binary_codes_list = [binary_codes]
@@ -58,7 +65,8 @@ class PyramidHead(nn.Module):
                 bn_feats, logits = neck(feats, use_tanh=use_tanh)
                 feats_list.append(feats)
                 bnfeats_list.append(bn_feats)
-                logits_list.append(logits)
+                logits_list[0].append(logits[0])
+                logits_list[1].append(logits[1])
             else:
                 binary_codes = neck(feats, use_tanh=use_tanh)
                 binary_codes_list.append(binary_codes)

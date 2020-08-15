@@ -9,6 +9,7 @@ import lightreid
 # Settings
 parser = argparse.ArgumentParser()
 parser.add_argument('--results_dir', type=str, default='./results/', help='path to save outputs')
+parser.add_argument('--dataset', type=str, default='dukemtmcreid', help='')
 parser.add_argument('--lightmodel', type=ast.literal_eval, default=False, help='train a small model with model distillation')
 parser.add_argument('--lightfeat', type=ast.literal_eval, default=False, help='learn binary codes NOT real-value code')
 parser.add_argument('--lightsearch', type=ast.literal_eval, default=False, help='lightfeat should be True if lightsearch is True')
@@ -17,8 +18,8 @@ args = parser.parse_args()
 # build dataset
 DUKE_PATH = '/home/Monday/datasets/DukeMTMC-reID'
 datamanager = lightreid.data.DataManager(
-    sources=[lightreid.data.DukeMTMCreID(data_path=DUKE_PATH, combineall=False)],
-    target=lightreid.data.DukeMTMCreID(data_path=DUKE_PATH, combineall=False),
+    sources=lightreid.data.build_train_dataset([args.dataset]),
+    target=lightreid.data.build_test_dataset(args.dataset),
     transforms_train=lightreid.data.build_transforms(img_size=[256, 128], transforms_list=['randomflip', 'padcrop', 'rea']),
     transforms_test=lightreid.data.build_transforms(img_size=[256, 128], transforms_list=[]),
     sampler='pk', p=16, k=4)
@@ -37,7 +38,7 @@ criterion = lightreid.losses.Criterion([
 
 # build optimizer
 optimizer = torch.optim.Adam(model.parameters(), lr=0.00035, weight_decay=5e-4)
-lr_scheduler = lightreid.optim.WarmupMultiStepLR(optimizer, milestones=[40, 90], gamma=0.1, warmup_factor=0.01, warmup_iters=10)
+lr_scheduler = lightreid.optim.WarmupMultiStepLR(optimizer, milestones=[40, 70], gamma=0.1, warmup_factor=0.01, warmup_epochs=10)
 optimizer = lightreid.optim.Optimizer(optimizer=optimizer, lr_scheduler=lr_scheduler, max_epochs=120)
 
 # run

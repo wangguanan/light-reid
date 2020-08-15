@@ -3,7 +3,8 @@
 @contact:   guan.wang0706@gmail.com
 """
 
-from .lr_scheduler import WarmupMultiStepLR, DelayedCosineAnnealingLR
+from .lr_scheduler import WarmupMultiStepLR, DelayedCosineAnnealingLR, WarmupCosineAnnealingLR
+
 
 class Optimizer(object):
 

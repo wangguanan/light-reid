@@ -8,7 +8,7 @@ from bisect import bisect_right
 
 class WarmupMultiStepLR(torch.optim.lr_scheduler._LRScheduler):
 
-    def __init__(self, optimizer, milestones, gamma=0.1, warmup_factor=1.0 / 3, warmup_iters=500,
+    def __init__(self, optimizer, milestones, gamma=0.1, warmup_factor=1.0 / 3, warmup_epochs=500,
                  warmup_method="linear", last_epoch=-1):
         if not list(milestones) == sorted(milestones):
             raise ValueError(
@@ -24,7 +24,7 @@ class WarmupMultiStepLR(torch.optim.lr_scheduler._LRScheduler):
         self.milestones = milestones
         self.gamma = gamma
         self.warmup_factor = warmup_factor
-        self.warmup_iters = warmup_iters
+        self.warmup_iters = warmup_epochs
         self.warmup_method = warmup_method
         super(WarmupMultiStepLR, self).__init__(optimizer, last_epoch)
 

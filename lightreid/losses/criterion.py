@@ -19,7 +19,11 @@ class Criterion(object):
     CRITERION_FACTORY = [
         'CrossEntropyLoss', 'CrossEntropyLabelSmooth', 'TripletLoss', 'FocalLoss', 'CenterLoss',
         'ProbSelfDistillLoss', 'SIMSelfDistillLoss', 'KLLoss']
-    VALUE_FACTORY = ['feats', 'head_feats', 'logits', 'pids', 'camids', 'feats_t', 'logits_t']
+    VALUE_FACTORY = [
+        'feats', 'head_feats', 'logits', 'pids', 'camids', # for vanilla traning
+        'feats_s', 'logits_s', 'feats_t', 'logits_t', # distillation
+        'reduce',
+    ]
 
     def __init__(self, criterion_list):
         # check criterion class
@@ -67,6 +71,8 @@ class Criterion(object):
             elif criterion.__class__.__name__ in ['SIMSelfDistillLoss']:
                 assert 'head_feats' in kwargs.keys(), \
                     'SimDistillLoss expect feats as inputs, but got {}'.format(kwargs.keys())
+                assert isinstance(kwargs['head_feats'], list), \
+                    'SIMSelfDistillLoss expect head_feats is type list, but got type{}'.format(type(kwargs['head_feats']))
                 loss = weight * criterion(feats_list=kwargs['head_feats'])
 
             elif criterion.__class__.__name__ in ['ProbSelfDistillLoss']:
@@ -75,14 +81,15 @@ class Criterion(object):
                 loss = weight * criterion(logits_list=kwargs['logits'])
 
             elif criterion.__class__.__name__ in ['KLLoss']:
+                assert 'logits_s' in kwargs.keys() and 'logits_t' in kwargs.keys(), \
+                    'KLLoss expect logits_s and logits_t as inputs, but got {}'.format(kwargs.keys())
                 if isinstance(kwargs['logits'], list):
-                    loss = weight * criterion(logits_s=kwargs['logits'][0], logits_t=kwargs['logits_t'].detach())
+                    loss = weight * criterion(logits_s=kwargs['logits_s'][0], logits_t=kwargs['logits_t'].detach())
                 else:
-                    loss = weight * criterion(logits_s=kwargs['logits'], logits_t=kwargs['logits_t'].detach())
+                    loss = weight * criterion(logits_s=kwargs['logits_s'], logits_t=kwargs['logits_t'].detach())
 
             else:
                 assert 0, 'expect criterion in {} but got {}'.format(Criterion.CRITERION_FACTORY, criterion)
-
 
             overall_loss += loss
             loss_dict[criterion.__class__.__name__] = loss.data

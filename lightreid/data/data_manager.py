@@ -69,10 +69,10 @@ class DataManager(object):
 
         # init train/query/gallery dataset
         train = self.combine([source.train for source in sources])
+        self.class_num = len(set([sample[1] for sample in train]))
         self.train_dataset = ReIDDataset(train, transforms_train)
         self.query_dataset = ReIDDataset(target.query, transforms_test)
         self.gallery_dataset = ReIDDataset(target.gallery, transforms_test)
-        self.class_num = len(set([sample[1] for sample in train]))
 
         # train loader
         if sampler == 'random':

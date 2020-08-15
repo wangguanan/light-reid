@@ -36,8 +36,8 @@ class BaseReIDModel(nn.Module):
 
         # teacher mode
         if teacher_mode:
-            headfeat_vec, logits = self.head(feats_vec, y, use_tanh=self.use_tanh, teacher_mode=True)
-            return feats_vec, headfeat_vec, logits
+            headfeats_vec, logits = self.head(feats_vec, y, use_tanh=self.use_tanh, teacher_mode=True)
+            return feats_vec, headfeats_vec, logits
 
         # return
         if self.training:
@@ -49,8 +49,8 @@ class BaseReIDModel(nn.Module):
                 return feats_list, headfeats_list, logits_list
         else:
             if test_feat_from_head:
-                headfeat_vec = self.head(feats_vec, y, use_tanh=self.use_tanh)
-                return headfeat_vec
+                headfeats_vec = self.head(feats_vec, y, use_tanh=self.use_tanh)
+                return headfeats_vec
             else:
                 return feats_vec
 
@@ -61,19 +61,19 @@ class BaseReIDModel(nn.Module):
         self.use_tanh = False
 
 
-class PCBReIDModel(BaseReIDModel):
-
-    def forward(self, x, y=None, fixcnn=False):
-        # conn backbone
-        feat_map = self.backbone(x)
-        if fixcnn:
-            feat_map = feat_map.detach()
-        # pooling
-        feat_vec = self.pooling(feat_map).squeeze(3)
-        # return
-        if self.training:
-            embedding_list, logits_list = self.head(feat_vec, y)
-            return embedding_list, logits_list
-        else:
-            feat = self.head(feat_vec, y)
-            return feat
+# class PCBReIDModel(BaseReIDModel):
+#
+#     def forward(self, x, y=None, fixcnn=False):
+#         # conn backbone
+#         feat_map = self.backbone(x)
+#         if fixcnn:
+#             feat_map = feat_map.detach()
+#         # pooling
+#         feat_vec = self.pooling(feat_map).squeeze(3)
+#         # return
+#         if self.training:
+#             embedding_list, logits_list = self.head(feat_vec, y)
+#             return embedding_list, logits_list
+#         else:
+#             feat = self.head(feat_vec, y)
+#             return feat
