@@ -46,11 +46,11 @@ conda install pytorch==1.4.0 torchvision -c pytorch
 [5 steps](./examples/bagtricks/main.py) to implement a SOTA reid model 
 
 
-## Implemented reid methods 
+## Implemented reid methods and experimental results
 
 - [x] [bagtricks](./examples/bagtricks)
-- [ ] [agw](./examples/agw) (constructing）
-- [ ] [sbs](./examples/stronger_baseline) (constructing)
+- [ ] [agw](./examples/agw)）
+- [ ] sbs (constructing)
 - [ ] pcb (todo)
 - [ ] mgn (todo)
 
