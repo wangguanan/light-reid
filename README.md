@@ -9,6 +9,8 @@ it features
 - [x] simple modules for reid implementation
 - [x] implementations of state-of-the-art deep reid models 
 
+references
+- Faster Person Re-Identification. Guan'an Wang, Shaogang Gong, Jian Cheng and Zengguang Hou. [paper](https://arxiv.org/abs/2008.06826)
 
 ## What's New
 - [2020.08]: We release a toolbox of light-reid learning for faster inference, getting >30x faster speed.
