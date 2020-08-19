@@ -49,7 +49,7 @@ conda install pytorch==1.4.0 torchvision -c pytorch
 ## Implemented reid methods and experimental results
 
 - [x] [bagtricks](./examples/bagtricks)
-- [ ] [agw](./examples/agw)）
+- [ ] [agw](./examples/agw)
 - [ ] sbs (constructing)
 - [ ] pcb (todo)
 - [ ] mgn (todo)
