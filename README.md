@@ -10,7 +10,7 @@ it features
 - [x] implementations of state-of-the-art deep reid models 
 
 references
-- Faster Person Re-Identification. Guan'an Wang, Shaogang Gong, Jian Cheng and Zengguang Hou. [paper](https://arxiv.org/abs/2008.06826)
+- [ECCV'20] Faster Person Re-Identification. Guan'an Wang, Shaogang Gong, Jian Cheng and Zengguang Hou. [[paper]](https://arxiv.org/abs/2008.06826)
 
 ## What's New
 - [2020.08]: We release a toolbox of light-reid learning for faster inference, getting >30x faster speed.
@@ -19,7 +19,7 @@ references
 
 
 ## Find our Works
-* [2020.07]: **[ECCV'20]** Our work about Fast ReID has been accepted by ECCV'20. ([Paper] [Code](https://github.com/wangguanan/light-reid))
+* [2020.07]: **[ECCV'20]** Our work about Fast ReID has been accepted by ECCV'20. ([Paper](https://arxiv.org/abs/2008.06826) [Code](https://github.com/wangguanan/light-reid))
 * [2020.03]: **[CVPR'20]** Our work about Occluded ReID has been accepted by CVPR'20. ([Paper](https://arxiv.org/abs/2003.08177), [Code](https://github.com/wangguanan/HOReID)).
 * [2020.01]: **[AAAI'20]** Our work about RGB-Infrared(IR) ReID has been accepted by AAAI'20. ([Paper](https://arxiv.org/pdf/2002.04114.pdf), [Code](https://github.com/wangguanan/JSIA-ReID)).
 * [2019.10]: **[ICCV'19]** Our work about RGB-Infrared(IR) ReID has been accepted by ICCV'19. ([Paper](http://openaccess.thecvf.com/content_ICCV_2019/papers/Wang_RGB-Infrared_Cross-Modality_Person_Re-Identification_via_Joint_Pixel_and_Feature_Alignment_ICCV_2019_paper.pdf), [Code](https://github.com/wangguanan/AlignGAN)).
