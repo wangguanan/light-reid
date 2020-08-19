@@ -2,13 +2,13 @@
 
 implement and speedup [AGW](https://arxiv.org/abs/2001.04193) with light-reid.
 
+## Experimental Results and Trained Models
+
 Settings (on a MacBook Pro (Retina, 13-inch, Mid 2014))
 
 - GPU: TITAN XP (memory 12194MB)
 - CPU: 2.6 GHz Dual-Core Intel Core i5
 - Memory: 8 GB 1600 MHz DDR3
-
-## Experimental Results and Trained Models
 
 DukeMTMC-reID
 
