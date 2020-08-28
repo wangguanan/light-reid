@@ -33,7 +33,7 @@ model = lightreid.models.BaseReIDModel(backbone=backbone, pooling=pooling, head=
 # build loss
 criterion = lightreid.losses.Criterion([
     {'criterion': lightreid.losses.CrossEntropyLabelSmooth(num_classes=datamanager.class_num), 'weight': 1.0},
-    {'criterion': lightreid.losses.TripletLoss(margin=0.3, metric='euclidean'), 'weight': 1.0},
+    {'criterion': lightreid.losses.TripletLoss(margin='soft', metric='euclidean'), 'weight': 1.0},
 ])
 
 # build optimizer
@@ -49,7 +49,7 @@ solver = lightreid.engine.Engine(
 solver.train(eval_freq=10)
 # test
 solver.resume_latest_model()
-solver.eval(onebyone=True)
+solver.smart_eval(onebyone=True, mode='normal')
 # visualize
 # solver.visualize()
 
