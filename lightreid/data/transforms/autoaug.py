@@ -1,9 +1,3 @@
-# encoding: utf-8
-"""
-@author:  liaoxingyu
-@contact: sherlockliao01@gmail.com
-"""
-
 # ref: https://github.com/DeepVoltaire/AutoAugment/blob/master/autoaugment.py
 # fix some color augmentation methods for adaptation to reid task
 
@@ -26,9 +20,8 @@ class ImageNetPolicy(object):
         >>>     transforms.ToTensor()])
     """
 
-    def __init__(self, total_iter, fillcolor=(128, 128, 128)):
-        self.total_iter = total_iter
-        self.gamma = 0
+    def __init__(self, prob, fillcolor=(128, 128, 128)):
+        self.prob = prob
         self.policies = [
             SubPolicy(0.4, "posterize", 8, 0.6, "rotate", 9, fillcolor),
             SubPolicy(0.6, "solarize", 5, 0.6, "autocontrast", 5, fillcolor),
@@ -62,12 +55,10 @@ class ImageNetPolicy(object):
         ]
 
     def __call__(self, img):
-        if random.uniform(0, 1) > self.gamma:
-            policy_idx = random.randint(0, len(self.policies) - 1)
-            self.gamma = min(1.0, self.gamma + 1.0 / self.total_iter)
-            return self.policies[policy_idx](img)
-        else:
+        if np.random.rand() > self.prob:
             return img
+        policy_idx = random.randint(0, len(self.policies) - 1)
+        return self.policies[policy_idx](img)
 
     def __repr__(self):
         return "AutoAugment ImageNet Policy"
