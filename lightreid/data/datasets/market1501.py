@@ -19,13 +19,19 @@ class Market1501(ReIDSamples):
         data_path(str): path to Market-1501 dataset
         combineall(bool): combine train and test sets as train set if True
     """
+    dataset_url = 'http://188.138.127.15:81/Datasets/Market-1501-v15.09.15.zip'
 
-    def __init__(self, data_path, combineall=False):
+    def __init__(self, data_path, combineall=False, download=False):
         super(Market1501, self).__init__()
 
         # parameters
         self.market_path = data_path
         self.combineall = combineall
+
+        # is not exist and download true, download dataset
+        if not os.path.exists(data_path):
+            print('dataset path {} is not existed, start download dataset'.format(data_path))
+            self.download_dataset(data_path, self.dataset_url)
 
         # paths of train, query and gallery
         train_path = os.path.join(self.market_path, 'bounding_box_train/')
@@ -62,3 +68,4 @@ class Market1501(ReIDSamples):
         split_list = file_name.replace('.jpg', '').replace('c', '').replace('s', '_').split('_')
         person_id, camera_id = int(split_list[0]), int(split_list[1])
         return person_id, camera_id
+

@@ -31,7 +31,7 @@ def build_train_dataset(dataset_list, combineall=False):
     for dataset_name in dataset_list:
         assert dataset_name in __datasets_factory.keys(), \
             'expect dataset in {}}, but got {}'.format(__datasets_factory.keys(), dataset_name)
-        dataset = __datasets_factory[dataset_name](__datasets_path[dataset_name], combineall)
+        dataset = __datasets_factory[dataset_name](__datasets_path[dataset_name]['path'], combineall)
         train_datasets.append(dataset)
     return train_datasets
 
@@ -41,8 +41,20 @@ def build_test_dataset(dataset_name):
     Example:
         see build_train_dataset
     '''
-    assert dataset_name in __datasets_factory.keys(), \
-        'expect dataset in {}}, but got {}'.format(__datasets_factory.keys(), dataset_name)
-    dataset = __datasets_factory[dataset_name](__datasets_path[dataset_name], combineall=False)
-    return dataset
+    if isinstance(dataset_name, str):
+        assert dataset_name in __datasets_factory.keys(), \
+            'expect dataset in {}}, but got {}'.format(__datasets_factory.keys(), dataset_name)
+        dataset = __datasets_factory[dataset_name](__datasets_path[dataset_name]['path'], combineall=False)
+        return [dataset]
+    elif isinstance(dataset_name, list):
+        for val in dataset_name:
+            assert val in __datasets_factory.keys(), \
+                'expect dataset in {}}, but got {}'.format(__datasets_factory.keys(), val)
+        dataset_list = []
+        for val in dataset_name:
+            dataset = __datasets_factory[val](__datasets_path[val]['path'], combineall=False)
+            dataset_list.append(dataset)
+        return dataset_list
+    else:
+        assert 0, 'expect input type string or list, but got {}'.format(type(dataset_name))
 

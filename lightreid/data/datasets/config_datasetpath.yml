@@ -1,9 +1,17 @@
 # default dataset paths
 # please udpate to your own paths
 
-#market1501: 'light-reid/datasets/Market-1501/'
-market1501: '/home/Monday/datasets/Market-1501-v15.09.15/'
-#dukemtmcreid: 'light-reid/datasets/DukeMTMC-reID/'
-dukemtmcreid: '/home/Monday/datasets/DukeMTMC-reID/'
-#msmt17: 'light-reid/datasets/MSMT17/'
-msmt17: '/home/Monday/datasets/MSMT17_V1/'
+market1501:
+  path: '/home/Monday/datasets/Market-1501-v15.09.15/' #'light-reid/datasets/Market-1501/'
+#  path: '/Volumes/WGA/datasets/Market-1501-v15.09.15/' #'light-reid/datasets/Market-1501/'
+  download: True # if dataset not in path, download it and extract zip/tar
+
+dukemtmcreid:
+  path: '/home/Monday/datasets/DukeMTMC-reID/' # 'light-reid/datasets/DukeMTMC-reID/'
+#  path: '/Volumes/WGA/datasets/DukeMTMC-reID/' #'light-reid/datasets/Market-1501/'
+  download: True # if dataset not in path, download it and extract zip/tar
+
+msmt17:
+  path: '/home/Monday/datasets/MSMT17_V1/' #'light-reid/datasets/MSMT17/'
+#  path: '/Volumes/WGA/datasets/MSMT17_V1/' #'light-reid/datasets/Market-1501/'
+  download: True

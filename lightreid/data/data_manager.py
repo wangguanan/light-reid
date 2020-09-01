@@ -71,8 +71,12 @@ class DataManager(object):
         train = self.combine([source.train for source in sources])
         self.class_num = len(set([sample[1] for sample in train]))
         self.train_dataset = ReIDDataset(train, transforms_train)
-        self.query_dataset = ReIDDataset(target.query, transforms_test)
-        self.gallery_dataset = ReIDDataset(target.gallery, transforms_test)
+
+        self.query_gallery_dataset_list = []
+        for val in target:
+            query_dataset = ReIDDataset(val.query, transforms_test)
+            gallery_dataset = ReIDDataset(val.gallery, transforms_test)
+            self.query_gallery_dataset_list.append((query_dataset, gallery_dataset))
 
         # train loader
         if sampler == 'random':
@@ -87,8 +91,11 @@ class DataManager(object):
             assert 0, 'expect {}. but got {}'.format(DataManager.SAMPLERS, sampler)
 
         # query and gallery loader
-        self.query_loader = data.DataLoader(self.query_dataset, batch_size=64, num_workers=8, drop_last=False, shuffle=False)
-        self.gallery_loader = data.DataLoader(self.gallery_dataset, batch_size=64, num_workers=8, drop_last=False, shuffle=False)
+        self.query_gallery_loader_list = []
+        for query_dataset, gallery_dataset in self.query_gallery_dataset_list:
+            query_loader = data.DataLoader(query_dataset, batch_size=64, num_workers=8, drop_last=False, shuffle=False)
+            gallery_loader = data.DataLoader(gallery_dataset, batch_size=64, num_workers=8, drop_last=False, shuffle=False)
+            self.query_gallery_loader_list.append((query_loader, gallery_loader))
 
 
     def combine(self, samples_list):

@@ -1,14 +1,16 @@
 from .random_erasing import RandomErasing
 from .pad_crop import padcrop
-from .autoaugment import ImageNetPolicy
+from .autoaug import ImageNetPolicy
+from .augmix import AugMix
 import torchvision.transforms as transforms
 
 
 __transforms_factory_before = {
-    'autoaug': ImageNetPolicy,
+    'autoaug': ImageNetPolicy(prob=0.5),
     'randomflip': transforms.RandomHorizontalFlip(p=0.5),
     'padcrop': padcrop,
     'colorjitor': transforms.ColorJitter(brightness=0.25, contrast=0.15, saturation=0.25, hue=0),
+    'augmix': AugMix(prob=0.5)
 }
 
 __transforms_factory_after = {
@@ -31,9 +33,6 @@ def build_transforms(img_size, transforms_list, **kwargs):
         if transform in __transforms_factory_before.keys():
             if transform == 'padcrop':
                 results.append(__transforms_factory_before[transform](img_size))
-            elif transform == 'autoaug':
-                assert 'total_epochs' in kwargs.keys(), 'autoaug was used, parameter total_epochs should be given'
-                results.append(__transforms_factory_before[transform](total_iter=kwargs['total_epochs']))
             else:
                 results.append(__transforms_factory_before[transform])
 
