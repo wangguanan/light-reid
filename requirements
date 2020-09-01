@@ -6,8 +6,8 @@ prettytable
 easydict
 scikit-learn
 gdown
-hexhamming
 progressbar2
-pip
-install
 pyyaml
+hexhamming==1.1
+
+
