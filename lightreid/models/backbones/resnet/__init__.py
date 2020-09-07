@@ -5,7 +5,7 @@
 
 __all__ = [
     'resnet18', 'resnet34', 'resnet50', 'resnet101', 'resnet152',
-    'resnet18ibn', 'resnet34ibn', 'resnet50ibn', 'resnet101ibn', 'resnet152ibn'
+    'resnet18ibna', 'resnet34ibna', 'resnet50ibna', 'resnet101ibn', 'resnet152ibna'
 ]
 
 import torch.nn as nn
@@ -89,32 +89,32 @@ class ResNet(nn.Module):
         return x
 
 
-def resnet18(pretrained=True, last_stride_one=True):
+def resnet18(pretrained=True, last_stride_one=True, **kwargs):
     return ResNet(name='resnet18', pretrained=pretrained, last_stride_one=last_stride_one)
 
-def resnet34(pretrained=True, last_stride_one=True):
+def resnet34(pretrained=True, last_stride_one=True, **kwargs):
     return ResNet(name='resnet34', pretrained=pretrained, last_stride_one=last_stride_one)
 
-def resnet50(pretrained=True, last_stride_one=True):
+def resnet50(pretrained=True, last_stride_one=True, **kwargs):
     return ResNet(name='resnet50', pretrained=pretrained, last_stride_one=last_stride_one)
 
-def resnet101(pretrained=True, last_stride_one=True):
+def resnet101(pretrained=True, last_stride_one=True, **kwargs):
     return ResNet(name='resnet101', pretrained=pretrained, last_stride_one=last_stride_one)
 
-def resnet152(pretrained=True, last_stride_one=True):
+def resnet152(pretrained=True, last_stride_one=True, **kwargs):
     return ResNet(name='resnet152', pretrained=pretrained, last_stride_one=last_stride_one)
 
-def resnet18ibn(pretrained=True, last_stride_one=True):
+def resnet18ibna(pretrained=True, last_stride_one=True, **kwargs):
     return ResNet(name='resnet18ibn', pretrained=pretrained, last_stride_one=last_stride_one)
 
-def resnet34ibn(pretrained=True, last_stride_one=True):
+def resnet34ibna(pretrained=True, last_stride_one=True, **kwargs):
     return ResNet(name='resnet34ibn', pretrained=pretrained, last_stride_one=last_stride_one)
 
-def resnet50ibn(pretrained=True, last_stride_one=True):
+def resnet50ibna(pretrained=True, last_stride_one=True, **kwargs):
     return ResNet(name='resnet50ibn', pretrained=pretrained, last_stride_one=last_stride_one)
 
-def resnet101ibn(pretrained=True, last_stride_one=True):
+def resnet101ibna(pretrained=True, last_stride_one=True, **kwargs):
     return ResNet(name='resnet101ibn', pretrained=pretrained, last_stride_one=last_stride_one)
 
-def resnet152ibn(pretrained=True, last_stride_one=True):
+def resnet152ibna(pretrained=True, last_stride_one=True, **kwargs):
     return ResNet(name='resnet152ibn', pretrained=pretrained, last_stride_one=last_stride_one)
