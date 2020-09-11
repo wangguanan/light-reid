@@ -12,7 +12,7 @@ from torch.nn import Parameter
 
 
 class ArcFace(nn.Module):
-    def __init__(self, cfg, in_feat, num_classes, scale, margin):
+    def __init__(self, in_feat, num_classes, scale, margin):
         super().__init__()
         self.in_feat = in_feat
         self._num_classes = num_classes

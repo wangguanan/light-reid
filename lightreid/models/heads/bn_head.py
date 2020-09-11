@@ -37,7 +37,7 @@ class BNHead(nn.Module):
 
         # teacher mode: return bn_feats and logits
         if teacher_mode:
-            if self.classifier.__class__.__name__ == 'Circle':
+            if self.classifier.__class__.__name__ in ['Circle', 'ArcFace']:
                 logits = self.classifier(bn_feats, y)
             else:
                 logits = self.classifier(bn_feats)
@@ -52,7 +52,7 @@ class BNHead(nn.Module):
                 return bn_feats # real-value feats
 
         # train
-        if self.classifier.__class__.__name__ == 'Circle':
+        if self.classifier.__class__.__name__ in ['Circle', 'ArcFace']:
             logits = self.classifier(bn_feats, y)
         else:
             logits = self.classifier(bn_feats)
