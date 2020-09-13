@@ -4,7 +4,7 @@
 """
 
 import os, copy
-from .base import ReIDSamples
+from .reid_samples import ReIDSamples
 
 
 class MSMT17(ReIDSamples):
@@ -21,8 +21,17 @@ class MSMT17(ReIDSamples):
         combineall(bool): combine train and test sets as train set if True
     """
 
-    def __init__(self, data_path, combineall=False):
-        super(MSMT17, self).__init__()
+    dataset_url = None
+
+    def __init__(self, data_path, combineall=False, download=False):
+
+        # is not exist and download true, download dataset or stop
+        if not os.path.exists(data_path):
+            if download:
+                print('dataset path {} is not existed, start download dataset'.format(data_path))
+                self.download_dataset(data_path, self.dataset_url)
+            else:
+                return 'dataset path {} is not existed, start download dataset'.format(data_path)
 
         list_train_path = os.path.join(data_path, 'list_train.txt')
         list_val_path = os.path.join(data_path, 'list_val.txt')
@@ -34,13 +43,9 @@ class MSMT17(ReIDSamples):
         query = self._load_list(os.path.join(data_path, 'test/'), list_query_path)
         gallery = self._load_list(os.path.join(data_path, 'test/'), list_gallery_path)
         train = copy.deepcopy(train) + copy.deepcopy(val)
-        if combineall:
-            train = self._combine_samples([copy.deepcopy(train), copy.deepcopy(query) + copy.deepcopy(gallery)])
-        train = self.relabel(train)
-        self.statistics(train, query, gallery)
 
-        # return
-        self.train, self.query, self.gallery = train, query, gallery
+        # init
+        super(MSMT17, self).__init__(train, query, gallery, combineall)
 
     def _load_list(self, dir_path, list_path):
         with open(list_path, 'r') as txt:

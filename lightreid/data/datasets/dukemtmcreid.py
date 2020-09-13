@@ -4,7 +4,7 @@
 """
 
 import os, copy
-from .base import ReIDSamples
+from .reid_samples import ReIDSamples
 
 
 class DukeMTMCreID(ReIDSamples):
@@ -22,30 +22,31 @@ class DukeMTMCreID(ReIDSamples):
         combineall(bool): combine train and test sets as train set if True
     """
 
-    def __init__(self, data_path, combineall=False):
-        super(DukeMTMCreID, self).__init__()
+    dataset_url = 'http://vision.cs.duke.edu/DukeMTMC/data/misc/DukeMTMC-reID.zip'
 
-        # parameters
-        self.duke_path = data_path
-        self.combineall = combineall
+    def __init__(self, data_path, combineall=False, download=False):
+
+        # is not exist and download true, download dataset or stop
+        if not os.path.exists(data_path):
+            if download:
+                print('dataset path {} is not existed, start download dataset'.format(data_path))
+                self.download_dataset(data_path, self.dataset_url)
+            else:
+                raise RuntimeError('Dataset path {} NotExist. recommend dowload set True to automatically download dataset'.format(data_path))
 
         # paths of train, query and gallery
-        train_path = os.path.join(self.duke_path, 'bounding_box_train/')
-        query_path = os.path.join(self.duke_path, 'query/')
-        gallery_path = os.path.join(self.duke_path, 'bounding_box_test/')
+        train_path = os.path.join(data_path, 'bounding_box_train/')
+        query_path = os.path.join(data_path, 'query/')
+        gallery_path = os.path.join(data_path, 'bounding_box_test/')
 
         # load
         train = self._load_samples(train_path)
         query = self._load_samples(query_path)
         gallery = self._load_samples(gallery_path)
-        if self.combineall:
-            train += copy.deepcopy(query) + copy.deepcopy(gallery)
-        train = self.relabel(train)
-        self.statistics(train, query, gallery)
-
-        # return
-        self.train, self.query, self.gallery = train, query, gallery
-
+        
+        # init
+        super(DukeMTMCreID, self).__init__(train, query, gallery, combineall=combineall)
+        
     def _load_samples(self, folder_dir):
         '''return (img_path, identity_id, camera_id)'''
         samples = []

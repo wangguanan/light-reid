@@ -1,17 +1,49 @@
 # default dataset paths
 # please udpate to your own paths
 
+root_path: '/data/datasets'
+
 market1501:
-  path: '/home/Monday/datasets/Market-1501-v15.09.15/' #'light-reid/datasets/Market-1501/'
-#  path: '/Volumes/WGA/datasets/Market-1501-v15.09.15/' #'light-reid/datasets/Market-1501/'
-  download: True # if dataset not in path, download it and extract zip/tar
+  path: '/data/datasets'
+  folder: 'Market-1501-v15.09.15'
+  download: True # if dataset not in path, automatically download and extract
 
 dukemtmcreid:
-  path: '/home/Monday/datasets/DukeMTMC-reID/' # 'light-reid/datasets/DukeMTMC-reID/'
-#  path: '/Volumes/WGA/datasets/DukeMTMC-reID/' #'light-reid/datasets/Market-1501/'
-  download: True # if dataset not in path, download it and extract zip/tar
+  path: '/data/datasets'
+  folder: 'DukeMTMC-reID'
+  download: False
 
 msmt17:
-  path: '/home/Monday/datasets/MSMT17_V1/' #'light-reid/datasets/MSMT17/'
-#  path: '/Volumes/WGA/datasets/MSMT17_V1/' #'light-reid/datasets/Market-1501/'
-  download: True
+  path: '/data/datasets'
+  folder: 'MSMT17_V1'
+  download: False
+
+cuhk03:
+  path: '/data/datasets'
+  folder: 'cuhk03_release'
+  download: False
+
+wildtrack_crop:
+  path: '/data/datasets'
+  folder: 'Wildtrack_crop_dataset/crop'
+  download: False
+
+rap:
+  path: '/data/datasets'
+  folder: 'rap/ids/'
+  download: False
+
+njust365:
+  path: '/data/datasets'
+  folder: 'njust365'
+  download: False
+
+njust365spr:
+  path: '/data/datasets'
+  folder: 'njust365'
+  download: False
+
+njust365win:
+  path: '/data/datasets'
+  folder: 'njust365'
+  download: False

@@ -11,42 +11,72 @@ import zipfile
 import time
 import sys
 import errno
+import copy
 
 
 class ReIDSamples:
     '''
     An abstract class representing a Re-ID samples.
-    Return:
+    Attrs:
         train (list): contains tuples of (img_path(s), pid, camid).
         query (list): contains tuples of (img_path(s), pid, camid).
         gallery (list): contains tuples of (img_path(s), pid, camid).
     '''
 
-    def __init__(self):
-        self.train = None
-        self.query = None
-        self.gallery = None
+    def __init__(self, train, query, gallery, combineall=False, **kwargs):
 
-    def statistics(self, train, query, gallery, name=None):
-        '''show samples statistics'''
+        if combineall:
+            print('[{} Combine All] combine train, query and gallery and training set ... ...'.format(self.__class__.__name__))
+            train += copy.deepcopy(query) + copy.deepcopy(gallery)
+        train = self.relabel(train)
+        self.train, self.query, self.gallery = train, query, gallery
 
+        # show information
+        self.statistics(train=self.train, query=self.query, gallery=self.gallery, combineall=combineall)
+
+
+    def statistics(self, **kwargs):
+        '''show sample statistics'''
         def analyze(samples):
+            if samples is None:
+                return None, None, None
             pid_num = len(set([sample[1] for sample in samples]))
             cid_num = len(set([sample[2] for sample in samples]))
             sample_num = len(samples)
             return sample_num, pid_num, cid_num
 
-        train_info = analyze(train)
-        query_info = analyze(query)
-        gallery_info = analyze(gallery)
-
-        # please kindly install prettytable: ```pip install prettyrable```
-        table = PrettyTable(['set', 'images', 'identities', 'cameras'])
-        table.add_row([self.__class__.__name__ if name is None else name, '', '', ''])
-        table.add_row(['train', str(train_info[0]), str(train_info[1]), str(train_info[2])])
-        table.add_row(['query', str(query_info[0]), str(query_info[1]), str(query_info[2])])
-        table.add_row(['gallery', str(gallery_info[0]), str(gallery_info[1]), str(gallery_info[2])])
+        table = PrettyTable([self.__class__.__name__, 'images', 'identities', 'cameras'])
+        for key, val in kwargs.items():
+            if key in ['train', 'query', 'gallery']:
+                info = analyze(val)
+                key_str = str(key)
+                if 'combineall' in kwargs.keys() and kwargs['combineall'] and key == 'train':
+                    key_str += '(combineall)'
+                table.add_row([str(key_str), str(info[0]), str(info[1]), str(info[2])])
         print(table)
+
+
+    # def statistics(self, train, query, gallery, name=None, combineall=False):
+    #
+    #     '''show samples statistics'''
+    #
+    #     def analyze(samples):
+    #         pid_num = len(set([sample[1] for sample in samples]))
+    #         cid_num = len(set([sample[2] for sample in samples]))
+    #         sample_num = len(samples)
+    #         return sample_num, pid_num, cid_num
+    #
+    #     train_info = analyze(train)
+    #     query_info = analyze(query)
+    #     gallery_info = analyze(gallery)
+    #
+    #     # please kindly install prettytable: ```pip install prettyrable```
+    #     table = PrettyTable([self.__class__.__name__ if name is None else name, 'images', 'identities', 'cameras'])
+    #     train_str = 'train(combineall)' if combineall else 'train'
+    #     table.add_row([train_str, str(train_info[0]), str(train_info[1]), str(train_info[2])])
+    #     table.add_row(['query', str(query_info[0]), str(query_info[1]), str(query_info[2])])
+    #     table.add_row(['gallery', str(gallery_info[0]), str(gallery_info[1]), str(gallery_info[2])])
+    #     print(table)
 
     def os_walk(self, folder_dir):
         for root, dirs, files in os.walk(folder_dir):
@@ -143,3 +173,16 @@ class ReIDSamples:
             except OSError as e:
                 if e.errno != errno.EEXIST:
                     raise
+
+    def check_before_run(self, required_files):
+        """Checks if required files exist before going deeper.
+
+        Args:
+            required_files (str or list): string file name(s).
+        """
+        if isinstance(required_files, str):
+            required_files = [required_files]
+
+        for fpath in required_files:
+            if not osp.exists(fpath):
+                raise RuntimeError('"{}" is not found'.format(fpath))

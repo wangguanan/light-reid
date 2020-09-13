@@ -4,7 +4,7 @@
 """
 
 import os, copy
-from .base import ReIDSamples
+from .reid_samples import ReIDSamples
 
 
 class Market1501(ReIDSamples):
@@ -22,33 +22,27 @@ class Market1501(ReIDSamples):
     dataset_url = 'http://188.138.127.15:81/Datasets/Market-1501-v15.09.15.zip'
 
     def __init__(self, data_path, combineall=False, download=False):
-        super(Market1501, self).__init__()
 
-        # parameters
-        self.market_path = data_path
-        self.combineall = combineall
-
-        # is not exist and download true, download dataset
+        # is not exist and download true, download dataset or stop
         if not os.path.exists(data_path):
-            print('dataset path {} is not existed, start download dataset'.format(data_path))
-            self.download_dataset(data_path, self.dataset_url)
+            if download:
+                print('dataset path {} is not existed, start download dataset'.format(data_path))
+                self.download_dataset(data_path, self.dataset_url)
+            else:
+                return 'dataset path {} is not existed, start download dataset'.format(data_path)
 
         # paths of train, query and gallery
-        train_path = os.path.join(self.market_path, 'bounding_box_train/')
-        query_path = os.path.join(self.market_path, 'query/')
-        gallery_path = os.path.join(self.market_path, 'bounding_box_test/')
+        train_path = os.path.join(data_path, 'bounding_box_train/')
+        query_path = os.path.join(data_path, 'query/')
+        gallery_path = os.path.join(data_path, 'bounding_box_test/')
 
         # load samples
         train = self._load_samples(train_path)
         query = self._load_samples(query_path)
         gallery = self._load_samples(gallery_path)
-        if self.combineall:
-            train += copy.deepcopy(query) + copy.deepcopy(gallery)
-        train = self.relabel(train)
-        self.statistics(train, query, gallery)
-
-        # return
-        self.train, self.query, self.gallery = train, query, gallery
+        
+        # init
+        super(Market1501, self).__init__(train, query, gallery, combineall)
 
     def _load_samples(self, folder_dir):
         '''return (img_path, identity_id, camera_id)'''
