@@ -72,11 +72,11 @@ class DataManager(object):
         self.class_num = len(set([sample[1] for sample in train]))
         self.train_dataset = ReIDDataset(train, transforms_train)
 
-        self.query_gallery_dataset_list = []
+        self.query_gallery_dataset_dict = {}
         for val in target:
             query_dataset = ReIDDataset(val.query, transforms_test)
             gallery_dataset = ReIDDataset(val.gallery, transforms_test)
-            self.query_gallery_dataset_list.append((query_dataset, gallery_dataset))
+            self.query_gallery_dataset_dict[val.__class__.__name__] = (query_dataset, gallery_dataset)
 
         # train loader
         if sampler == 'random':
@@ -91,11 +91,11 @@ class DataManager(object):
             assert 0, 'expect {}. but got {}'.format(DataManager.SAMPLERS, sampler)
 
         # query and gallery loader
-        self.query_gallery_loader_list = []
-        for query_dataset, gallery_dataset in self.query_gallery_dataset_list:
+        self.query_gallery_loader_dict = {}
+        for dataset_name, (query_dataset, gallery_dataset) in self.query_gallery_dataset_dict.items():
             query_loader = data.DataLoader(query_dataset, batch_size=64, num_workers=8, drop_last=False, shuffle=False)
             gallery_loader = data.DataLoader(gallery_dataset, batch_size=64, num_workers=8, drop_last=False, shuffle=False)
-            self.query_gallery_loader_list.append((query_loader, gallery_loader))
+            self.query_gallery_loader_dict[dataset_name] = (query_loader, gallery_loader)
 
 
     def combine(self, samples_list):
