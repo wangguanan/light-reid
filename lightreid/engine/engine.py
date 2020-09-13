@@ -7,10 +7,15 @@ import numpy as np
 import os
 import time
 import torch
+import torch.nn as nn
+from prettytable import PrettyTable
+
 from lightreid.evaluations import PreRecEvaluator, CmcMapEvaluator, CmcMapEvaluator1b1, CmcMapEvaluatorC2F, accuracy
 from lightreid.utils import MultiItemAverageMeter, CatMeter, AverageMeter, Logging, time_now, os_walk
 from lightreid.visualizations import visualize_ranked_results
 import lightreid
+
+
 
 
 class Engine(object):
@@ -30,7 +35,8 @@ class Engine(object):
             light_search(bool): if True, use pyramid head lean multiple codes, and search with coarse2fine.
     '''
 
-    def __init__(self, results_dir, datamanager, model, criterion, optimizer, use_gpu, eval_metric='cosine',
+    def __init__(self, results_dir, datamanager, model, criterion, optimizer, use_gpu, data_parallel=False, sync_bn=False,
+                 eval_metric='cosine',
                  light_model=False, light_feat=False, light_search=False):
 
         # base settings
@@ -65,8 +71,8 @@ class Engine(object):
             # load teacher model
             teacher_path = os.path.join(results_dir, 'lightmodel(False)-lightfeat(False)-lightsearch(False)/final_model.pth.tar')
             assert os.path.exists(teacher_path), \
-                'lightmodel was enabled, expect {} as a teachder but file not exists'.format(self.model_teachder)
-            model_t = torch.load(teacher_path)
+                'lightmodel was enabled, expect {} as a teachder but file not exists'.format(teacher_path)
+            model_t = torch.load(teacher_path, map_location=torch.device('cpu'))
             self.model_t = model_t.to(self.device).eval() # set teacher as evaluation mode
             self.logging('[light_model was enabled] load teacher model from {}'.format(teacher_path))
             # modify model to a small model (ResNet18 as default here)
@@ -122,7 +128,13 @@ class Engine(object):
             self.logging('[light_search was enabled] add ProbSelfDistillLoss and SIMSelfDistillLoss')
 
         self.model = self.model.to(self.device)
-
+        if data_parallel:
+            if not sync_bn:
+                self.model = nn.DataParallel(self.model)
+            if sync_bn:
+                # torch.distributed.init_process_group(backend='nccl', world_size=4, init_method='...')
+                self.model = nn.SyncBatchNorm.convert_sync_batchnorm(self.model)
+                # self.model = nn.parallel.DistributedDataParallel(self.model)
 
     def save_model(self, save_epoch):
         """
@@ -139,11 +151,11 @@ class Engine(object):
             os.remove(model_path)
         torch.save(self.model, os.path.join(self.results_dir, 'final_model.pth.tar'))
 
-    def resume_model(self, model_path):
+    def resume_model(self, model_path, strict=True):
         """
         resume from model_path
         """
-        self.model.load_state_dict(torch.load(model_path), strict=True)
+        self.model.load_state_dict(torch.load(model_path), strict=strict)
 
     def resume_latest_model(self):
         '''
@@ -231,6 +243,9 @@ class Engine(object):
             # record
             self.loss_meter.update(loss_dict)
 
+        # learning rate
+        self.loss_meter.update({'LR': self.optimizer.optimizer.param_groups[0]['lr']})
+
         return self.loss_meter.get_str()
 
 
@@ -243,37 +258,111 @@ class Engine(object):
         metric = self.eval_metric
         self.set_eval()
 
+        table = PrettyTable(['dataset', 'map', 'rank-1', 'rank-5', 'rank-10'])
+        for dataset_name, (query_loader, gallery_loader) in self.datamanager.query_gallery_loader_dict.items():
+
+            # extract features
+            time_meter = AverageMeter()
+            query_feats, query_pids, query_camids = self.extract_feats(query_loader, time_meter=time_meter)
+            gallery_feats, gallery_pids, gallery_camids = self.extract_feats(gallery_loader, time_meter=time_meter)
+            self.logging('[Feature Extraction] feature extraction time per batch (64) is {}s'.format(time_meter.get_val()))
+
+            # compute mAP and rank@k
+            if isinstance(query_feats, np.ndarray): #
+                if not onebyone: # eval all query images one shot
+                    mAP, CMC = CmcMapEvaluator(metric=metric, mode='inter-camera').evaluate(
+                        query_feats, query_camids, query_pids,
+                        gallery_feats, gallery_camids, gallery_pids)
+                else: # eval query images one by one
+                    mAP, CMC, ranktime, evaltime = CmcMapEvaluator1b1(metric=metric, mode='inter-camera').compute(
+                        query_feats, query_camids, query_pids,
+                        gallery_feats, gallery_camids, gallery_pids, return_time=True)
+            elif isinstance(query_feats, list): # eval with coarse2fine
+                    mAP, CMC, ranktime, evaltime = CmcMapEvaluatorC2F(metric=metric, mode='inter-camera').compute(
+                        query_feats, query_camids, query_pids,
+                        gallery_feats, gallery_camids, gallery_pids, return_time=True)
+
+            # compute precision-recall curve
+            if return_pr:
+                pr_evaluator = PreRecEvaluator(metric=metric, mode='inter-camera')
+                pres, recalls, thresholds = pr_evaluator.evaluate(
+                    query_feats, query_camids, query_pids,
+                    gallery_feats, gallery_camids, gallery_pids)
+                pr_evaluator.plot_prerecall_curve(self.results_dir, pres, recalls)
+
+            # logging
+            table.add_row([dataset_name, str(mAP), str(CMC[0]), str(CMC[4]), str(CMC[9])])
+            self.logging(mAP, CMC[:150])
+            try:
+                self.logging('average ranking time: {}ms; average evaluation time: {}ms'.format(ranktime*1000, evaltime*1000))
+            except:
+                pass
+        self.logging(table)
+
+
+    def smart_eval(self, onebyone=False, return_pr=False, return_vislist=False, mode='normal'):
+        '''
+        Args:
+            onebyone(bool): evaluate query one by one, otherwise in a parallel way
+        '''
+
+        assert mode in ['normal', 'extract_only', 'eval_only'], \
+            'expect mode in normal, extract_only and eval_only, but got {}'.format(mode)
+        metric = self.eval_metric
+        self.set_eval()
+
         # extract features
-        time_meter = AverageMeter()
-        query_feats, query_pids, query_camids = self.extract_feats(self.datamanager.query_loader, time_meter=time_meter)
-        gallery_feats, gallery_pids, gallery_camids = self.extract_feats(self.datamanager.gallery_loader, time_meter=time_meter)
-        self.logging('[Feature Extraction] feature extraction time per batch (64) is {}s'.format(time_meter.get_val()))
+        if mode == 'extract_only' or mode == 'normal':
+            time_meter = AverageMeter()
+            query_feats, query_pids, query_camids = self.extract_feats(self.datamanager.query_loader, time_meter=time_meter)
+            gallery_feats, gallery_pids, gallery_camids = self.extract_feats(self.datamanager.gallery_loader, time_meter=time_meter)
+            self.logging('[Feature Extraction] feature extraction time per batch (64) is {}s'.format(time_meter.get_val()))
+            features = {
+                'query_feats': query_feats, 'query_pids': query_pids, 'query_camids': query_camids,
+                'gallery_feats': gallery_feats, 'gallery_pids': gallery_pids, 'gallery_camids': gallery_camids}
+            torch.save(features, os.path.join(self.results_dir, 'features.pkl'))
+            return
+        elif mode == 'eval_only' or mode == 'normal':
+            assert os.path.exists(os.path.join(self.results_dir, 'features.pkl')), \
+                'expect load features from file {} but file not exists'.format(os.path.join(self.results_dir, 'features.pkl'))
+            features = torch.load(os.path.join(self.results_dir, 'features.pkl'))
+            query_feats = features['query_feats']
+            query_pids = features['query_pids']
+            query_camids = features['query_camids']
+            gallery_feats = features['gallery_feats']
+            gallery_pids = features['gallery_pids']
+            gallery_camids = features['gallery_camids']
 
-        # compute mAP and rank@k
-        if isinstance(query_feats, np.ndarray): #
-            if not onebyone: # eval all query images one shot
-                mAP, CMC = CmcMapEvaluator(metric=metric, mode='inter-camera').evaluate(
+            # compute mAP and rank@k
+            if isinstance(query_feats, np.ndarray):  #
+                if not onebyone:  # eval all query images one shot
+                    mAP, CMC = CmcMapEvaluator(metric=metric, mode='inter-camera').evaluate(
+                        query_feats, query_camids, query_pids,
+                        gallery_feats, gallery_camids, gallery_pids)
+                else:  # eval query images one by one
+                    mAP, CMC, ranktime, evaltime = CmcMapEvaluator1b1(metric=metric, mode='inter-camera').compute(
+                        query_feats, query_camids, query_pids,
+                        gallery_feats, gallery_camids, gallery_pids, return_time=True)
+            elif isinstance(query_feats, list):  # eval with coarse2fine
+                mAP, CMC, ranktime, evaltime = CmcMapEvaluatorC2F(metric=metric, mode='inter-camera').compute(
+                    query_feats, query_camids, query_pids,
+                    gallery_feats, gallery_camids, gallery_pids, return_time=True)
+
+            # compute precision-recall curve
+            if return_pr:
+                pr_evaluator = PreRecEvaluator(metric=metric, mode='inter-camera')
+                pres, recalls, thresholds = pr_evaluator.evaluate(
                     query_feats, query_camids, query_pids,
                     gallery_feats, gallery_camids, gallery_pids)
-            else: # eval query images one by one
-                mAP, CMC = CmcMapEvaluator1b1(metric=metric, mode='inter-camera').compute(
-                    query_feats, query_camids, query_pids,
-                    gallery_feats, gallery_camids, gallery_pids)
-        elif isinstance(query_feats, list): # eval with coarse2fine
-                mAP, CMC = CmcMapEvaluatorC2F(metric=metric, mode='inter-camera').compute(
-                    query_feats, query_camids, query_pids,
-                    gallery_feats, gallery_camids, gallery_pids)
+                pr_evaluator.plot_prerecall_curve(self.results_dir, pres, recalls)
 
-        # compute precision-recall curve
-        if return_pr:
-            pr_evaluator = PreRecEvaluator(metric=metric, mode='inter-camera')
-            pres, recalls, thresholds = pr_evaluator.evaluate(
-                query_feats, query_camids, query_pids,
-                gallery_feats, gallery_camids, gallery_pids)
-            pr_evaluator.plot_prerecall_curve(self.results_dir, pres, recalls)
-
-        self.logging(mAP, CMC)
-        return mAP, CMC[0: 150]
+            self.logging(mAP, CMC[:150])
+            try:
+                self.logging(
+                    'average ranking time: {} ms; average evaluation time: {} ms'.format(ranktime * 1000, evaltime * 1000))
+            except:
+                pass
+            return mAP, CMC[:150]
 
 
     def visualize(self):
