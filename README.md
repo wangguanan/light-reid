@@ -39,6 +39,8 @@ pip install -r requirements
 
 # install torch and torchvision (select the proper cuda version to suit your machine)
 conda install pytorch==1.4.0 torchvision -c pytorch
+# install faiss for stable search
+conda install faiss-cpu -c pytorch
 ```
 
 
@@ -49,7 +51,7 @@ conda install pytorch==1.4.0 torchvision -c pytorch
 ## Implemented reid methods and experimental results
 
 - [x] [bagtricks](./examples/bagtricks)
-- [ ] [agw](./examples/agw)
+- [x] [agw](./examples/agw)
 - [ ] sbs (constructing)
 - [ ] pcb (todo)
 - [ ] mgn (todo)
