@@ -17,7 +17,7 @@ __transforms_factory_after = {
     'rea': RandomErasing(probability=0.5)
 }
 
-__KWARGS = ['total_epochs']
+__KWARGS = ['total_epochs', 'mean', 'std']
 
 def build_transforms(img_size, transforms_list, **kwargs):
 
@@ -25,8 +25,8 @@ def build_transforms(img_size, transforms_list, **kwargs):
         assert transform in __transforms_factory_before.keys() or transform in __transforms_factory_after.keys(), \
             'Expect transforms in {} and {}, got {}'.format(__transforms_factory_before.keys(), __transforms_factory_after.keys(), transform)
 
-    for key in kwargs.keys():
-        assert key in __KWARGS, 'expect parameter in {} but got {}'.format(__KWARGS, key)
+    # for key in kwargs.keys():
+    #     assert key in __KWARGS, 'expect parameter in {} but got {}'.format(__KWARGS, key)
 
     results = [transforms.Resize(img_size, interpolation=3)]
     for transform in transforms_list:
@@ -36,9 +36,17 @@ def build_transforms(img_size, transforms_list, **kwargs):
             else:
                 results.append(__transforms_factory_before[transform])
 
+    mean = [0.485, 0.456, 0.406]
+    std = [0.229, 0.224, 0.225]
+    if 'mean' in kwargs.keys():
+        mean = kwargs['mean']
+        print('set mean {}'.format(mean))
+    if 'std' in kwargs.keys():
+        std = kwargs['std']
+        print('set std {}'.format(std))
     results.extend(# totensor --> normalize
         [transforms.ToTensor(),
-         transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])])
+         transforms.Normalize(mean=mean, std=std)])
 
     for transform in transforms_list:
         if transform in __transforms_factory_after.keys():

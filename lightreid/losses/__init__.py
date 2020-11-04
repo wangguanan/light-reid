@@ -9,5 +9,5 @@ from .focal_loss import FocalLoss
 from .center_loss import CenterLoss
 from .self_distill_loss import ProbSelfDistillLoss, SIMSelfDistillLoss
 from .kl_loss import KLLoss
-from .criterion import Criterion
+from .criterion import Criterion, build_criterion
 

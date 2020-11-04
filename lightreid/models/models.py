@@ -32,7 +32,7 @@ class BaseReIDModel(nn.Module):
         if fixcnn:
             feats_map = feats_map.detach()
         # pooling
-        feats_vec = self.pooling(feats_map).squeeze(3).squeeze(2)
+        feats_vec = self.pooling(feats_map)#.squeeze(3).squeeze(2)
 
         # teacher mode
         if teacher_mode:
@@ -41,20 +41,20 @@ class BaseReIDModel(nn.Module):
 
         # return
         if self.training:
-            if 'BNHead' in self.head.__class__.__name__ :
+            if self.head.__class__.__name__ in ['BNHead', 'MetaBNHead']:
                 headfeats_vec, logits = self.head(feats_vec, y, use_tanh=self.use_tanh)
                 return feats_vec, headfeats_vec, logits
             elif self.head.__class__.__name__ == 'CodePyramid':
                 feats_list, headfeats_list, logits_list = self.head(feats_vec, y, use_tanh=self.use_tanh)
                 return feats_list, headfeats_list, logits_list
             else:
-                assert 0, 'head error, got {}'.format(self.head.__class__.__name__)
+                assert 0, 'head error'
         else:
             if test_feat_from_head:
                 headfeats_vec = self.head(feats_vec, y, use_tanh=self.use_tanh)
-                return headfeats_vec
+                return headfeats_vec[..., 0, 0]
             else:
-                return feats_vec
+                return feats_vec[..., 0, 0]
 
     def enable_tanh(self):
         self.use_tanh = True

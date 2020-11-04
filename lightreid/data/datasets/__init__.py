@@ -5,6 +5,8 @@ from .cuhk03 import CUHK03
 from .wildtrack import WildTrackCrop
 from .rap import RAP
 from .njust365 import NJUST365, NJUST365SPR, NJUST365WIN
+from .airportalert import AirportAlert
+from .prid import PRID
 
 import yaml
 from os.path import realpath, dirname, join
@@ -12,7 +14,7 @@ from os.path import realpath, dirname, join
 
 __all__ = [
     'Market1501', 'DukeMTMCreID', 'MSMT17', 'CUHK03', 'WildTrackCrop', 'RAP',
-    'NJUST365', 'NJUST365WIN', 'NJUST365SPR',
+    'NJUST365', 'NJUST365WIN', 'NJUST365SPR', 'AirportAlert', 'PRID'
     'build_train_dataset', 'build_test_dataset']
 
 __datasets_factory = {
@@ -25,6 +27,8 @@ __datasets_factory = {
     'njust365': NJUST365,
     'njust365spr': NJUST365SPR,
     'njust365win': NJUST365WIN,
+    'airportalert': AirportAlert,
+    'prid': PRID,
 }
 
 

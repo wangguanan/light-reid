@@ -17,7 +17,6 @@ import lightreid
 
 
 
-
 class Engine(object):
     '''
     Engine for light-reid training
@@ -37,7 +36,7 @@ class Engine(object):
 
     def __init__(self, results_dir, datamanager, model, criterion, optimizer, use_gpu, data_parallel=False, sync_bn=False,
                  eval_metric='cosine',
-                 light_model=False, light_feat=False, light_search=False):
+                 light_model=False, light_feat=False, light_search=False, **kwargs):
 
         # base settings
         self.results_dir = os.path.join(results_dir,

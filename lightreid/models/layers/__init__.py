@@ -2,7 +2,7 @@ from .circle import Circle
 from .generalize_mean_pooling import GeneralizedMeanPoolingP, GeneralizedMeanPooling
 from .arcface import ArcFace
 
-
+import torch
 import torch.nn as nn
 
 __pooling_factory = {
@@ -12,6 +12,17 @@ __pooling_factory = {
     'gempoolp': GeneralizedMeanPoolingP(1),
 }
 
+
+class Clamp(nn.Module):
+    
+    def __init__(self, min, max):
+        super(Clamp, self).__init__()
+        self.min = min
+        self.max = max
+
+    def forward(self, x):
+        return torch.clamp(x, min=self.min, max=self.max)
+
 def build_pooling(name, **kwargs):
     '''
     Example:
@@ -19,7 +30,17 @@ def build_pooling(name, **kwargs):
     '''
     assert name in __pooling_factory.keys(), \
         'expcet pooling name in {} but got {}'.format(__pooling_factory.keys(), name)
-    return __pooling_factory[name]
+
+    layers = []
+    pooling = __pooling_factory[name]
+    layers.append(pooling)
+    if 'clamp' in kwargs.keys():
+        min, max = kwargs['clamp']
+        clamp = Clamp(min=min, max=max)
+        layers.append(clamp)
+
+    return nn.Sequential(*layers)
+
 
 
 __classifier_factory = {

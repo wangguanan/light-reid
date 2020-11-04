@@ -63,9 +63,9 @@ class DataManager(object):
         # check param sample and kwargs is legal
         assert sampler in DataManager.SAMPLERS, \
             'sampler expect {}. but got {}'.format(DataManager.SAMPLERS, sampler)
-        for arg in kwargs.keys():
-            assert arg in DataManager.KWARGS, \
-                'parameters expect {}. but got {}'.format(DataManager.KWARGS, arg)
+        # for arg in kwargs.keys():
+        #     assert arg in DataManager.KWARGS, \
+        #         'parameters expect {}. but got {}'.format(DataManager.KWARGS, arg)
 
         # init train/query/gallery dataset
         train = self.combine([source.train for source in sources])

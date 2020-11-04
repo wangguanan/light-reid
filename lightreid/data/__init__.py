@@ -28,6 +28,6 @@ def build_datamanager(
     combineall = kwargs['combineall'] if 'combineall' in kwargs.keys() else False
     train_dataset = build_train_dataset(sources, combineall)
     test_dataset = build_test_dataset(targets)
-    transforms_train = build_transforms(img_size=img_size, transforms_list=transforms_train)
-    transforms_test = build_transforms(img_size=img_size, transforms_list=transforms_test)
+    transforms_train = build_transforms(img_size=img_size, transforms_list=transforms_train, **kwargs)
+    transforms_test = build_transforms(img_size=img_size, transforms_list=transforms_test, **kwargs)
     return DataManager(train_dataset, test_dataset, transforms_train, transforms_test, sampler, **kwargs)

@@ -5,11 +5,11 @@
 
 from __future__ import print_function, absolute_import
 
-from lightreid import data, models, losses, optim, engine, utils, evaluations
+from .build import build_engine, build_inference
 
 
 __version__ = '0.1.0'
 __author__ = '''Guan\'an Wang'''
 __homepage__ = 'https://wangguanan.github.io/'
-__description__ = 'toolbox of ligh-reid learning'
+__description__ = 'toolbox of light-reid learning'
 __url__ = ''

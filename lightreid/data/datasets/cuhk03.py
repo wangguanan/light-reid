@@ -66,7 +66,7 @@ class CUHK03(ReIDSamples):
             self.dataset_dir, self.data_dir, self.raw_mat_path,
             self.split_new_det_mat_path, self.split_new_lab_mat_path
         ]
-        # self.check_before_run(required_files)
+        self.check_before_run(required_files)
 
         self.preprocess_split()
 

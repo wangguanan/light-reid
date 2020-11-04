@@ -47,3 +47,13 @@ njust365win:
   path: '/data/datasets'
   folder: 'njust365'
   download: False
+
+airportalert:
+  path: '/data/datasets'
+  folder: 'airport'
+  download: False
+
+prid:
+  path: '/data/datasets'
+  folder: 'prid'
+  download: False

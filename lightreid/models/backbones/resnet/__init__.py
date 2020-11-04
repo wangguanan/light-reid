@@ -89,7 +89,6 @@ class ResNet(nn.Module):
         return x
 
 
-
 def resnet18(pretrained=True, last_stride_one=True, **kwargs):
     return ResNet(name='resnet18', pretrained=pretrained, last_stride_one=last_stride_one)
 
