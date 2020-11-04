@@ -7,10 +7,12 @@ from .label_smooth_cross_entropy_loss import CrossEntropyLabelSmooth
 from .triplet_loss_with_batchhard import TripletLoss
 
 
-def build_criterion():
-    pass
+def build_criterion_config(config):
+    criterion_list = config.items()
+    return build_criterion(criterion_list)
 
-
+def build_criterion(criterion_list):
+    return Criterion(criterion_list)
 
 class Criterion(object):
     '''

@@ -2,8 +2,10 @@ import numpy as np
 import copy
 from hexhamming import hamming_distance
 import progressbar
+import time
 
 import lightreid
+from lightreid.utils.meters import AverageMeter
 
 import scipy
 from scipy.optimize import curve_fit
@@ -53,7 +55,7 @@ class CmcMapEvaluatorC2F:
         ])
 
 
-    def compute(self, query_feats_list, query_camids, query_pids, gallery_feats_list, gallery_camids, gallery_pids):
+    def compute(self, query_feats_list, query_camids, query_pids, gallery_feats_list, gallery_camids, gallery_pids, return_time=False):
         '''rank and evaluate'''
 
         query_feat_lens = [val.shape[1] for val in query_feats_list]
@@ -65,6 +67,7 @@ class CmcMapEvaluatorC2F:
         gallery_feats_list = [gallery_feats_list[idx] for idx in np.argsort(query_feat_lens)]
 
         # compute threshold
+        # thresholds = {32: 13, 128: 57, 512: 495, 2048: 483}
         thresholds = ThresholdOptimization(beta=2).optimize(query_feats_list, gallery_feats_list, query_pids, gallery_pids)
         print(thresholds)
 
@@ -88,17 +91,23 @@ class CmcMapEvaluatorC2F:
             gallery_feats_list = gallery_hex_list
 
         # rank
+        rank_time_meter = AverageMeter()
         all_rank_list = [[] for _ in range(len(query_pids))]
         for query_idx in self.bar_rank(range(len(query_pids))):
+            ts = time.time()
             rank_list = self.rank_coarse2fine(query_idx, query_feats_list, gallery_feats_list, thresholds)
+            rank_time_meter.update(time.time()-ts)
             all_rank_list[query_idx] = rank_list
 
         # evaluate
+        eval_time_meter = AverageMeter()
         APs, CMC = [], []
         for query_idx in self.bar_evaluate(range(len(query_pids))):
+            ts = time.time()
             AP, cmc = self.evaluate(
                 query_idx, query_camids, query_pids,
                 gallery_camids, gallery_pids, np.array(all_rank_list[query_idx]))
+            eval_time_meter.update(time.time()-ts)
             # record
             APs.append(AP); CMC.append(cmc)
 
@@ -108,6 +117,8 @@ class CmcMapEvaluatorC2F:
         CMC = [cmc[:min_len] for cmc in CMC]
         CMC = np.mean(np.array(CMC), axis=0)
 
+        if return_time:
+            return MAP, CMC, rank_time_meter.get_val(), eval_time_meter.get_val()
         return MAP, CMC
 
 

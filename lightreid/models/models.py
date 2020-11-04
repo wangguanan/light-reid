@@ -41,14 +41,14 @@ class BaseReIDModel(nn.Module):
 
         # return
         if self.training:
-            if self.head.__class__.__name__ == 'BNHead':
+            if 'BNHead' in self.head.__class__.__name__ :
                 headfeats_vec, logits = self.head(feats_vec, y, use_tanh=self.use_tanh)
                 return feats_vec, headfeats_vec, logits
             elif self.head.__class__.__name__ == 'CodePyramid':
                 feats_list, headfeats_list, logits_list = self.head(feats_vec, y, use_tanh=self.use_tanh)
                 return feats_list, headfeats_list, logits_list
             else:
-                assert 0, 'head error'
+                assert 0, 'head error, got {}'.format(self.head.__class__.__name__)
         else:
             if test_feat_from_head:
                 headfeats_vec = self.head(feats_vec, y, use_tanh=self.use_tanh)

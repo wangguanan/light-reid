@@ -45,14 +45,19 @@ class ReIDSamples:
             sample_num = len(samples)
             return sample_num, pid_num, cid_num
 
-        table = PrettyTable([self.__class__.__name__, 'images', 'identities', 'cameras'])
+        table = PrettyTable([self.__class__.__name__, 'images', 'identities', 'cameras', 'imgs/id', 'imgs/cam', 'imgs/id&cam'])
         for key, val in kwargs.items():
             if key in ['train', 'query', 'gallery']:
                 info = analyze(val)
                 key_str = str(key)
                 if 'combineall' in kwargs.keys() and kwargs['combineall'] and key == 'train':
                     key_str += '(combineall)'
-                table.add_row([str(key_str), str(info[0]), str(info[1]), str(info[2])])
+                img_num, pid_num, cid_num = info
+                imgs_per_id = round(img_num / float(pid_num), 2) if img_num is not None else None
+                imgs_per_cam = round(img_num / float(cid_num), 2) if img_num is not None else None
+                imgs_per_idcam = round(img_num / float(pid_num) / float(cid_num), 2) if img_num is not None else None
+                table.add_row([str(key_str), str(info[0]), str(info[1]), str(info[2]),
+                               str(imgs_per_id), str(imgs_per_cam), str(imgs_per_idcam)])
         print(table)
 
 

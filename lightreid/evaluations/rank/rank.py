@@ -58,12 +58,14 @@ class CmcMapEvaluator(BaseEvaluator):
         '''
 
         '''compute distance matrix'''
-        if self.metric is 'cosine':
+        if self.metric == 'cosine':
             scores = self.cosine_dist(query_features, gallery_features)
-        elif self.metric is 'euclidean':
+        elif self.metric == 'euclidean':
             scores = self.euclidean_dist(query_features, gallery_features)
-        elif self.metric is 'hamming':
+        elif self.metric == 'hamming':
             scores = self.hamming_dist(query_features, gallery_features)
+        else:
+            assert 0, 'metric error, got {}.'.format(self.metric)
         rank_results = np.argsort(scores)
 
         '''evaluate every query'''

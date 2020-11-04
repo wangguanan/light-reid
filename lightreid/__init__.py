@@ -5,7 +5,7 @@
 
 from __future__ import print_function, absolute_import
 
-from lightreid import data, models, losses, optim, engine, utils
+from lightreid import data, models, losses, optim, engine, utils, evaluations
 
 
 __version__ = '0.1.0'

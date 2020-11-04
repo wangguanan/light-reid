@@ -5,7 +5,7 @@
 
 __all__ = [
     'resnet18', 'resnet34', 'resnet50', 'resnet101', 'resnet152',
-    'resnet18ibna', 'resnet34ibna', 'resnet50ibna', 'resnet101ibna', 'resnet152ibna'
+    'resnet18ibna', 'resnet34ibna', 'resnet50ibna', 'resnet101ibn', 'resnet152ibna'
 ]
 
 import torch.nn as nn
@@ -87,6 +87,7 @@ class ResNet(nn.Module):
         x = self.layer4(x)
 
         return x
+
 
 
 def resnet18(pretrained=True, last_stride_one=True, **kwargs):

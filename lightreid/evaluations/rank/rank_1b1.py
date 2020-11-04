@@ -5,6 +5,8 @@ import progressbar
 from sklearn import metrics as sk_metrics
 import time
 
+from lightreid.utils.meters import AverageMeter
+
 import multiprocessing
 
 __all__ = ['CmcMapEvaluator1b1']
@@ -55,7 +57,7 @@ class CmcMapEvaluator1b1:
 
 
 
-    def compute(self, query_feats, query_camids, query_pids, gallery_feats, gallery_camids, gallery_pids):
+    def compute(self, query_feats, query_camids, query_pids, gallery_feats, gallery_camids, gallery_pids, return_time=False):
         '''rank and evaluate'''
 
         if self.metric == 'hamming': # convert np.ndarray to hex
@@ -75,9 +77,12 @@ class CmcMapEvaluator1b1:
                 gallery_feats = gallery_hex
 
         # rank
+        ranktime_meter = AverageMeter()
         all_rank_list = np.zeros([len(query_pids), len(gallery_pids)])
         for query_idx in self.bar_rank(range(len(query_pids))):
+            ts = time.time()
             rank_list = self.rank(query_idx, query_feats, gallery_feats)
+            ranktime_meter.update(time.time() - ts)
             all_rank_list[query_idx, :] = rank_list
 
         # # rank with multiprocessing
@@ -105,11 +110,14 @@ class CmcMapEvaluator1b1:
         #     all_rank_list[query_idx, :] = rank_list
 
         # evaluate
+        evaltime_meter = AverageMeter()
         APs, CMC = [], []
         for query_idx in self.bar_evaluate(range(len(query_pids))):
+            ts = time.time()
             AP, cmc = self.evaluate(
                 query_idx, query_camids, query_pids,
                 gallery_camids, gallery_pids, np.array(all_rank_list[query_idx]))
+            evaltime_meter.update(time.time() - ts)
             # record
             APs.append(AP); CMC.append(cmc)
 
@@ -119,6 +127,8 @@ class CmcMapEvaluator1b1:
         CMC = [cmc[:min_len] for cmc in CMC]
         CMC = np.mean(np.array(CMC), axis=0)
 
+        if return_time:
+            return MAP, CMC, ranktime_meter.get_val(), evaltime_meter.get_val()
         return MAP, CMC
 
     def rank(self, query_idx, query_features, gallery_features, split_startend_idx=None, pool=None):
@@ -208,6 +218,7 @@ class CmcMapEvaluator1b1:
         # compute hamming distance and counting sort
         results = [[] for _ in range(max_dist + 1)]
         for idx, yi in enumerate(y):
+            hamming_distance(x, yi)
             results[hamming_distance(x, yi)].append(idx)
         # return final sorting result and topk sorting result
         final_result = []
