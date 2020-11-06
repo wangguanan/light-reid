@@ -20,7 +20,7 @@ class BNHead(nn.Module):
         self.class_num = class_num
         self.normalize_feats = normalize_feats
 
-        self.bn = nn.BatchNorm2d(self.in_dim)
+        self.bn = nn.BatchNorm1d(self.in_dim)
         self.bn.bias.requires_grad_(False)
 
         self.middle_dim = middle_dim

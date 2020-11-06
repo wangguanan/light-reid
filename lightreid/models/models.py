@@ -32,7 +32,7 @@ class BaseReIDModel(nn.Module):
         if fixcnn:
             feats_map = feats_map.detach()
         # pooling
-        feats_vec = self.pooling(feats_map)#.squeeze(3).squeeze(2)
+        feats_vec = self.pooling(feats_map).squeeze(3).squeeze(2)
 
         # teacher mode
         if teacher_mode:
@@ -52,9 +52,11 @@ class BaseReIDModel(nn.Module):
         else:
             if test_feat_from_head:
                 headfeats_vec = self.head(feats_vec, y, use_tanh=self.use_tanh)
-                return headfeats_vec[..., 0, 0]
+                return headfeats_vec
+                # return headfeats_vec[..., 0, 0]
             else:
-                return feats_vec[..., 0, 0]
+                return feats_vec
+                # return feats_vec[..., 0, 0]
 
     def enable_tanh(self):
         self.use_tanh = True

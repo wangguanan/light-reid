@@ -301,8 +301,12 @@ class Engine(object):
 
     def smart_eval(self, onebyone=False, return_pr=False, return_vislist=False, mode='normal'):
         '''
+        extract features --> save features on disk --> load features --> evaluation
         Args:
             onebyone(bool): evaluate query one by one, otherwise in a parallel way
+            return_pr(bool):
+            return_vislist(bool):
+            mode(str): normal, extract_only, eval_only
         '''
 
         assert mode in ['normal', 'extract_only', 'eval_only'], \
@@ -312,55 +316,61 @@ class Engine(object):
 
         # extract features
         if mode == 'extract_only' or mode == 'normal':
-            time_meter = AverageMeter()
-            query_feats, query_pids, query_camids = self.extract_feats(self.datamanager.query_loader, time_meter=time_meter)
-            gallery_feats, gallery_pids, gallery_camids = self.extract_feats(self.datamanager.gallery_loader, time_meter=time_meter)
-            self.logging('[Feature Extraction] feature extraction time per batch (64) is {}s'.format(time_meter.get_val()))
-            features = {
-                'query_feats': query_feats, 'query_pids': query_pids, 'query_camids': query_camids,
-                'gallery_feats': gallery_feats, 'gallery_pids': gallery_pids, 'gallery_camids': gallery_camids}
-            torch.save(features, os.path.join(self.results_dir, 'features.pkl'))
-            return
-        elif mode == 'eval_only' or mode == 'normal':
-            assert os.path.exists(os.path.join(self.results_dir, 'features.pkl')), \
-                'expect load features from file {} but file not exists'.format(os.path.join(self.results_dir, 'features.pkl'))
-            features = torch.load(os.path.join(self.results_dir, 'features.pkl'))
-            query_feats = features['query_feats']
-            query_pids = features['query_pids']
-            query_camids = features['query_camids']
-            gallery_feats = features['gallery_feats']
-            gallery_pids = features['gallery_pids']
-            gallery_camids = features['gallery_camids']
+            for dataset_name, (query_loader, gallery_loader) in self.datamanager.query_gallery_loader_dict.items():
+                time_meter = AverageMeter()
+                query_feats, query_pids, query_camids = self.extract_feats(query_loader, time_meter=time_meter)
+                gallery_feats, gallery_pids, gallery_camids = self.extract_feats(gallery_loader, time_meter=time_meter)
+                self.logging('[Feature Extraction] feature extraction time per batch (64) is {}s'.format(time_meter.get_val()))
+                features = {
+                    'query_feats': query_feats, 'query_pids': query_pids, 'query_camids': query_camids,
+                    'gallery_feats': gallery_feats, 'gallery_pids': gallery_pids, 'gallery_camids': gallery_camids}
+                torch.save(features, os.path.join(self.results_dir, '{}_features.pkl'.format(dataset_name)))
 
-            # compute mAP and rank@k
-            if isinstance(query_feats, np.ndarray):  #
-                if not onebyone:  # eval all query images one shot
-                    mAP, CMC = CmcMapEvaluator(metric=metric, mode='inter-camera').evaluate(
-                        query_feats, query_camids, query_pids,
-                        gallery_feats, gallery_camids, gallery_pids)
-                else:  # eval query images one by one
-                    mAP, CMC, ranktime, evaltime = CmcMapEvaluator1b1(metric=metric, mode='inter-camera').compute(
+        # evaluate
+        if mode == 'eval_only' or mode == 'normal':
+            table = PrettyTable(['dataset', 'map', 'rank-1', 'rank-5', 'rank-10'])
+            for dataset_name, (_, _) in self.datamanager.query_gallery_loader_dict.items():
+                assert os.path.exists(os.path.join(self.results_dir, '{}_features.pkl'.format(dataset_name))), \
+                    'expect load features from file {} but file not exists'.format(os.path.join(self.results_dir, 'features.pkl'))
+                features = torch.load(os.path.join(self.results_dir, '{}_features.pkl'.format(dataset_name)))
+                query_feats = features['query_feats']
+                query_pids = features['query_pids']
+                query_camids = features['query_camids']
+                gallery_feats = features['gallery_feats']
+                gallery_pids = features['gallery_pids']
+                gallery_camids = features['gallery_camids']
+
+                # compute mAP and rank@k
+                if isinstance(query_feats, np.ndarray):  #
+                    if not onebyone:  # eval all query images one shot
+                        mAP, CMC = CmcMapEvaluator(metric=metric, mode='inter-camera').evaluate(
+                            query_feats, query_camids, query_pids,
+                            gallery_feats, gallery_camids, gallery_pids)
+                    else:  # eval query images one by one
+                        mAP, CMC, ranktime, evaltime = CmcMapEvaluator1b1(metric=metric, mode='inter-camera').compute(
+                            query_feats, query_camids, query_pids,
+                            gallery_feats, gallery_camids, gallery_pids, return_time=True)
+                elif isinstance(query_feats, list):  # eval with coarse2fine
+                    mAP, CMC, ranktime, evaltime = CmcMapEvaluatorC2F(metric=metric, mode='inter-camera').compute(
                         query_feats, query_camids, query_pids,
                         gallery_feats, gallery_camids, gallery_pids, return_time=True)
-            elif isinstance(query_feats, list):  # eval with coarse2fine
-                mAP, CMC, ranktime, evaltime = CmcMapEvaluatorC2F(metric=metric, mode='inter-camera').compute(
-                    query_feats, query_camids, query_pids,
-                    gallery_feats, gallery_camids, gallery_pids, return_time=True)
 
-            # compute precision-recall curve
-            if return_pr:
-                pr_evaluator = PreRecEvaluator(metric=metric, mode='inter-camera')
-                pres, recalls, thresholds = pr_evaluator.evaluate(
-                    query_feats, query_camids, query_pids,
-                    gallery_feats, gallery_camids, gallery_pids)
-                pr_evaluator.plot_prerecall_curve(self.results_dir, pres, recalls)
+                # compute precision-recall curve
+                if return_pr:
+                    pr_evaluator = PreRecEvaluator(metric=metric, mode='inter-camera')
+                    pres, recalls, thresholds = pr_evaluator.evaluate(
+                        query_feats, query_camids, query_pids,
+                        gallery_feats, gallery_camids, gallery_pids)
+                    pr_evaluator.plot_prerecall_curve(self.results_dir, pres, recalls)
 
-            self.logging(mAP, CMC[:150])
-            try:
-                self.logging(
-                    'average ranking time: {} ms; average evaluation time: {} ms'.format(ranktime * 1000, evaltime * 1000))
-            except:
-                pass
+                table.add_row([dataset_name, str(mAP), str(CMC[0]), str(CMC[4]), str(CMC[9])])
+                self.logging(mAP, CMC[:150])
+                try:
+                    self.logging(
+                        'average ranking time: {} ms; average evaluation time: {} ms'.format(ranktime * 1000, evaltime * 1000))
+                except:
+                    pass
+            self.logging(table)
             return mAP, CMC[:150]
 
 

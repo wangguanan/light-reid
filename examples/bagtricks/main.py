@@ -16,7 +16,6 @@ parser.add_argument('--lightsearch', type=ast.literal_eval, default=False, help=
 args = parser.parse_args()
 
 # build dataset
-DUKE_PATH = '/home/Monday/datasets/DukeMTMC-reID'
 datamanager = lightreid.data.DataManager(
     sources=lightreid.data.build_train_dataset([args.dataset]),
     target=lightreid.data.build_test_dataset(args.dataset),
