@@ -11,6 +11,7 @@ it features
 
 
 ## What's New
+- [2020.11]: we support build with config files, making coding more simple. please refer [bagtricks_buildwithconfigs](./examples/bagtricks_buildwithconfigs)
 - [2020.08]: We release a toolbox of light-reid learning for faster inference, getting >30x faster speed.
 - [2020.03]: We implement [BagTricks](https://ieeexplore.ieee.org/document/8930088) and support IBN-Net, MSMT17, combineall, multi-dataset train. Please see branch [version_py3.7_bot](https://github.com/wangguanan/light-reid/tree/version_py3.7_bot).
 - [2019.03]: We give a clearn implemention of  [BagTricks](https://ieeexplore.ieee.org/document/8930088) with python2.7. Please see branch [version_py2.7](https://github.com/wangguanan/light-reid/tree/version_py2.7).
@@ -47,10 +48,12 @@ conda install faiss-cpu -c pytorch
 ## Quick Start 
 [5 steps](./examples/bagtricks/main.py) to implement a SOTA reid model 
 
+[1 step](./examples/bagtricks_buildwithconfigs) to build a SOTA reid model with configs
+
 
 ## Implemented reid methods and experimental results
 
-- [x] [bagtricks](./examples/bagtricks)
+- [x] [bagtricks](./examples/bagtricks), [bagtricks_buildwithconfigs](./examples/bagtricks_buildwithconfigs)
 - [x] [agw](./examples/agw)
 - [ ] sbs (constructing)
 - [ ] pcb (todo)

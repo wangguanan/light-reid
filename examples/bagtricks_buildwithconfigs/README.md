@@ -1,9 +1,20 @@
-# BagTrick
+# BagTrick(build with config files)
 
 implement and speedup [BagTricks](https://arxiv.org/abs/1903.07071) with light-reid
 
+build with config files, more simple
 
-## Command 
+## run
+
+```
+# train
+python train.py --config_file ./base_config.yaml
+``` 
+
+```
+# infer
+python infer.py --config_file ./base_config.yaml --model_path /path/to/model.pth
+```
 
 
 ## Experimental Results and Trained Models
