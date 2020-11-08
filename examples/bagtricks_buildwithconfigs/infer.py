@@ -14,7 +14,7 @@ parser.add_argument('--config_file', type=str, default='path/to/config.yaml', he
 parser.add_argument('--model_path', type=str, default='path/to/model.pth', help='')
 args = parser.parse_args()
 
-# init config
+# load configs from yaml
 with open(args.config_file) as file:
     config = yaml.load(file, Loader=yaml.FullLoader)
 
