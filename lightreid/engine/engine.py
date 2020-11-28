@@ -16,11 +16,10 @@ from lightreid.visualizations import visualize_ranked_results
 import lightreid
 
 
-
 class Engine(object):
     '''
     Engine for light-reid training
-    Args：
+    Args:
         necessary:
             results_dir(str): path to save results
             datamanager(lighreid.data.DataManager): provide train_loader and test_loader
@@ -33,7 +32,6 @@ class Engine(object):
             light_feat(bool): if True, learn binary codes and evaluate with hamming distance.
             light_search(bool): if True, use pyramid head lean multiple codes, and search with coarse2fine.
     '''
-
     def __init__(self, results_dir, datamanager, model, criterion, optimizer, use_gpu, data_parallel=False, sync_bn=False,
                  eval_metric='cosine',
                  light_model=False, light_feat=False, light_search=False, **kwargs):
@@ -135,6 +133,7 @@ class Engine(object):
                 self.model = nn.SyncBatchNorm.convert_sync_batchnorm(self.model)
                 # self.model = nn.parallel.DistributedDataParallel(self.model)
 
+
     def save_model(self, save_epoch):
         """
         save model parameters (only state_dict) in self.results_dir/model_{epoch}.pth
@@ -180,7 +179,7 @@ class Engine(object):
 
     def set_eval(self):
         '''
-        set mode as evaluation model
+        set mode as evaluation mode
         '''
         self.model = self.model.eval()
 
@@ -223,15 +222,18 @@ class Engine(object):
             imgs, pids, camids = imgs.to(self.device), pids.to(self.device), camids.to(self.device)
             # forward
             fix_cnn = epoch < self.optimizer.fix_cnn_epochs if hasattr(self, 'fix_cnn_epochs') else False
-            feats, bnfeats, logits = self.model(imgs, pids, fixcnn=fix_cnn)
-            acc = accuracy(logits[0], pids, [1])[0]
+            res = self.model(imgs, pids, fixcnn=fix_cnn)
+            acc = accuracy(res['logits'], pids, [1])[0]
             # teacher model
             if self.light_model:
                 with torch.no_grad():
-                    feats_t, headfeats_t, logits_t = self.model_t(imgs, pids, teacher_mode=True)
-                loss, loss_dict = self.criterion.compute(feats=feats, head_feats=bnfeats, logits=logits[0], pids=pids, logits_s=logits[1], logits_t=logits_t[1])
+                    res_t = self.model_t(imgs, pids)
+                    res_t_new = {}
+                    for key, val in res_t.items():
+                        res_t_new[key+'_t'] = val
+                loss, loss_dict = self.criterion.compute(pids=pids, **res, **res_t_new)
             else:
-                loss, loss_dict = self.criterion.compute(feats=feats, head_feats=bnfeats, logits=logits[0], pids=pids)
+                loss, loss_dict = self.criterion.compute(pids=pids, **res)
             loss_dict['Accuracy'] = acc
             # optimize
             self.optimizer.optimizer.zero_grad()
@@ -393,7 +395,7 @@ class Engine(object):
             topk=20, mode='inter-camera', show='all')
 
 
-    def extract_feats(self, loader, feat_from_head=True, time_meter=None):
+    def extract_feats(self, loader, time_meter=None):
 
         self.set_eval()
 
@@ -407,7 +409,7 @@ class Engine(object):
                 if time_meter is not None:
                     torch.cuda.synchronize()
                     ts = time.time()
-                feats = self.model(imgs, test_feat_from_head=feat_from_head)
+                feats = self.model(imgs)
                 if time_meter is not None:
                     torch.cuda.synchronize()
                     time_meter.update(time.time()-ts)
@@ -434,3 +436,92 @@ class Engine(object):
 
         return feats, pids, camids
 
+
+class CleanEngine(Engine):
+    """
+    a more clean version of Engine
+    """
+
+    def __init__(self, results_dir, datamanager, model, criterion, optimizer, use_gpu, data_parallel=False, sync_bn=False,
+                 eval_metric='cosine',
+                 light_model=False, light_feat=False, light_search=False,
+                 **kwargs):
+
+        # base settings
+        self.results_dir = os.path.join(results_dir,
+            'lightmodel({})-lightfeat({})-lightsearch({})'.format(light_model, light_feat, light_search))
+        self.datamanager = datamanager
+        self.model = model
+        self.criterion = criterion
+        self.optimizer = optimizer
+        self.device = torch.device('cuda') if use_gpu else torch.device('cpu')
+        self.eval_metric = eval_metric
+
+        self.loss_meter = MultiItemAverageMeter()
+        os.makedirs(self.results_dir, exist_ok=True)
+        self.logging = Logging(os.path.join(self.results_dir, 'logging.txt'))
+
+        # optinal settings for light-reid learning
+        self.light_model = light_model
+        self.light_feat = light_feat
+        self.light_search = light_search
+        self.logging('\n' + '****'*5 + ' light-reid settings ' + '****'*5)
+        self.logging('light_model:  {}'.format(light_model))
+        self.logging('light_feat:  {}'.format(light_feat))
+        self.logging('light_search:  {}'.format(light_search))
+        self.logging('****'*5 + ' light-reid settings ' + '****'*5 + '\n')
+
+        # if enable light_model, learn the model with distillation
+        # load teacher model from model_teacher (should be already trained)
+        # add KLLoss(distillation loss) to criterion
+        if self.light_model:
+            # load teacher model
+            teacher_path = kwargs['teacher_path']
+            assert os.path.exists(teacher_path), \
+                'lightmodel was enabled, expect {} as a teacher but file not exists'.format(teacher_path)
+            model_t = torch.load(teacher_path, map_location=torch.device('cpu'))
+            self.model_t = model_t.to(self.device).train() # set teacher as evaluation mode
+            self.logging('[light_model was enabled] load teacher model from {}'.format(teacher_path))
+            # add KLLoss to criterion
+            self.criterion.criterion_list.append(
+                {'criterion': lightreid.losses.KLLoss(t=4), 'weight': 1.0, 'inputs': {'logits_s': 'logits_distill', 'logits_t': 'logits_distill_t'}})
+            self.logging('[light_model was enabled] add KLLoss for model distillation')
+
+        # if enable light_feat,
+        # learn binary codes NOT real-value features
+        # evaluate with hamming metric, NOT cosine NEITHER euclidean metrics
+        if self.light_feat:
+            self.model.enable_hash()
+            self.eval_metric = 'hamming'
+            self.logging('[light_feat was enabled] model learn binary codes, and is evaluated with hamming distance')
+            self.logging('[light_feat was enabled] update eval_metric from {} to hamming by setting self.eval_metric=hamming'.format(eval_metric))
+
+        # if enable light_search,
+        # learn binary codes of multiple length with pyramid-head
+        # and search with coarse2fine strategy
+        if self.light_search:
+            # modify head to pyramid-head
+            in_dim, class_num = self.model.head.in_dim, self.model.head.class_num
+            head_type, classifier_type = self.model.head.__class__.__name__, self.model.head.classifier.__class__.__name__
+            self.model.head = lightreid.models.CodePyramid(
+                in_dim=in_dim, out_dims=[2048, 512, 128, 32], class_num=class_num, head=head_type, classifier=classifier_type)
+            self.logging('[light_search was enabled] learn multiple codes with {}'.format(self.model.head.__class__.__name__))
+            # update optimizer parameters
+            optimizer_defaults = self.optimizer.optimizer.defaults
+            self.optimizer.optimizer.__init__(self.model.parameters(), **optimizer_defaults)
+            self.logging('[light_search was enabled] update optimizer parameters')
+            # add self-ditillation loss loss for pyramid-haed
+            self.criterion.criterion_list.extend([
+                {'criterion': lightreid.losses.ProbSelfDistillLoss(), 'weight': 1.0},
+                {'criterion': lightreid.losses.SIMSelfDistillLoss(), 'weight': 1000.0},
+            ])
+            self.logging('[light_search was enabled] add ProbSelfDistillLoss and SIMSelfDistillLoss')
+
+        self.model = self.model.to(self.device)
+        if data_parallel:
+            if not sync_bn:
+                self.model = nn.DataParallel(self.model)
+            if sync_bn:
+                # torch.distributed.init_process_group(backend='nccl', world_size=4, init_method='...')
+                self.model = nn.SyncBatchNorm.convert_sync_batchnorm(self.model)
+                # self.model = nn.parallel.DistributedDataParallel(self.model)

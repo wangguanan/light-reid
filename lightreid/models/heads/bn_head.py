@@ -8,33 +8,48 @@ import torch.nn as nn
 import torch.nn.functional as F
 from lightreid.utils import weights_init_kaiming, weights_init_classifier
 
+
 class BNHead(nn.Module):
     """
-    features --> bn --> tanh(optional) --> fc --> logits
+    features + bn -->
+    middle_fc + middle_bn (optional for feature reduction) -->
+    tanh (optional for feature binarization) -->
+    classifier_fc --> class_logits
+    Args:
+        in_dim(int): input feature dimentions, such as 2048
+        class_num(int): class number to prediction
+        classifier(nn.Module): nn.Linear(in_dim, classes_dim) as default
+        middle_dim(int): middle_dim for feature reduction with fc+bn, if None DO NOT reduction
     """
 
-    def __init__(self, in_dim, class_num, classifier=None, middle_dim=None, normalize_feats=True):
+    def __init__(self, in_dim, class_num, classifier=None, middle_dim=None):
         super(BNHead, self).__init__()
 
+        # parameters
         self.in_dim = in_dim
         self.class_num = class_num
-        self.normalize_feats = normalize_feats
+        self.middle_dim = middle_dim
+        # self.is_hash = nn.Parameter(torch.tensor(0), requires_grad=False)
+        self.register_buffer('is_hash', torch.tensor(0).to(torch.bool))
 
+        # bn layer
         self.bn = nn.BatchNorm1d(self.in_dim)
         self.bn.bias.requires_grad_(False)
 
-        self.middle_dim = middle_dim
+        # feature reduction with fc+bn
         if middle_dim is not None:
             self.middle_fc = nn.Linear(in_dim, middle_dim)
             self.middle_bn = nn.BatchNorm1d(middle_dim)
             self.middle_bn.bias.requires_grad_(False)
 
+        # classifier for class prediction
         if classifier is None:
             tmp_tim = self.in_dim if middle_dim is None else middle_dim
             self.classifier = nn.Linear(tmp_tim, self.class_num, bias=False)
         else:
             self.classifier = classifier
 
+        # initialize weights
         self.bn.apply(weights_init_kaiming)
         if middle_dim is not None:
             self.middle_fc.apply(weights_init_classifier)
@@ -42,40 +57,61 @@ class BNHead(nn.Module):
         self.classifier.apply(weights_init_classifier)
 
 
-    def forward(self, feats, y=None, use_tanh=False, teacher_mode=False):
+    def forward(self, feats, y=None):
+        """
+        feats(tensor): batch features with size [bs, dim]
+        y(tensor): labels with size [bs]
+        """
+
+        # bn layer
         bn_feats = self.bn(feats)
 
+        # feature reduction
         if self.middle_dim is not None:
             feats = self.middle_fc(bn_feats)
             bn_feats = self.middle_bn(feats)
 
-        if use_tanh:
+        # feature binarization
+        if self.is_hash:
             tanh_feats = torch.tanh(bn_feats)
-            bn_feats = tanh_feats
+            binary_feats = (torch.sign(bn_feats) + 1.0) / 2.0  # binary codes, i.e. {0,1}
 
-        # teacher mode: return bn_feats and logits
-        if teacher_mode:
-            if self.classifier.__class__.__name__ in ['Circle', 'ArcFace']:
-                logits = self.classifier(bn_feats, y)
-            else:
-                logits = self.classifier(bn_feats)
-            logits2 = F.linear(bn_feats, self.classifier.weight)
-            return bn_feats, (logits, logits2)
-
-        # eval
+        # return in eval setting
         if not self.training:
-            if use_tanh:
-                return (torch.sign(bn_feats) + 1.0)/2.0 # binary codes, i.e. {0,1}
-            else:
-                if self.normalize_feats:
-                    return torch.nn.functional.normalize(bn_feats, dim=1, p=2) # real-value feats
-                else:
-                    return bn_feats
+            res = {
+                'feats': feats,
+                'bn_feats': bn_feats
+            }
+            if self.is_hash:
+                res['tanh_feats'] = tanh_feats
+                res['binary_feats'] = binary_feats
+            return res
 
-        # train
+        # train, multiply classifier and output class logits
+        feats_tmp = tanh_feats if self.is_hash else bn_feats
         if self.classifier.__class__.__name__ in ['Circle', 'ArcFace']:
-            logits = self.classifier(bn_feats, y)
+            logits = self.classifier(feats_tmp, y)
         else:
-            logits = self.classifier(bn_feats)
-        logits2 = F.linear(bn_feats, self.classifier.weight)
-        return bn_feats, (logits, logits2)
+            logits = self.classifier(feats_tmp)
+        logits_distill = F.linear(feats_tmp, self.classifier.weight) # only used for distillation
+        res = {
+            'feats': feats,
+            'bn_feats': bn_feats,
+            'logits': logits,
+            'logits_distill': logits_distill
+        }
+        if self.is_hash:
+            res['tanh_feats'] = tanh_feats
+            res['binary_feats'] = binary_feats
+        return res
+
+
+    def enable_hash(self):
+        device = torch.device('cuda') if self.is_hash.is_cuda else torch.device('cpu')
+        # self.is_hash.data = torch.tensor(1).to(torch.bool).to(device).data
+        self.is_hash.data = torch.tensor(1).to(device).data
+
+    def disable_hash(self):
+        device = torch.device('cuda') if self.is_hash.is_cuda else torch.device('cpu')
+        # self.is_hash.data = torch.tensor(0).to(torch.bool).to(device).data
+        self.is_hash.data = torch.tensor(0).to(torch.bool).to(device).data

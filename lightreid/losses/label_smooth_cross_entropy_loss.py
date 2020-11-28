@@ -31,6 +31,7 @@ class CrossEntropyLabelSmooth(nn.Module):
 			inputs: prediction matrix (before softmax) with shape (batch_size, num_classes)
 			targets: ground truth labels with shape (num_classes)
 		"""
+
 		use_gpu = targets.is_cuda
 		log_probs = self.logsoftmax(inputs)
 		targets = torch.zeros(log_probs.size()).scatter_(1, targets.unsqueeze(1).data.cpu(), 1)

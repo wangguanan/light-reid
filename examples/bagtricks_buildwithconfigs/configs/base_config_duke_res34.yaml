@@ -1,5 +1,5 @@
 env:
-  results_dir: './results/'
+  results_dir: './results/duke/resnet34/'
   use_gpu: True
   data_parallel: True
   sync_bn: False
@@ -10,7 +10,7 @@ lightreid:
   light_search: False
 
 data:
-  sources: ['market1501']
+  sources: ['dukemtmcreid']
   targets: ['market1501', 'dukemtmcreid']
   img_size: [256, 128] # height, width
   transforms_train: ['randomflip', 'padcrop', 'rea']
@@ -23,7 +23,7 @@ data:
 
 model:
   backbone:
-    name: 'resnet50'
+    name: 'resnet34'
     last_stride_one: True
     pretrained: True
   pooling:
@@ -35,16 +35,22 @@ model:
 
 criterion:
   loss1:
+    display_name: 'classification_loss'
     criterion:
       name: 'cross_entropy_label_smooth'
-    input: 'logits'
+    inputs:
+      inputs: 'logits'
+      targets: 'pids'
     weight: 1.0
   loss2:
+    display_name: 'triplet_loss'
     criterion:
       name: 'tripletloss'
       margin: 0.35
       metric: 'euclidean'
-    input: 'feats'
+    inputs:
+      emb: 'feats'
+      label: 'pids'
     weight: 1.0
 
 optim:

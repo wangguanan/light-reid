@@ -6,13 +6,18 @@
 from .backbones import resnet18, resnet34, resnet50, resnet101, resnet152
 from .heads import BNHead, PCBHead, CodePyramid
 from .layers import GeneralizedMeanPoolingP, Circle, ArcFace
-from .models import BaseReIDModel
+from .architectures import BaseReIDModel, ReductionReIDModel
 
 from .backbones import build_cnnbackbone
 from .layers import build_pooling, build_classifier
 from .heads import build_head
 from easydict import EasyDict as edict
 
+
+arch_factory__ = {
+    'base_arch': BaseReIDModel,
+    'reduction_arch': ReductionReIDModel
+}
 
 def build_model(backbone, pooling, head, **kwargs):
     """
@@ -32,5 +37,11 @@ def build_model(backbone, pooling, head, **kwargs):
     classifier = build_classifier(name=head.classifier.pop('name'), in_dim=classifier_indim, out_dim=head.class_num, **head.pop('classifier'))
     head = build_head(in_dim=backbone.dim, class_num=head.pop('class_num'), classifier=classifier, **head)
 
-    return BaseReIDModel(backbone=backbone, pooling=pooling, head=head)
+    if 'name' not in kwargs:
+        return BaseReIDModel(backbone=backbone, pooling=pooling, head=head)
+    else:
+        kwargs = edict(kwargs)
+        name = kwargs.pop('name')
+        return arch_factory__[name](backbone=backbone, pooling=pooling, head=head, **kwargs)
+
 

@@ -1,2 +1,2 @@
-from .engine import Engine
+from .engine import Engine, CleanEngine
 from .inference import Inference
