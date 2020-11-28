@@ -12,9 +12,10 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--config_file', type=str, default='./configs/base_config.yaml', help='')
 args = parser.parse_args()
 
-# init configs
+# load configs from yaml file
 with open(args.config_file) as file:
     config = yaml.load(file, Loader=yaml.FullLoader)
+# init solver
 solver = lightreid.build_engine(config)
 
 # train
