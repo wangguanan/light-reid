@@ -11,6 +11,7 @@ it features
 
 
 ## What's New
+- [2020.11]: we support pca_reduction to 128d with almost no accuracy drop. please refer [base_config_duke_res50_pca128.yaml](./examples/bagtricks_buildwithconfigs/base_config_duke_res50_pca128.yaml)
 - [2020.11]: we support build with config files, making coding more simple. please refer [bagtricks_buildwithconfigs](./examples/bagtricks_buildwithconfigs)
 - [2020.08]: We release a toolbox of light-reid learning for faster inference, getting >30x faster speed.
 - [2020.03]: We implement [BagTricks](https://ieeexplore.ieee.org/document/8930088) and support IBN-Net, MSMT17, combineall, multi-dataset train. Please see branch [version_py3.7_bot](https://github.com/wangguanan/light-reid/tree/version_py3.7_bot).
