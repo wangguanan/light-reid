@@ -20,6 +20,12 @@ solver = lightreid.build_engine(config)
 
 # train
 solver.train(eval_freq=10)
+
 # test
 solver.resume_latest_model()
 solver.smart_eval(onebyone=True, mode='normal')
+
+# visualize
+solver.resume_latest_model()
+solver.visualize()
+
