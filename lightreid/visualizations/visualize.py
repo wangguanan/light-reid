@@ -17,7 +17,7 @@ def make_dirs(dir):
         print('Existed dirs: {}'.format(dir))
 
 
-def visualize_ranked_results(distmat, dataset, save_dir='./vis-results/', topk=20, mode='inter-camera', show='all'):
+def visualize_ranked_results(distmat, dataset, save_dir='./vis-results/', sort='ascend', topk=20, mode='inter-camera', show='all'):
     """Visualizes ranked results.
     Args:
         dismat (numpy.ndarray): distance matrix of shape (nq, ng)
@@ -30,6 +30,10 @@ def visualize_ranked_results(distmat, dataset, save_dir='./vis-results/', topk=2
             intra-camera only visualize results in the same camera with the query
             inter-camera only visualize results in the different camera with the query
             all visualize all results
+        show(string): pos/neg/all
+            pos onlu show those true matched images
+            neg only show those false matched images
+            all show both
     """
     num_q, num_g = distmat.shape
 
@@ -40,10 +44,14 @@ def visualize_ranked_results(distmat, dataset, save_dir='./vis-results/', topk=2
     query, gallery = dataset
     assert num_q == len(query)
     assert num_g == len(gallery)
+    assert sort in ['ascend', 'descend']
     assert mode in ['intra-camera', 'inter-camera', 'all']
     assert show in ['pos', 'neg', 'all']
 
-    indices = np.argsort(distmat, axis=1)
+    if sort == 'ascend':
+        indices = np.argsort(distmat, axis=1)
+    else:
+        indices = np.argsort(distmat, axis=1)[:, ::-1]
     os.makedirs(save_dir, exist_ok=True)
 
     def cat_imgs_to(image_list, hit_list, text_list, target_dir):

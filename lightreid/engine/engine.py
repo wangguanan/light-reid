@@ -5,6 +5,7 @@
 
 import numpy as np
 import os
+from os.path import join, realpath, dirname
 import time
 import torch
 import torch.nn as nn
@@ -383,19 +384,29 @@ class Engine(object):
         import sklearn.metrics.pairwise as skp
         metric = self.eval_metric
         self.set_eval()
-        query_feats, query_pids, query_camids = self.extract_feats(self.datamanager.query_loader)
-        gallery_feats, gallery_pids, gallery_camids = self.extract_feats(self.datamanager.gallery_loader)
-        if metric == 'cosine':
-            distmat = skp.cosine_distances(query_feats, gallery_feats) # please note, it is cosine distance not similarity
-        elif metric == 'euclidean':
-            distmat = skp.euclidean_distances(query_feats, gallery_feats)
-        elif metric == 'hamming':
-            distmat = lightreid.utils.hamming_distance(query_feats, gallery_feats)
-        dataset = [self.datamanager.query_dataset.samples,
-                   self.datamanager.gallery_dataset.samples]
-        visualize_ranked_results(
-            distmat, dataset, save_dir='./vis-results/',
-            topk=20, mode='inter-camera', show='all')
+
+        for dataset_name, (query_loader, gallery_loader) in self.datamanager.query_gallery_loader_dict.items():
+            query_feats, query_pids, query_camids = self.extract_feats(query_loader)
+            gallery_feats, gallery_pids, gallery_camids = self.extract_feats(gallery_loader)
+            if metric == 'cosine':
+                distmat = skp.cosine_distances(query_feats, gallery_feats) # please note, it is cosine distance not similarity
+                sort = 'ascend'
+            elif metric == 'euclidean':
+                distmat = skp.euclidean_distances(query_feats, gallery_feats)
+                sort = 'ascend'
+            elif metric == 'hamming':
+                distmat = lightreid.utils.hamming_distance(query_feats, gallery_feats)
+                sort = 'descend'
+            else:
+                assert 0, 'metric type error'
+
+            query_dataset, gallery_dataset = self.datamanager.query_gallery_dataset_dict[dataset_name]
+            dataset = [query_dataset.samples,
+                       gallery_dataset.samples]
+            output_path = join(self.results_dir, 'visualize/', '{}/'.format(dataset_name))
+            visualize_ranked_results(
+                distmat, dataset, save_dir=output_path, sort=sort,
+                topk=20, mode='inter-camera', show='all')
 
 
     def extract_feats(self, loader, time_meter=None):
@@ -529,3 +540,4 @@ class CleanEngine(Engine):
                 # torch.distributed.init_process_group(backend='nccl', world_size=4, init_method='...')
                 self.model = nn.SyncBatchNorm.convert_sync_batchnorm(self.model)
                 # self.model = nn.parallel.DistributedDataParallel(self.model)
+
