@@ -63,3 +63,8 @@ class Market1501(ReIDSamples):
         person_id, camera_id = int(split_list[0]), int(split_list[1])
         return person_id, camera_id
 
+
+class Market1501withAttr(Market1501):
+
+    pass
+

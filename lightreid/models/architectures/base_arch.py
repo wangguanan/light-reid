@@ -7,7 +7,10 @@ import torch
 import torch.nn as nn
 import copy
 
+from .build import ARCHs_REGISTRY
 
+
+@ARCHs_REGISTRY.register()
 class BaseReIDModel(nn.Module):
     """
     Archtecture for ReID Model

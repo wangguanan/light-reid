@@ -5,7 +5,10 @@ import torchvision
 
 from lightreid.utils import weights_init_kaiming, weights_init_classifier
 
+from .build import HEADs_REGISTRY
 
+
+@HEADs_REGISTRY.register()
 class BottleClassifier(nn.Module):
 
     def __init__(self, in_dim, out_dim, relu=True, dropout=True, bottle_dim=512):

@@ -4,7 +4,10 @@ from PIL import Image
 from collections import OrderedDict
 from easydict import EasyDict as edict
 
+from .build import ENGINEs_REGISTRY
 
+
+@ENGINEs_REGISTRY.register()
 class Inference:
     '''
     A class for inference only

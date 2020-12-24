@@ -11,7 +11,9 @@ import numpy as np
 from .base_arch import BaseReIDModel
 from sklearn.decomposition import PCA
 
+from .build import ARCHs_REGISTRY
 
+@ARCHs_REGISTRY.register()
 class ReductionReIDModel(BaseReIDModel):
     """
     Architecture for ReID Model

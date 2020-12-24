@@ -6,7 +6,7 @@
 from .backbones import resnet18, resnet34, resnet50, resnet101, resnet152
 from .heads import BNHead, PCBHead, CodePyramid
 from .layers import GeneralizedMeanPoolingP, Circle, ArcFace
-from .architectures import BaseReIDModel, ReductionReIDModel
+from .architectures import ARCHs_REGISTRY, BaseReIDModel, ReductionReIDModel
 
 from .backbones import build_cnnbackbone
 from .layers import build_pooling, build_classifier
@@ -14,16 +14,19 @@ from .heads import build_head
 from easydict import EasyDict as edict
 
 
-arch_factory__ = {
-    'base_arch': BaseReIDModel,
-    'reduction_arch': ReductionReIDModel
-}
+
 
 def build_model(backbone, pooling, head, **kwargs):
     """
     Args:
     Example:
     """
+    arch_factory__ = {
+        'base_arch': BaseReIDModel,
+        'reduction_arch': ReductionReIDModel,
+        # user customized
+        **ARCHs_REGISTRY._obj_map,
+    }
 
     # convert type dict to easy dict for easy using
     backbone = edict(backbone)

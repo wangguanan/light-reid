@@ -4,7 +4,9 @@
 """
 
 import torch.nn.functional as F
+from .build import LOSSes_REGISTRY
 
+@LOSSes_REGISTRY.register()
 class KLLoss:
     '''KL Divergence'''
 

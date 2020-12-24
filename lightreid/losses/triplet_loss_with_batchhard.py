@@ -6,8 +6,9 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from .build import LOSSes_REGISTRY
 
-
+@LOSSes_REGISTRY.register()
 class RankingLoss:
 
     def __init__(self):

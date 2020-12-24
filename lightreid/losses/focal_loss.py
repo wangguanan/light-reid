@@ -6,7 +6,9 @@
 import torch
 import torch.nn as nn
 from torch.autograd import Variable
+from .build import LOSSes_REGISTRY
 
+@LOSSes_REGISTRY.register()
 class FocalLoss(nn.Module):
     """
     reference: https://github.com/clcarwin/focal_loss_pytorch
