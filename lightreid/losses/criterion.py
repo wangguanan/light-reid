@@ -3,39 +3,6 @@
 @contact:   guan.wang0706@gmail.com
 """
 
-from easydict import EasyDict as edict
-import torch
-
-from .label_smooth_cross_entropy_loss import CrossEntropyLabelSmooth
-from .triplet_loss_with_batchhard import TripletLoss
-
-
-__criterion_factory = {
-    'cross_entropy': torch.nn.CrossEntropyLoss,
-    'cross_entropy_label_smooth': CrossEntropyLabelSmooth,
-    'tripletloss': TripletLoss,
-}
-
-def build_criterion(cfg):
-
-    cfg = edict(cfg)
-    criterion_list = []
-    for key in cfg.keys():
-        if 'loss' not in key: continue
-        tmp = {}
-        val = getattr(cfg, key)
-        name = val.criterion.pop('name')
-        try:
-            tmp['criterion'] = __criterion_factory[name](num_classes=cfg.num_classes, **val.criterion)
-        except:
-            tmp['criterion'] = __criterion_factory[name](**val.criterion)
-        tmp['inputs'] = val.inputs
-        tmp['weight'] = val.weight
-        criterion_list.append(tmp)
-
-    return Criterion(criterion_list)
-
-
 class Criterion(object):
     '''
     Example:

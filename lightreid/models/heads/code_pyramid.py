@@ -5,10 +5,14 @@
 
 import torch
 import torch.nn as nn
+
 from .bn_head import BNHead
 import lightreid
 
+from .build import HEADs_REGISTRY
 
+
+@HEADs_REGISTRY.register()
 class CodePyramid(nn.Module):
     """Pyramid Head.
     Learn multiple codes of different lengths.

@@ -17,7 +17,10 @@ from lightreid.utils import MultiItemAverageMeter, CatMeter, AverageMeter, Loggi
 from lightreid.visualizations import visualize_ranked_results
 import lightreid
 
+from .build import ENGINEs_REGISTRY
 
+
+@ENGINEs_REGISTRY.register()
 class Engine(object):
     '''
     Engine for light-reid training
@@ -223,7 +226,7 @@ class Engine(object):
             # forward
             fix_cnn = epoch < self.optimizer.fix_cnn_epochs if hasattr(self, 'fix_cnn_epochs') else False
             res = self.model(imgs, pids, fixcnn=fix_cnn)
-            acc = accuracy(res['logits'], pids, [1])[0]
+            # acc = accuracy(res['logits'], pids, [1])[0]
             # teacher model
             if self.light_model:
                 with torch.no_grad():
@@ -234,7 +237,7 @@ class Engine(object):
                 loss, loss_dict = self.criterion.compute(pids=pids, **res, **res_t_new)
             else:
                 loss, loss_dict = self.criterion.compute(pids=pids, **res)
-            loss_dict['Accuracy'] = acc
+            # loss_dict['Accuracy'] = acc
             # optimize
             self.optimizer.optimizer.zero_grad()
             loss.backward()
@@ -447,6 +450,7 @@ class Engine(object):
         return feats, pids, camids
 
 
+@ENGINEs_REGISTRY.register()
 class CleanEngine(Engine):
     """
     a more clean version of Engine

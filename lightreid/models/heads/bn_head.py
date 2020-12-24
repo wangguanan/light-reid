@@ -7,8 +7,10 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from lightreid.utils import weights_init_kaiming, weights_init_classifier
+from .build import HEADs_REGISTRY
 
 
+@HEADs_REGISTRY.register()
 class BNHead(nn.Module):
     """
     features + bn -->

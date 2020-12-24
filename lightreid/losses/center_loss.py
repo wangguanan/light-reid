@@ -5,8 +5,9 @@
 
 import torch
 import torch.nn as nn
+from .build import LOSSes_REGISTRY
 
-
+@LOSSes_REGISTRY.register()
 class CenterLoss(nn.Module):
     """Center loss.
 

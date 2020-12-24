@@ -5,8 +5,10 @@
 
 import torch
 import torch.nn as nn
+from .build import LOSSes_REGISTRY
 
 
+@LOSSes_REGISTRY.register()
 class CrossEntropyLabelSmooth(nn.Module):
 	"""Cross entropy loss with label smoothing regularizer.
 
