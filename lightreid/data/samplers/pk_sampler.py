@@ -3,8 +3,11 @@
 @contact:   guan.wang0706@gmail.com
 """
 
+import itertools
+
 import torch.utils.data as data
 import random
+import torch.distributed as dist
 
 
 class PKSampler(data.sampler.Sampler):
@@ -16,15 +19,26 @@ class PKSampler(data.sampler.Sampler):
     '''
 
     def __init__(self, data_source, k):
+        # parameters
         self.data_source = data_source
         self.pid_idx = 1
         self.k = k
+        # multi-processing
+        self.mp = dist.is_available()
+        if self.mp:
+            self.rank = dist.get_rank()
+            self.word_size = dist.get_world_size()
+        # init
         self.samples = self.data_source.samples
         self.class_dict = self._tuple2dict(self.samples)
 
     def __iter__(self):
         self.sample_list = self._generate_list(self.class_dict)
-        return iter(self.sample_list)
+        if self.mp:
+            return iter(self.sample_list)
+        else:
+            start = self.rank
+            return itertools.islice(self.sample_list, start, None, self.word_size)
 
     def __len__(self):
         return len(self.sample_list)

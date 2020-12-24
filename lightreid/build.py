@@ -1,14 +1,15 @@
 from .data import build_datamanager
 from .models import build_model
 from .optim import build_optimizer
-from .engine import Engine, Inference, CleanEngine
+from .engine import Engine, Inference, CleanEngine, SyncBNEngine
 from .losses import build_criterion
 from easydict import EasyDict as edict
 
 
 engine_factory__ = {
     'engine': Engine,
-    'clean_engine': CleanEngine
+    'clean_engine': CleanEngine,
+    'syncbn_engine': SyncBNEngine
 }
 
 
@@ -29,7 +30,6 @@ def build_engine(cfg):
     criterion = build_criterion(cfg.criterion)
 
     # build optim
-    print(model)
     cfg.optim.optimizer.params = model.parameters()
     optim = build_optimizer(**cfg.optim)
 
