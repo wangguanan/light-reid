@@ -13,7 +13,7 @@ from .build import ARCHs_REGISTRY
 @ARCHs_REGISTRY.register()
 class BaseReIDModel(nn.Module):
     """
-    Archtecture for ReID Model
+    Architecture for ReID Model
     combine backbone, pooling and head modules
     """
 

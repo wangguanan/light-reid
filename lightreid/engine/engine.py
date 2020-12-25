@@ -564,8 +564,6 @@ class SyncBNEngine(Engine):
             self.model = apex.parallel.DistributedDataParallel(self.model)
             torch.backends.cudnn.benchmark = True
 
-
-
     def train_an_epoch(self, epoch):
 
         self.set_train()

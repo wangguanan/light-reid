@@ -24,7 +24,8 @@ class PKSampler(data.sampler.Sampler):
         self.pid_idx = 1
         self.k = k
         # multi-processing
-        self.mp = dist.is_available()
+        # self.mp = dist.is_available()
+        self.mp = False
         if self.mp:
             self.rank = dist.get_rank()
             self.word_size = dist.get_world_size()
@@ -34,7 +35,7 @@ class PKSampler(data.sampler.Sampler):
 
     def __iter__(self):
         self.sample_list = self._generate_list(self.class_dict)
-        if self.mp:
+        if not self.mp:
             return iter(self.sample_list)
         else:
             start = self.rank

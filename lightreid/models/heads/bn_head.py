@@ -7,6 +7,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from lightreid.utils import weights_init_kaiming, weights_init_classifier
+from lightreid.models.layers import build_classifier
 from .build import HEADs_REGISTRY
 
 
@@ -20,11 +21,12 @@ class BNHead(nn.Module):
     Args:
         in_dim(int): input feature dimentions, such as 2048
         class_num(int): class number to prediction
-        classifier(nn.Module): nn.Linear(in_dim, classes_dim) as default
+        classifier(dict): e.g. {'name': 'linear'}, {'name': 'circle', 'margin': 0.35, 'scale': 64}
         middle_dim(int): middle_dim for feature reduction with fc+bn, if None DO NOT reduction
     """
 
-    def __init__(self, in_dim, class_num, classifier=None, middle_dim=None):
+
+    def __init__(self, in_dim, class_num, classifier={'name': 'linear'}, middle_dim=None):
         super(BNHead, self).__init__()
 
         # parameters
@@ -44,12 +46,15 @@ class BNHead(nn.Module):
             self.middle_bn = nn.BatchNorm1d(middle_dim)
             self.middle_bn.bias.requires_grad_(False)
 
-        # classifier for class prediction
-        if classifier is None:
-            tmp_tim = self.in_dim if middle_dim is None else middle_dim
-            self.classifier = nn.Linear(tmp_tim, self.class_num, bias=False)
-        else:
-            self.classifier = classifier
+        classifier['in_dim'] = in_dim if middle_dim is None else middle_dim
+        classifier['out_dim'] = class_num
+        self.classifier = build_classifier(**classifier)
+        # # classifier for class prediction
+        # if classifier is None:
+        #     tmp_tim = self.in_dim if middle_dim is None else middle_dim
+        #     self.classifier = nn.Linear(tmp_tim, self.class_num, bias=False)
+        # else:
+        #     self.classifier = classifier
 
         # initialize weights
         self.bn.apply(weights_init_kaiming)
@@ -57,7 +62,6 @@ class BNHead(nn.Module):
             self.middle_fc.apply(weights_init_classifier)
             self.middle_bn.apply(weights_init_kaiming)
         self.classifier.apply(weights_init_classifier)
-
 
     def forward(self, feats, y=None):
         """
