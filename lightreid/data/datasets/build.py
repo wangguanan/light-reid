@@ -2,30 +2,44 @@ from .market1501 import Market1501
 from .dukemtmcreid import DukeMTMCreID
 from .msmt17 import MSMT17
 from .cuhk03 import CUHK03
-# from .wildtrack import WildTrackCrop
-# from .rap import RAP
-# from .njust365 import NJUST365, NJUST365SPR, NJUST365WIN
-
+from .wildtrack import WildTrackCrop
+from .rap import RAP
+from .njust365 import NJUST365, NJUST365SPR, NJUST365WIN
+from .airportalert import AirportAlert
+from .prid import PRID
+from .occluded_reid import OccludedReID
+from .partial_ilids import PartialILIDS
+from .partial_reid import PartialReID
 
 import yaml
 from os.path import realpath, dirname, join
 
+
+__all__ = [
+    'Market1501', 'DukeMTMCreID', 'MSMT17', 'CUHK03', 'WildTrackCrop', 'RAP',
+    'NJUST365', 'NJUST365WIN', 'NJUST365SPR', 'AirportAlert', 'PRID'
+    'build_train_dataset', 'build_test_dataset']
 
 __datasets_factory = {
     'market1501': Market1501,
     'dukemtmcreid': DukeMTMCreID,
     'msmt17': MSMT17,
     'cuhk03': CUHK03,
-    # 'wildtrack_crop': WildTrackCrop,
-    # 'rap': RAP,
-    # 'njust365': NJUST365,
-    # 'njust365spr': NJUST365SPR,
-    # 'njust365win': NJUST365WIN,
+    'wildtrack_crop': WildTrackCrop,
+    'rap': RAP,
+    'njust365': NJUST365,
+    'njust365spr': NJUST365SPR,
+    'njust365win': NJUST365WIN,
+    'airportalert': AirportAlert,
+    'prid': PRID,
+    'occludedreid': OccludedReID,
+    'partialreid': PartialReID,
+    'partialilids': PartialILIDS,
 }
 
 
 # init dataset paths
-with open(join(dirname(__file__), 'config_datasetpath.yml')) as file:
+with open(join(dirname(__file__), 'datasetpaths.yml')) as file:
     __datasets_config = yaml.load(file, Loader=yaml.FullLoader)
 
 
