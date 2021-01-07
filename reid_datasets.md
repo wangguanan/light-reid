@@ -1,7 +1,7 @@
 # Person Re-Identification Datasets
 
 For easy access, 
-this projects provide links of popular open-sourced Re-ID datasets
+this projects provide links of popular open-sourced Re-ID datasets.
 
 ## Re-ID datasets
 
@@ -14,3 +14,4 @@ this projects provide links of popular open-sourced Re-ID datasets
 | Occluded-ReID | 2018 | x         | √         | 200  | -    | 1,000   | -                                                                    | [link](https://drive.google.com/file/d/1rba7DluxolBl1QD5nTF7iX3UBTGSDp06/view?usp=sharing) | [link](https://pan.baidu.com/s/1HA8piyNu7aB8f_KeYVifBw) (ht6a) | -          |
 | Partial-ReID  | 2018 | x         | √         | 60   | -    | 300     | -                                                                    | -                                                                                          | [link](https://pan.baidu.com/s/1a_ZYwqNTfvDQPTBgTBSy3Q) (qs93) | -          |
 | Partial-iLIDs | 2018 | x         | √         | 119  | -    | 119     | -                                                                    | -                                                                                          | [link](https://pan.baidu.com/s/1a_ZYwqNTfvDQPTBgTBSy3Q) (qs93) | -          |
+
