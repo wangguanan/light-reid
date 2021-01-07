@@ -25,7 +25,6 @@ class BNHead(nn.Module):
         middle_dim(int): middle_dim for feature reduction with fc+bn, if None DO NOT reduction
     """
 
-
     def __init__(self, in_dim, class_num, classifier={'name': 'linear'}, middle_dim=None):
         super(BNHead, self).__init__()
 

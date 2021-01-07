@@ -1,6 +1,7 @@
 from .data import build_datamanager
 from .models import build_model
 from .optim import build_optimizer
+from .evaluations import build_evaluator
 from .engine import Engine, Inference, CleanEngine, SyncBNEngine
 from .losses import build_criterion
 from easydict import EasyDict as edict
@@ -33,10 +34,19 @@ def build_engine(cfg):
     cfg.optim.optimizer.params = model.parameters()
     optim = build_optimizer(**cfg.optim)
 
+    # build evaluator
+    cfg.evaluator = cfg['evaluator'] if 'evaluator' in cfg.keys() else {
+        'name': 'cmc_map_eval',
+        'metric': 'cosine',
+        'mode': 'inter-camera'
+    }
+    evaluator = build_evaluator(**cfg.evaluator)
+
     # build solver
     engine_type = cfg['engine'] if 'engine' in cfg.keys() else 'engine'
     solver = engine_factory__[engine_type](
         datamanager=datamanager, model=model, criterion=criterion, optimizer=optim,
+        evaluator=evaluator,
         **cfg.env, **cfg.lightreid)
 
     return solver

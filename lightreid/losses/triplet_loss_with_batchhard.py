@@ -8,6 +8,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 from .build import LOSSes_REGISTRY
 
+__all__ = ['TripletLoss']
+
 @LOSSes_REGISTRY.register()
 class RankingLoss:
 
@@ -52,7 +54,7 @@ class TripletLoss(RankingLoss):
         margin(float or 'soft'): if float, use nn.MarginRankingLoss, if 'soft',
     '''
 
-    def __init__(self, margin, metric):
+    def __init__(self, margin, metric, reduce=True):
         '''
         :param margin: float or 'soft', for MarginRankingLoss with margin and soft margin
         :param bh: batch hard
@@ -62,9 +64,9 @@ class TripletLoss(RankingLoss):
         assert isinstance(margin, float) or margin=='soft', \
             'margin must be type float or value \'soft\', but got {}'.format(margin)
         if isinstance(margin, float):
-            self.margin_loss = nn.MarginRankingLoss(margin=margin)
+            self.margin_loss = nn.MarginRankingLoss(margin=margin, reduce=reduce)
         elif margin == 'soft':
-            self.margin_loss = nn.SoftMarginLoss()
+            self.margin_loss = nn.SoftMarginLoss(reduce=reduce)
         self.metric = metric
 
     def __call__(self, emb, label):

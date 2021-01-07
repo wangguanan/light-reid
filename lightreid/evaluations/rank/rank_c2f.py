@@ -12,6 +12,8 @@ from scipy.optimize import curve_fit
 from scipy import special
 from scipy.optimize import minimize_scalar
 
+from ..build import EVALUATORs_REGISTRY
+
 
 __all__ = ['CmcMapEvaluatorC2F']
 
@@ -23,6 +25,7 @@ class FileTransferFrequency(progressbar.FileTransferSpeed):
         return speed * 1000, 1
 
 
+@EVALUATORs_REGISTRY.register()
 class CmcMapEvaluatorC2F:
     '''
     Evaluate every query one-by-one, including computing distance and sort.

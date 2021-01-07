@@ -38,7 +38,7 @@ class Engine(object):
             light_search(bool): if True, use pyramid head lean multiple codes, and search with coarse2fine.
     '''
     def __init__(self, results_dir, datamanager, model, criterion, optimizer, use_gpu, data_parallel=False, sync_bn=False,
-                 eval_metric='cosine',
+                 eval_metric='cosine', evaluator=None,
                  light_model=False, light_feat=False, light_search=False, **kwargs):
 
         # base settings
@@ -50,6 +50,7 @@ class Engine(object):
         self.optimizer = optimizer
         self.device = torch.device('cuda') if use_gpu else torch.device('cpu')
         self.eval_metric = eval_metric
+        self.evaluator = evaluator
 
         self.loss_meter = MultiItemAverageMeter()
         os.makedirs(self.results_dir, exist_ok=True)
@@ -203,7 +204,7 @@ class Engine(object):
             # save model
             self.save_model(curr_epoch)
             # evaluate final model
-            if eval_freq >0 and curr_epoch%eval_freq==0 and curr_epoch>0:
+            if eval_freq >0 and curr_epoch%eval_freq==0:
                 self.eval(onebyone=False)
             # train
             results = self.train_an_epoch(curr_epoch)
@@ -253,6 +254,7 @@ class Engine(object):
         return self.loss_meter.get_str()
 
 
+
     def eval(self, onebyone=False, return_pr=False, return_vislist=False):
         '''
         Args:
@@ -262,6 +264,7 @@ class Engine(object):
         metric = self.eval_metric
         self.set_eval()
 
+        res = {}
         table = PrettyTable(['dataset', 'map', 'rank-1', 'rank-5', 'rank-10'])
         for dataset_name, (query_loader, gallery_loader) in self.datamanager.query_gallery_loader_dict.items():
 
@@ -272,19 +275,11 @@ class Engine(object):
             self.logging('[Feature Extraction] feature extraction time per batch (64) is {}s'.format(time_meter.get_val()))
 
             # compute mAP and rank@k
-            if isinstance(query_feats, np.ndarray): #
-                if not onebyone: # eval all query images one shot
-                    mAP, CMC = CmcMapEvaluator(metric=metric, mode='inter-camera').evaluate(
+            # print(query_feats.shape, gallery_feats.shape)
+            # print(query_feats.sum(axis=0)[:10], query_feats.sum(axis=0)[-10:])
+            mAP, CMC = self.evaluator.evaluate(
                         query_feats, query_camids, query_pids,
                         gallery_feats, gallery_camids, gallery_pids)
-                else: # eval query images one by one
-                    mAP, CMC, ranktime, evaltime = CmcMapEvaluator1b1(metric=metric, mode='inter-camera').compute(
-                        query_feats, query_camids, query_pids,
-                        gallery_feats, gallery_camids, gallery_pids, return_time=True)
-            elif isinstance(query_feats, list): # eval with coarse2fine
-                    mAP, CMC, ranktime, evaltime = CmcMapEvaluatorC2F(metric=metric, mode='inter-camera').compute(
-                        query_feats, query_camids, query_pids,
-                        gallery_feats, gallery_camids, gallery_pids, return_time=True)
 
             # compute precision-recall curve
             if return_pr:
@@ -296,12 +291,15 @@ class Engine(object):
 
             # logging
             table.add_row([dataset_name, str(mAP), str(CMC[0]), str(CMC[4]), str(CMC[9])])
-            self.logging(mAP, CMC[:150])
-            try:
-                self.logging('average ranking time: {}ms; average evaluation time: {}ms'.format(ranktime*1000, evaltime*1000))
-            except:
-                pass
+            # self.logging(mAP, CMC[:150])
+            # try:
+            #     self.logging('average ranking time: {}ms; average evaluation time: {}ms'.format(ranktime*1000, evaltime*1000))
+            # except:
+            #     pass
+            res[dataset_name] = {'map': mAP, 'cmc': CMC}
+
         self.logging(table)
+        return res
 
 
     def smart_eval(self, onebyone=False, return_pr=False, return_vislist=False, mode='normal'):
@@ -345,20 +343,24 @@ class Engine(object):
                 gallery_pids = features['gallery_pids']
                 gallery_camids = features['gallery_camids']
 
+                # # compute mAP and rank@k
+                # if isinstance(query_feats, np.ndarray):  #
+                #     if not onebyone:  # eval all query images one shot
+                #         mAP, CMC = CmcMapEvaluator(metric=metric, mode='inter-camera').evaluate(
+                #             query_feats, query_camids, query_pids,
+                #             gallery_feats, gallery_camids, gallery_pids)
+                #     else:  # eval query images one by one
+                #         mAP, CMC, ranktime, evaltime = CmcMapEvaluator1b1(metric=metric, mode='inter-camera').compute(
+                #             query_feats, query_camids, query_pids,
+                #             gallery_feats, gallery_camids, gallery_pids, return_time=True)
+                # elif isinstance(query_feats, list):  # eval with coarse2fine
+                #     mAP, CMC, ranktime, evaltime = CmcMapEvaluatorC2F(metric=metric, mode='inter-camera').compute(
+                #         query_feats, query_camids, query_pids,
+                #         gallery_feats, gallery_camids, gallery_pids, return_time=True)
                 # compute mAP and rank@k
-                if isinstance(query_feats, np.ndarray):  #
-                    if not onebyone:  # eval all query images one shot
-                        mAP, CMC = CmcMapEvaluator(metric=metric, mode='inter-camera').evaluate(
-                            query_feats, query_camids, query_pids,
-                            gallery_feats, gallery_camids, gallery_pids)
-                    else:  # eval query images one by one
-                        mAP, CMC, ranktime, evaltime = CmcMapEvaluator1b1(metric=metric, mode='inter-camera').compute(
-                            query_feats, query_camids, query_pids,
-                            gallery_feats, gallery_camids, gallery_pids, return_time=True)
-                elif isinstance(query_feats, list):  # eval with coarse2fine
-                    mAP, CMC, ranktime, evaltime = CmcMapEvaluatorC2F(metric=metric, mode='inter-camera').compute(
-                        query_feats, query_camids, query_pids,
-                        gallery_feats, gallery_camids, gallery_pids, return_time=True)
+                mAP, CMC = self.evaluator.evaluate(
+                    query_feats, query_camids, query_pids,
+                    gallery_feats, gallery_camids, gallery_pids)
 
                 # compute precision-recall curve
                 if return_pr:
@@ -370,11 +372,11 @@ class Engine(object):
 
                 table.add_row([dataset_name, str(mAP), str(CMC[0]), str(CMC[4]), str(CMC[9])])
                 self.logging(mAP, CMC[:150])
-                try:
-                    self.logging(
-                        'average ranking time: {} ms; average evaluation time: {} ms'.format(ranktime * 1000, evaltime * 1000))
-                except:
-                    pass
+                # try:
+                #     self.logging(
+                #         'average ranking time: {} ms; average evaluation time: {} ms'.format(ranktime * 1000, evaltime * 1000))
+                # except:
+                #     pass
             self.logging(table)
             return mAP, CMC[:150]
 

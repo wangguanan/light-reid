@@ -28,7 +28,8 @@ class ReIDSamples:
         if combineall:
             print('[{} Combine All] combine train, query and gallery and training set ... ...'.format(self.__class__.__name__))
             train += copy.deepcopy(query) + copy.deepcopy(gallery)
-        train = self.relabel(train)
+        if train is not None:
+            train = self.relabel(train)
         self.train, self.query, self.gallery = train, query, gallery
 
         # show information
@@ -60,28 +61,6 @@ class ReIDSamples:
                                str(imgs_per_id), str(imgs_per_cam), str(imgs_per_idcam)])
         print(table)
 
-
-    # def statistics(self, train, query, gallery, name=None, combineall=False):
-    #
-    #     '''show samples statistics'''
-    #
-    #     def analyze(samples):
-    #         pid_num = len(set([sample[1] for sample in samples]))
-    #         cid_num = len(set([sample[2] for sample in samples]))
-    #         sample_num = len(samples)
-    #         return sample_num, pid_num, cid_num
-    #
-    #     train_info = analyze(train)
-    #     query_info = analyze(query)
-    #     gallery_info = analyze(gallery)
-    #
-    #     # please kindly install prettytable: ```pip install prettyrable```
-    #     table = PrettyTable([self.__class__.__name__ if name is None else name, 'images', 'identities', 'cameras'])
-    #     train_str = 'train(combineall)' if combineall else 'train'
-    #     table.add_row([train_str, str(train_info[0]), str(train_info[1]), str(train_info[2])])
-    #     table.add_row(['query', str(query_info[0]), str(query_info[1]), str(query_info[2])])
-    #     table.add_row(['gallery', str(gallery_info[0]), str(gallery_info[1]), str(gallery_info[2])])
-    #     print(table)
 
     def os_walk(self, folder_dir):
         for root, dirs, files in os.walk(folder_dir):

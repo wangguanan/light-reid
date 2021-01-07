@@ -8,6 +8,9 @@ import os
 from sklearn import metrics as sk_metrics
 import matplotlib.pyplot as plt
 
+from ..build import EVALUATORs_REGISTRY
+
+__all__ = ['CmcMapEvaluator']
 
 class BaseEvaluator:
 
@@ -32,12 +35,17 @@ class BaseEvaluator:
         # return sk_metrics.pairwise_distances(x, y, metric=scipy_dist.hamming)
 
 
+@EVALUATORs_REGISTRY.register()
 class CmcMapEvaluator(BaseEvaluator):
     '''
+    Compute Rank@k and mean Average Precision (mAP) scores for ReID task.
     Evaluate all query at one time.
     This is very fast due the parallel matrix computation of numpy. (computing distance and sort)
     But it takes much more memory.
-    Compute Rank@k and mean Average Precision (mAP) scores for ReID task
+    Args:
+        metric(str): could be cosine, euclidean and hamming
+        mode(str): could be inter-camera, intra-camera and all
+            inter-camera
     '''
 
     def __init__(self, metric, mode):
@@ -45,7 +53,7 @@ class CmcMapEvaluator(BaseEvaluator):
         assert mode in ['inter-camera', 'intra-camera', 'all']
         self.mode = mode
         self.metric = metric
-
+        print(self.metric, self.mode)
 
     def evaluate(self, query_features, query_camids, query_pids, gallery_features, gallery_camids, gallery_pids):
         '''
@@ -107,8 +115,7 @@ class CmcMapEvaluator(BaseEvaluator):
             junk_index = np.argwhere(gallery_pids == -1)
             index_wo_junk = self.notin1d(a_rank, junk_index)
             good_index = np.argwhere(query_pid == gallery_pids)
-            # self_junk = a_rank[0] if a_rank[0] == 1 or a_rank[0] == 0 else []# remove self
-            self_junk = a_rank[0]
+            self_junk = a_rank[0] if a_rank[0] == 1 or a_rank[0] == 0 else [] # remove self if euclidean distance == 0 or cosine similarity == 1
             index_wo_junk = np.delete(index_wo_junk, np.where(self_junk == index_wo_junk))
             good_index = np.delete(good_index, np.where(self_junk == good_index))
 
@@ -140,6 +147,7 @@ class CmcMapEvaluator(BaseEvaluator):
         return self.in1d(array1, array2, invert=True)
 
 
+@EVALUATORs_REGISTRY.register()
 class PreRecEvaluator(BaseEvaluator):
     '''
     Compute Precision and Recall for Re-ID task

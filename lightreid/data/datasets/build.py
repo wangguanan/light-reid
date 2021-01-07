@@ -16,9 +16,8 @@ from os.path import realpath, dirname, join
 
 
 __all__ = [
-    'Market1501', 'DukeMTMCreID', 'MSMT17', 'CUHK03', 'WildTrackCrop', 'RAP',
-    'NJUST365', 'NJUST365WIN', 'NJUST365SPR', 'AirportAlert', 'PRID'
     'build_train_dataset', 'build_test_dataset']
+
 
 __datasets_factory = {
     'market1501': Market1501,
@@ -39,7 +38,7 @@ __datasets_factory = {
 
 
 # init dataset paths
-with open(join(dirname(__file__), 'datasetpaths.yml')) as file:
+with open(join(dirname(__file__), 'datasetpaths.yaml')) as file:
     __datasets_config = yaml.load(file, Loader=yaml.FullLoader)
 
 

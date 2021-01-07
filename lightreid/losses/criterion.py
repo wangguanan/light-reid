@@ -29,12 +29,12 @@ class Criterion(object):
         for value in self.criterion_list:
             weight = value['weight']
             criterion = value['criterion']
-            inputs = value['inputs']
-            if isinstance(inputs, str):
-                loss = weight * criterion(kwargs[inputs])
-            elif isinstance(inputs, dict):
+            inputs_name = value['inputs']
+            if isinstance(inputs_name, str): # (x)
+                loss = weight * criterion(kwargs[inputs_name])
+            elif isinstance(inputs_name, dict): # (x, y)
                 inputs_tmp = {}
-                for key, val in inputs.items():
+                for key, val in inputs_name.items():
                     inputs_tmp[key] = kwargs[val]
                 loss = weight * criterion(**inputs_tmp)
             else:
@@ -44,7 +44,8 @@ class Criterion(object):
             name = criterion.__class__.__name__ if 'display_name' not in value.keys() else value['display_name']
             loss_dict[name] = loss.data
             del loss
-            value, weight, criterion, inputs = None, None, None, None
+            value, weight, criterion, inputs_name = None, None, None, None
 
         return overall_loss, loss_dict
+
 

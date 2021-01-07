@@ -9,6 +9,7 @@ import copy
 
 from .build import ARCHs_REGISTRY
 
+__all__ = ['BaseReIDModel']
 
 @ARCHs_REGISTRY.register()
 class BaseReIDModel(nn.Module):

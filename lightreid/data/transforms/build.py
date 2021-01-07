@@ -2,6 +2,7 @@ from .random_erasing import RandomErasing
 from .pad_crop import padcrop
 from .autoaug import ImageNetPolicy
 from .augmix import AugMix
+from .half_crop import HalfCrop
 import torchvision.transforms as transforms
 
 
@@ -10,7 +11,8 @@ __transforms_factory_before = {
     'randomflip': transforms.RandomHorizontalFlip(p=0.5),
     'padcrop': padcrop,
     'colorjitor': transforms.ColorJitter(brightness=0.25, contrast=0.15, saturation=0.25, hue=0),
-    'augmix': AugMix(prob=0.5)
+    'augmix': AugMix(prob=0.5),
+    'halfcrop': HalfCrop(prob=0.5, keep_range=[0.5, 1.5])
 }
 
 __transforms_factory_after = {

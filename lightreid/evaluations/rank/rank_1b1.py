@@ -6,8 +6,8 @@ from sklearn import metrics as sk_metrics
 import time
 
 from lightreid.utils.meters import AverageMeter
+from ..build import EVALUATORs_REGISTRY
 
-import multiprocessing
 
 __all__ = ['CmcMapEvaluator1b1']
 
@@ -25,6 +25,8 @@ def func(x, sub_y, start_idx, suby_len):
         result[idx] = (hamming_distance(x, yi), start_idx+idx)
     return result
 
+
+@EVALUATORs_REGISTRY.register()
 class CmcMapEvaluator1b1:
     '''
     Evaluate every query one-by-one.
