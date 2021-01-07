@@ -9,7 +9,7 @@ Our CVPR2020 work [HONet](http://openaccess.thecvf.com/content_CVPR_2020/html/Wa
 please refer its [github](https://github.com/wangguanan/HOReID) for more details.
 
 
-## What is Occluded/Partial Re-ID
+### What is Occluded/Partial Re-ID
 
 Different from common Re-ID which assume query and gallery images are holistic (e.g. head, body, legs are visible),
 occluded/partial Re-ID is more general which accepts partial/occluded images (only partial region is visible and the others are invisible due to outlier our occlusion) as queries.
@@ -17,16 +17,18 @@ occluded/partial Re-ID is more general which accepts partial/occluded images (on
 ![](./images/background.png)
 
 
-## Preparation
+### Preparation
 
 * Please download 
 Market-1501, Occluded-ReID, Partial-ReID, Partial-iLIDs.
-Links can be found [here](../reid_datasets.md).
+Links can be found [here](../../reid_datasets.md).
 
-* Pre-trained Pose Model [pose_hrnet_w48_256x192.pth](https://drive.google.com/drive/folders/1hOTihvbyIxsm5ygDpbUuJ7O_tzv4oXjC) and  set yaml parameter ```model.head.pose_model_path``` to be your path.
+* Please downloaed
+the trained pose model [pose_hrnet_w48_256x192.pth](https://drive.google.com/drive/folders/1hOTihvbyIxsm5ygDpbUuJ7O_tzv4oXjC) 
+and set [yaml files](./configs) ```model.head.pose_model_path``` to be your own path.
 
 
-## run
+### run
 
 ```
 # train
@@ -39,7 +41,7 @@ python infer.py --config_file ./config_occludedreid.yaml --model_path /path/to/m
 ```
 
 
-## Experimental Results and Trained Models
+### Experimental Results and Trained Models
 
 Settings (on a MacBook Pro (Retina, 13-inch, Mid 2014))
 - GPU: TITAN XP (memory 12194MB)
