@@ -1,0 +1,85 @@
+env:
+  results_dir: './results/occludedreid_resnet50/'
+  use_gpu: True
+  data_parallel: False
+  sync_bn: False
+
+lightreid:
+  light_model: False
+  light_feat: False
+  light_search: False
+
+data:
+  sources: ['market1501']
+  targets: ['occludedreid', 'partialreid', 'partialilids']
+  img_size: [256, 128] # height, width
+  transforms_train: ['halfcrop', 'randomflip', 'padcrop', 'rea', 'colorjitor']
+  transforms_test: []
+  mean: [0.485, 0.456, 0.406]
+  std: [0.229, 0.2214, 0.225]
+  sampler: 'pk'
+  p: 16
+  k: 6
+
+model:
+  name: 'SkeletonReIDModel'
+  backbone:
+    name: 'resnet50'
+    last_stride_one: True
+    pretrained: True
+  pooling:
+    name: 'avgpool'
+  head:
+    name: 'SkeletonMultiHeads'
+    weight_global: 16.0
+    pose_model_path: '/data/projects/20190531_Partial-ReID-Skeleton-Feature-Alignment-ReID/datasets/coco/pose_hrnet_w48_256x192.pth'
+    test_mode: 'sum'
+    classifier:
+      name: 'linear'
+
+criterion:
+  loss1:
+    display_name: 'classification_loss'
+    criterion:
+      name: 'SkeletonIDELoss'
+      weight_global: 16.0
+    inputs:
+      logits_list: 'logits_list'
+      pids: 'pids'
+      weights: 'confidences'
+    weight: 1.0
+  loss2:
+    display_name: 'triplet_loss'
+    criterion:
+      name: 'SkeletonGlobalTripletLoss'
+      margin: 0.3
+      metric: 'euclidean'
+    inputs:
+      feat_list: 'feats_list'
+      label: 'pids'
+      weights: 'confidences'
+    weight: 1.0
+  loss3:
+    display_name: 'constraint_loss'
+    criterion:
+      name: 'SkeletonConstraintLoss'
+      symmetrics: [[1,2],[3,4],[5,6],[7,8],[9,10],[11,12]]
+      weight_global: 16.0
+    inputs:
+      feat_list: 'feats_list'
+      weights: 'confidences'
+    weight: 2
+
+optim:
+  optimizer:
+    name: 'adam'
+    lr: 3.5e-4
+    weight_decay: 5.0e-4
+  lr_scheduler:
+    name: 'warmup_multistep'
+    milestones: [40, 90]
+    gamma: 0.1
+    warmup_factor: 0.01
+    warmup_epochs: 10
+  max_epochs: 120
+
