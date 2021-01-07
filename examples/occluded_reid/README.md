@@ -15,33 +15,22 @@ Different from common Re-ID which assume query and gallery images are holistic (
 occluded/partial Re-ID is more general which accepts partial/occluded images (only partial region is visible and the others are invisible due to outlier our occlusion) as queries.
 
 ![](./images/background.png)
-![](./images/challenges.png)
-
-## How to Deal with Occluded/Partial Re-ID
-
-## Experimental Settings
-
-Following [???], 
-we train the proposed pipeline on Market-1501 dataset and 
-test on three occluded/partial datasets, including 
-Occluded-ReID, Partial-iLIDS, Partial-ReID.
 
 
+## Preparation
 
-
-
-## Prepare Datasets
-
-Please download 
+* Please download 
 Market-1501, Occluded-ReID, Partial-ReID, Partial-iLIDs.
 Links can be found [here](../reid_datasets.md).
+
+* Pre-trained Pose Model [pose_hrnet_w48_256x192.pth](https://drive.google.com/drive/folders/1hOTihvbyIxsm5ygDpbUuJ7O_tzv4oXjC) and  set yaml parameter ```model.head.pose_model_path``` to be your path.
 
 
 ## run
 
 ```
 # train
-python train.py --config_file ./config_occludedreid.yaml.yaml
+python train.py --config_file ./config_occludedreid.yaml
 ``` 
 
 ```
@@ -58,4 +47,13 @@ Settings (on a MacBook Pro (Retina, 13-inch, Mid 2014))
 - Memory: 8 GB 1600 MHz DDR3
 
 
-<table><thead><tr><th>Methods</th><th>Backbone</th><th>Conf.</th><th>Occluded-ReID</th><th>Partial-ReID</th><th>Partial-iLIDs</th><th>Github/Model</th></tr></thead><tbody><tr><td>OONet(Ours)</td><td>ResNet50</td><td>-</td><td>72.1(64.0)</td><td>86.3(90.0)</td><td>70.6(82.0)</td><td>[model]()</td></tr><tr><td>OONet(Ours)</td><td>ResNet50-ibna</td><td>-</td><td>78.7(70.9)</td><td>85.0(90.1)</td><td>73.9(83.0)</td><td>[model]()</td></tr><tr><td>[HONet](https://openaccess.thecvf.com/content_CVPR_2020/papers/Wang_High-Order_Information_Matters_Learning_Relation_and_Topology_for_Occluded_Person_CVPR_2020_paper.pdf)</td><td>ResNet50</td><td>CVPR2020</td><td>80.3(70.2)</td><td>85.3(91.0)</td><td>72.6(86.4)</td><td>[github](https://github.com/wangguanan/HOReID)</td></tr><tr><td>[TCSDO](https://arxiv.org/abs/1907.03253)</td><td>ResNet50</td><td>ArXiv2019</td><td>73.7(67.9)</td><td>82.7(-)</td><td>-</td><td>-</td></tr><tr><td>[FPR](https://arxiv.org/abs/1904.04975)</td><td>ResNet50</td><td>CVPR2019</td><td>78.3(68.0)</td><td>81.0(-)</td><td>68.1(-)</td><td>-</td></tr><tr><td>[PGFA](https://yu-wu.net/pdf/ICCV2019_Occluded-reID.pdf)</td><td>ResNet50</td><td>ICCV2019</td><td>-</td><td>68.0(80.0)</td><td>69.1(80.9)</td><td>-</td></tr><tr><td>[VPM](https://openaccess.thecvf.com/content_CVPR_2019/papers/Sun_Perceive_Where_to_Focus_Learning_Visibility-Aware_Part-Level_Features_for_Partial_CVPR_2019_paper.pdf)</td><td>ResNet50</td><td>ICCV2019</td><td>-</td><td>67.7(81.9)</td><td>65.5(74.8)</td><td>-</td></tr><tr><td>[DSR](https://arxiv.org/abs/1801.00881)</td><td>ResNet50</td><td>CVPR2018</td><td>72.8(62.8)</td><td>50.7(70.0)</td><td>58.8(67.2)</td><td>[github](https://github.com/JDAI-CV/fast-reid/tree/master/projects/PartialReID)</td></tr></tbody></table>
+| Methods                                                                                                                                                                    | Backbone      | Conf.     | Occluded-ReID | Partial-ReID | Partial-iLIDs | Github/Model                                                                    |
+|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------|-----------|---------------|--------------|---------------|---------------------------------------------------------------------------------|
+| OONet(Ours)                                                                                                                                                                | ResNet50      | -         | 72.1(64.0)    | 86.3(90.0)   | 70.6(82.0)    | [model]()                                                                       |
+| OONet(Ours)                                                                                                                                                                | ResNet50-ibna | -         | 78.7(70.9)    | 85.0(90.1)   | 73.9(83.0)    | [model]()                                                                       |
+| [HONet](https://openaccess.thecvf.com/content_CVPR_2020/papers/Wang_High-Order_Information_Matters_Learning_Relation_and_Topology_for_Occluded_Person_CVPR_2020_paper.pdf) | ResNet50      | CVPR2020  | 80.3(70.2)    | 85.3(91.0)   | 72.6(86.4)    | [github](https://github.com/wangguanan/HOReID)                                  |
+| [TCSDO](https://arxiv.org/abs/1907.03253)                                                                                                                                  | ResNet50      | ArXiv2019 | 73.7(67.9)    | 82.7(-)      | -             | -                                                                               |
+| [FPR](https://arxiv.org/abs/1904.04975)                                                                                                                                    | ResNet50      | CVPR2019  | 78.3(68.0)    | 81.0(-)      | 68.1(-)       | -                                                                               |
+| [PGFA](https://yu-wu.net/pdf/ICCV2019_Occluded-reID.pdf)                                                                                                                   | ResNet50      | ICCV2019  | -             | 68.0(80.0)   | 69.1(80.9)    | -                                                                               |
+| [VPM](https://openaccess.thecvf.com/content_CVPR_2019/papers/Sun_Perceive_Where_to_Focus_Learning_Visibility-Aware_Part-Level_Features_for_Partial_CVPR_2019_paper.pdf)    | ResNet50      | ICCV2019  | -             | 67.7(81.9)   | 65.5(74.8)    | -                                                                               |
+| [DSR](https://arxiv.org/abs/1801.00881)                                                                                                                                    | ResNet50      | CVPR2018  | 72.8(62.8)    | 50.7(70.0)   | 58.8(67.2)    | [github](https://github.com/JDAI-CV/fast-reid/tree/master/projects/PartialReID) |
