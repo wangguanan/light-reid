@@ -11,6 +11,7 @@ it features
 
 
 ## What's New
+- [2020.12]: we release a strong pipeline for occluded/partial re-id. please refer [occluded_reid](./example/occluded_reid)
 - [2020.11]: we support pca_reduction to 128d with almost no accuracy drop. please refer [bagtricks_pca](./examples/bagtricks_pca)
 - [2020.11]: we support build with config files, making coding more simple. please refer [bagtricks_buildwithconfigs](./examples/bagtricks_buildwithconfigs)
 - [2020.08]: We release a toolbox of light-reid learning for faster inference, getting >30x faster speed.
