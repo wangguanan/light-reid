@@ -14,7 +14,7 @@ please refer its [github](https://github.com/wangguanan/HOReID) for more details
 Different from common Re-ID which assume query and gallery images are holistic (e.g. head, body, legs are visible),
 occluded/partial Re-ID is more general which accepts partial/occluded images (only partial region is visible and the others are invisible due to outlier our occlusion) as queries.
 
-![](./images/background.png)
+![](./images/background.jpg)
 
 
 ### Preparation
