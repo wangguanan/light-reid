@@ -58,9 +58,9 @@ conda install faiss-cpu -c pytorch
 ## Implemented reid methods and experimental results
 
 - [x] [bagtricks_buildwithconfigs](./examples/bagtricks_buildwithconfigs): easily implement a strong reid baseline
-- [x] [bagtricks_pca][./examples/bagtricks_pca]: reduce feature with PCA, get short feature meanwhile keep strong accuracy
-- [x] [occluded_reid][./examples/occluded_reid]: a simple reid baseline for occluded reid, achieving comparable even better accuracy with existing methods
-- [x] [generalizable_reid][./examples/model_zoo]: a reid model perform well on multiple datasets
+- [x] [bagtricks_pca](./examples/bagtricks_pca]): reduce feature dimension with PCA
+- [x] [occluded_reid](./examples/occluded_reid): a simple&strong reid baseline for occluded reid
+- [x] [generalizable_reid]()./examples/model_zoo): a reid model performs well on multiple datasets
 
 ## Acknowledge
 
