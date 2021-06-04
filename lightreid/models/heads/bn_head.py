@@ -48,12 +48,6 @@ class BNHead(nn.Module):
         classifier['in_dim'] = in_dim if middle_dim is None else middle_dim
         classifier['out_dim'] = class_num
         self.classifier = build_classifier(**classifier)
-        # # classifier for class prediction
-        # if classifier is None:
-        #     tmp_tim = self.in_dim if middle_dim is None else middle_dim
-        #     self.classifier = nn.Linear(tmp_tim, self.class_num, bias=False)
-        # else:
-        #     self.classifier = classifier
 
         # initialize weights
         self.bn.apply(weights_init_kaiming)
@@ -113,10 +107,8 @@ class BNHead(nn.Module):
 
     def enable_hash(self):
         device = torch.device('cuda') if self.is_hash.is_cuda else torch.device('cpu')
-        # self.is_hash.data = torch.tensor(1).to(torch.bool).to(device).data
         self.is_hash.data = torch.tensor(1).to(device).data
 
     def disable_hash(self):
         device = torch.device('cuda') if self.is_hash.is_cuda else torch.device('cpu')
-        # self.is_hash.data = torch.tensor(0).to(torch.bool).to(device).data
         self.is_hash.data = torch.tensor(0).to(torch.bool).to(device).data
