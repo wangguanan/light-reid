@@ -26,6 +26,25 @@ it features
 * [2019.10]: **[ICCV'19]** Our work about RGB-Infrared(IR) ReID has been accepted by ICCV'19. ([Paper](http://openaccess.thecvf.com/content_ICCV_2019/papers/Wang_RGB-Infrared_Cross-Modality_Person_Re-Identification_via_Joint_Pixel_and_Feature_Alignment_ICCV_2019_paper.pdf), [Code](https://github.com/wangguanan/AlignGAN)).
 * [2019.05]: We implement PCB and achieve better performance than the offical one. ([Code](https://github.com/wangguanan/Pytorch-Person-ReID-Baseline-PCB-Beyond-Part-Models))
 
+## Citation
+if you find the repo is useful, please kindly cite our works
+```
+@article{wang2020faster,
+ title="Faster Person Re-Identification.",
+ author="Guan'an {Wang} and Shaogang {Gong} and Jian {Cheng} and Zengguang {Hou}",
+ journal="In Proceedings of the European Conference on Computer Vision (ECCV)",
+ year="2020"
+}
+
+@article{wang2020honet,
+ title="High-Order Information Matters: Learning Relation and Topology for Occluded Person Re-Identification.",
+ author="Guan'an {Wang} and Shuo {Yang} and Huanyu {Liu} and Zhicheng {Wang} and Yang {Yang} and Shuliang {Wang} and Gang {Yu} and Erjin {Zhou} and Jian {Sun}",
+ journal="In Proceedings of the 2020 IEEE Conference on Computer Vision and Pattern Recognition (CVPR)",
+ year="2020"
+}
+```
+
+
 
 ## Installation
 ```shell script
