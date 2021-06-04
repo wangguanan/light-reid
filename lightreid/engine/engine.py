@@ -7,9 +7,11 @@ import numpy as np
 import os
 from os.path import join, realpath, dirname
 import time
+
 import torch
 import torch.nn as nn
-import apex
+# import apex
+
 from prettytable import PrettyTable
 
 from lightreid.evaluations import PreRecEvaluator, CmcMapEvaluator, CmcMapEvaluator1b1, CmcMapEvaluatorC2F, accuracy
@@ -103,7 +105,7 @@ class Engine(object):
         # learn binary codes NOT real-value features
         # evaluate with hamming metric, NOT cosine NEITHER euclidean metrics
         if self.light_feat:
-            self.model.enable_tanh()
+            self.model.enable_hash()
             self.eval_metric = 'hamming'
             self.logging('[light_feat was enabled] model learn binary codes, and is evluated with hamming distance')
             self.logging('[light_feat was enabled] update eval_metric from {} to hamming by setting self.eval_metric=hamming'.format(eval_metric))
@@ -543,67 +545,67 @@ class CleanEngine(Engine):
                 # self.model = nn.parallel.DistributedDataParallel(self.model)
 
 
-class SyncBNEngine(Engine):
+# class SyncBNEngine(Engine):
 
-    def __init__(self, results_dir, datamanager, model, criterion, optimizer, use_gpu, data_parallel=False, sync_bn=False,
-                 eval_metric='cosine',
-                 light_model=False, light_feat=False, light_search=False, **kwargs):
-        super(SyncBNEngine, self).__init__(
-            results_dir, datamanager, model, criterion, optimizer, use_gpu, data_parallel, sync_bn,
-            eval_metric,
-            light_model, light_feat, light_search, **kwargs
-        )
-        self.sync_bn = sync_bn
-        assert 'local_rank' in kwargs.keys()
-        self.local_rank = kwargs['local_rank']
-        if self.sync_bn:
-            # init env
-            torch.distributed.init_process_group(backend='nccl')
-            torch.cuda.set_device(self.local_rank)
-            # sync bn
-            # self.model = apex.parallel.convert_syncbn_model(self.model)
-            self.model, self.optimizer.optimizer = apex.amp.initialize(self.model, self.optimizer.optimizer)
-            self.model = apex.parallel.DistributedDataParallel(self.model)
-            torch.backends.cudnn.benchmark = True
+#     def __init__(self, results_dir, datamanager, model, criterion, optimizer, use_gpu, data_parallel=False, sync_bn=False,
+#                  eval_metric='cosine',
+#                  light_model=False, light_feat=False, light_search=False, **kwargs):
+#         super(SyncBNEngine, self).__init__(
+#             results_dir, datamanager, model, criterion, optimizer, use_gpu, data_parallel, sync_bn,
+#             eval_metric,
+#             light_model, light_feat, light_search, **kwargs
+#         )
+#         self.sync_bn = sync_bn
+#         assert 'local_rank' in kwargs.keys()
+#         self.local_rank = kwargs['local_rank']
+#         if self.sync_bn:
+#             # init env
+#             torch.distributed.init_process_group(backend='nccl')
+#             torch.cuda.set_device(self.local_rank)
+#             # sync bn
+#             # self.model = apex.parallel.convert_syncbn_model(self.model)
+#             self.model, self.optimizer.optimizer = apex.amp.initialize(self.model, self.optimizer.optimizer)
+#             self.model = apex.parallel.DistributedDataParallel(self.model)
+#             torch.backends.cudnn.benchmark = True
 
-    def train_an_epoch(self, epoch):
+#     def train_an_epoch(self, epoch):
 
-        self.set_train()
-        self.loss_meter.reset()
+#         self.set_train()
+#         self.loss_meter.reset()
 
-        for idx, batch in enumerate(self.datamanager.train_loader):
-            # load batch data
-            imgs, pids, camids = batch
-            imgs, pids, camids = imgs.to(self.device), pids.to(self.device), camids.to(self.device)
-            # forward
-            fix_cnn = epoch < self.optimizer.fix_cnn_epochs if hasattr(self, 'fix_cnn_epochs') else False
-            res = self.model(imgs, pids, fixcnn=fix_cnn)
-            acc = accuracy(res['logits'], pids, [1])[0]
-            # teacher model
-            if self.light_model:
-                with torch.no_grad():
-                    res_t = self.model_t(imgs, pids)
-                    res_t_new = {}
-                    for key, val in res_t.items():
-                        res_t_new[key+'_t'] = val
-                loss, loss_dict = self.criterion.compute(pids=pids, **res, **res_t_new)
-            else:
-                loss, loss_dict = self.criterion.compute(pids=pids, **res)
-            loss_dict['Accuracy'] = acc
-            # optimize
-            self.optimizer.optimizer.zero_grad()
-            if self.sync_bn: # sync bn
-                with apex.amp.scale_loss(loss, self.optimizer.optimizer) as scaled_loss:
-                    scaled_loss.backward()
-            else:
-                loss.backward()
-            self.optimizer.optimizer.step()
-            # update learning rate
-            self.optimizer.lr_scheduler.step(epoch)
-            # record
-            self.loss_meter.update(loss_dict)
+#         for idx, batch in enumerate(self.datamanager.train_loader):
+#             # load batch data
+#             imgs, pids, camids = batch
+#             imgs, pids, camids = imgs.to(self.device), pids.to(self.device), camids.to(self.device)
+#             # forward
+#             fix_cnn = epoch < self.optimizer.fix_cnn_epochs if hasattr(self, 'fix_cnn_epochs') else False
+#             res = self.model(imgs, pids, fixcnn=fix_cnn)
+#             acc = accuracy(res['logits'], pids, [1])[0]
+#             # teacher model
+#             if self.light_model:
+#                 with torch.no_grad():
+#                     res_t = self.model_t(imgs, pids)
+#                     res_t_new = {}
+#                     for key, val in res_t.items():
+#                         res_t_new[key+'_t'] = val
+#                 loss, loss_dict = self.criterion.compute(pids=pids, **res, **res_t_new)
+#             else:
+#                 loss, loss_dict = self.criterion.compute(pids=pids, **res)
+#             loss_dict['Accuracy'] = acc
+#             # optimize
+#             self.optimizer.optimizer.zero_grad()
+#             if self.sync_bn: # sync bn
+#                 with apex.amp.scale_loss(loss, self.optimizer.optimizer) as scaled_loss:
+#                     scaled_loss.backward()
+#             else:
+#                 loss.backward()
+#             self.optimizer.optimizer.step()
+#             # update learning rate
+#             self.optimizer.lr_scheduler.step(epoch)
+#             # record
+#             self.loss_meter.update(loss_dict)
 
-        # learning rate
-        self.loss_meter.update({'LR': self.optimizer.optimizer.param_groups[0]['lr']})
+#         # learning rate
+#         self.loss_meter.update({'LR': self.optimizer.optimizer.param_groups[0]['lr']})
 
-        return self.loss_meter.get_str()
+#         return self.loss_meter.get_str()
