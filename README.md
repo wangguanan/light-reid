@@ -46,20 +46,21 @@ conda install pytorch==1.4.0 torchvision -c pytorch
 conda install faiss-cpu -c pytorch
 ```
 
+## Prepare Datasets
+
+- download datasets that you need, [reid_datasets.md](./reid_datasets.md) lists various of datasets and their links.
+- update datasets path at [./lightreid/data/datasets/datasetpaths.yaml](./lightreid/data/datasets/datasetpaths.yaml)
 
 ## Quick Start 
-[5 steps](./examples/bagtricks/main.py) to implement a SOTA reid model 
-
 [1 step](./examples/bagtricks_buildwithconfigs) to build a SOTA reid model with configs
 
 
 ## Implemented reid methods and experimental results
 
-- [x] [bagtricks](./examples/bagtricks), [bagtricks_buildwithconfigs](./examples/bagtricks_buildwithconfigs)
-- [x] [agw](./examples/agw)
-- [ ] sbs (constructing)
-- [ ] pcb (todo)
-- [ ] mgn (todo)
+- [x] [bagtricks_buildwithconfigs](./examples/bagtricks_buildwithconfigs): easily implement a strong reid baseline
+- [x] [bagtricks_pca][./examples/bagtricks_pca]: reduce feature with PCA, get short feature meanwhile keep strong accuracy
+- [x] [occluded_reid][./examples/occluded_reid]: a simple reid baseline for occluded reid, achieving comparable even better accuracy with existing methods
+- [x] [generalizable_reid][./examples/model_zoo]: a reid model perform well on multiple datasets
 
 ## Acknowledge
 
