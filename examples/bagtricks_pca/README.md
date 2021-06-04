@@ -1,8 +1,6 @@
-# BagTrick(build with config files)
+# BagTrick with PCA reduction
 
-implement and speedup [BagTricks](https://arxiv.org/abs/1903.07071) with light-reid
-
-build with config files, more simple
+reduce feature dimension with PCA, obtaining shorter feature meanwhile keep strong accuracy.
 
 ## run
 
