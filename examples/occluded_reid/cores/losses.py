@@ -74,7 +74,6 @@ class SkeletonConstraintLoss:
 @LOSSes_REGISTRY.register()
 class SkeletonGlobalTripletLoss:
     """
-
     """
 
     def __init__(self, margin, metric):
