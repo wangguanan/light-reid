@@ -72,8 +72,9 @@ we thank their awesome contribution to reid community.
 If you have any question about this reid toolbox, please feel free to contact me.
 E-mail: guan.wang0706@gmail.com
 
+
 ## LICENSE
-light-reid is released under the [Apache 2.0 license](./LICENSE).
+light-reid is released released under the MIT License (refer to the LICENSE file for details).
 
 
 ## Citation
