@@ -40,12 +40,12 @@ class Engine(object):
             light_search(bool): if True, use pyramid head lean multiple codes, and search with coarse2fine.
     '''
     def __init__(self, results_dir, datamanager, model, criterion, optimizer, use_gpu, data_parallel=False, sync_bn=False,
-                 eval_metric='cosine', evaluator=None,
-                 light_model=False, light_feat=False, light_search=False, **kwargs):
+                 eval_metric='cosine', evaluator=None, 
+                 light_model=False, light_feat=False, light_search=False,
+                 **kwargs):
 
         # base settings
-        self.results_dir = os.path.join(results_dir,
-            'lightmodel({})-lightfeat({})-lightsearch({})'.format(light_model, light_feat, light_search))
+        self.results_dir = results_dir
         self.datamanager = datamanager
         self.model = model
         self.criterion = criterion
@@ -68,37 +68,20 @@ class Engine(object):
         self.logging('light_search:  {}'.format(light_search))
         self.logging('****'*5 + ' light-reid settings ' + '****'*5 + '\n')
 
-        # if enable light_model, learn small model with distillation
-        # update model to a small model (res18)
-        # load teacher model from model_teacher (should be trained before)
+        # if enable light_model, learn the model with distillation
+        # load teacher model from model_teacher (should be already trained)
         # add KLLoss(distillation loss) to criterion
         if self.light_model:
             # load teacher model
-            teacher_path = os.path.join(results_dir, 'lightmodel(False)-lightfeat(False)-lightsearch(False)/final_model.pth.tar')
+            teacher_path = kwargs['teacher_path']
             assert os.path.exists(teacher_path), \
-                'lightmodel was enabled, expect {} as a teachder but file not exists'.format(teacher_path)
+                'lightmodel was enabled, expect {} as a teacher but file not exists'.format(teacher_path)
             model_t = torch.load(teacher_path, map_location=torch.device('cpu'))
-            self.model_t = model_t.to(self.device).eval() # set teacher as evaluation mode
+            self.model_t = model_t.to(self.device).train() # set teacher as evaluation mode
             self.logging('[light_model was enabled] load teacher model from {}'.format(teacher_path))
-            # modify model to a small model (ResNet18 as default here)
-            pretrained, last_stride_one = self.model.backbone.pretrained, self.model.backbone.last_stride_one
-            self.model.backbone.__init__('resnet18', pretrained, last_stride_one)
-            self.model.head.__init__(self.model.backbone.dim, self.model.head.class_num, self.model.head.classifier)
-            if self.model.head.classifier.__class__.__name__ == 'Circle':
-                self.model.head.classifier.__init__(
-                    self.model.backbone.dim, self.model.head.classifier._num_classes, self.model.head.classifier._s, self.model.head.classifier._m)
-            elif self.model.head.classifier.__class__.__name__ == 'Linear':
-                self.model.head.classifier.__init__(self.model.backbone.dim, self.model.head.classifier.out_features, self.model.head.classifier.bias)
-            else:
-                assert 0, 'classifier error'
-            self.logging('[light_model was enabled] modify model to ResNet18')
-            # update optimizer
-            optimizer_defaults = self.optimizer.optimizer.defaults
-            self.optimizer.optimizer.__init__(self.model.parameters(), **optimizer_defaults)
-            self.logging('[light_model was enabled] update optimizer parameters')
             # add KLLoss to criterion
             self.criterion.criterion_list.append(
-                {'criterion': lightreid.losses.KLLoss(t=4), 'weight': 1.0})
+                {'criterion': lightreid.losses.KLLoss(t=4), 'weight': 1.0, 'inputs': {'logits_s': 'logits_distill', 'logits_t': 'logits_distill_t'}})
             self.logging('[light_model was enabled] add KLLoss for model distillation')
 
         # if enable light_feat,
@@ -107,9 +90,8 @@ class Engine(object):
         if self.light_feat:
             self.model.enable_hash()
             self.eval_metric = 'hamming'
-            self.logging('[light_feat was enabled] model learn binary codes, and is evluated with hamming distance')
+            self.logging('[light_feat was enabled] model learn binary codes, and is evaluated with hamming distance')
             self.logging('[light_feat was enabled] update eval_metric from {} to hamming by setting self.eval_metric=hamming'.format(eval_metric))
-
 
         # if enable light_search,
         # learn binary codes of multiple length with pyramid-head
@@ -136,8 +118,10 @@ class Engine(object):
         if data_parallel:
             if not sync_bn:
                 self.model = nn.DataParallel(self.model)
-            else:
-                pass
+            if sync_bn:
+                # torch.distributed.init_process_group(backend='nccl', world_size=4, init_method='...')
+                self.model = nn.SyncBatchNorm.convert_sync_batchnorm(self.model)
+                # self.model = nn.parallel.DistributedDataParallel(self.model)
 
 
     def save_model(self, save_epoch):
@@ -277,8 +261,6 @@ class Engine(object):
             self.logging('[Feature Extraction] feature extraction time per batch (64) is {}s'.format(time_meter.get_val()))
 
             # compute mAP and rank@k
-            # print(query_feats.shape, gallery_feats.shape)
-            # print(query_feats.sum(axis=0)[:10], query_feats.sum(axis=0)[-10:])
             mAP, CMC = self.evaluator.evaluate(
                         query_feats, query_camids, query_pids,
                         gallery_feats, gallery_camids, gallery_pids)
@@ -293,11 +275,6 @@ class Engine(object):
 
             # logging
             table.add_row([dataset_name, str(mAP), str(CMC[0]), str(CMC[4]), str(CMC[9])])
-            # self.logging(mAP, CMC[:150])
-            # try:
-            #     self.logging('average ranking time: {}ms; average evaluation time: {}ms'.format(ranktime*1000, evaltime*1000))
-            # except:
-            #     pass
             res[dataset_name] = {'map': mAP, 'cmc': CMC}
 
         self.logging(table)
@@ -453,97 +430,6 @@ class Engine(object):
 
         return feats, pids, camids
 
-
-@ENGINEs_REGISTRY.register()
-class CleanEngine(Engine):
-    """
-    a more clean version of Engine
-    """
-
-    def __init__(self, results_dir, datamanager, model, criterion, optimizer, use_gpu, data_parallel=False, sync_bn=False,
-                 eval_metric='cosine', evaluator=None, 
-                 light_model=False, light_feat=False, light_search=False,
-                 **kwargs):
-
-        # base settings
-        self.results_dir = os.path.join(results_dir,
-            'lightmodel({})-lightfeat({})-lightsearch({})'.format(light_model, light_feat, light_search))
-        self.datamanager = datamanager
-        self.model = model
-        self.criterion = criterion
-        self.optimizer = optimizer
-        self.device = torch.device('cuda') if use_gpu else torch.device('cpu')
-        self.eval_metric = eval_metric
-        self.evaluator = evaluator
-
-        self.loss_meter = MultiItemAverageMeter()
-        os.makedirs(self.results_dir, exist_ok=True)
-        self.logging = Logging(os.path.join(self.results_dir, 'logging.txt'))
-
-        # optinal settings for light-reid learning
-        self.light_model = light_model
-        self.light_feat = light_feat
-        self.light_search = light_search
-        self.logging('\n' + '****'*5 + ' light-reid settings ' + '****'*5)
-        self.logging('light_model:  {}'.format(light_model))
-        self.logging('light_feat:  {}'.format(light_feat))
-        self.logging('light_search:  {}'.format(light_search))
-        self.logging('****'*5 + ' light-reid settings ' + '****'*5 + '\n')
-
-        # if enable light_model, learn the model with distillation
-        # load teacher model from model_teacher (should be already trained)
-        # add KLLoss(distillation loss) to criterion
-        if self.light_model:
-            # load teacher model
-            teacher_path = kwargs['teacher_path']
-            assert os.path.exists(teacher_path), \
-                'lightmodel was enabled, expect {} as a teacher but file not exists'.format(teacher_path)
-            model_t = torch.load(teacher_path, map_location=torch.device('cpu'))
-            self.model_t = model_t.to(self.device).train() # set teacher as evaluation mode
-            self.logging('[light_model was enabled] load teacher model from {}'.format(teacher_path))
-            # add KLLoss to criterion
-            self.criterion.criterion_list.append(
-                {'criterion': lightreid.losses.KLLoss(t=4), 'weight': 1.0, 'inputs': {'logits_s': 'logits_distill', 'logits_t': 'logits_distill_t'}})
-            self.logging('[light_model was enabled] add KLLoss for model distillation')
-
-        # if enable light_feat,
-        # learn binary codes NOT real-value features
-        # evaluate with hamming metric, NOT cosine NEITHER euclidean metrics
-        if self.light_feat:
-            self.model.enable_hash()
-            self.eval_metric = 'hamming'
-            self.logging('[light_feat was enabled] model learn binary codes, and is evaluated with hamming distance')
-            self.logging('[light_feat was enabled] update eval_metric from {} to hamming by setting self.eval_metric=hamming'.format(eval_metric))
-
-        # if enable light_search,
-        # learn binary codes of multiple length with pyramid-head
-        # and search with coarse2fine strategy
-        if self.light_search:
-            # modify head to pyramid-head
-            in_dim, class_num = self.model.head.in_dim, self.model.head.class_num
-            head_type, classifier_type = self.model.head.__class__.__name__, self.model.head.classifier.__class__.__name__
-            self.model.head = lightreid.models.CodePyramid(
-                in_dim=in_dim, out_dims=[2048, 512, 128, 32], class_num=class_num, head=head_type, classifier=classifier_type)
-            self.logging('[light_search was enabled] learn multiple codes with {}'.format(self.model.head.__class__.__name__))
-            # update optimizer parameters
-            optimizer_defaults = self.optimizer.optimizer.defaults
-            self.optimizer.optimizer.__init__(self.model.parameters(), **optimizer_defaults)
-            self.logging('[light_search was enabled] update optimizer parameters')
-            # add self-ditillation loss loss for pyramid-haed
-            self.criterion.criterion_list.extend([
-                {'criterion': lightreid.losses.ProbSelfDistillLoss(), 'weight': 1.0},
-                {'criterion': lightreid.losses.SIMSelfDistillLoss(), 'weight': 1000.0},
-            ])
-            self.logging('[light_search was enabled] add ProbSelfDistillLoss and SIMSelfDistillLoss')
-
-        self.model = self.model.to(self.device)
-        if data_parallel:
-            if not sync_bn:
-                self.model = nn.DataParallel(self.model)
-            if sync_bn:
-                # torch.distributed.init_process_group(backend='nccl', world_size=4, init_method='...')
-                self.model = nn.SyncBatchNorm.convert_sync_batchnorm(self.model)
-                # self.model = nn.parallel.DistributedDataParallel(self.model)
 
 
 # class SyncBNEngine(Engine):

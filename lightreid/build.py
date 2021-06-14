@@ -2,14 +2,13 @@ from .data import build_datamanager
 from .models import build_model
 from .optim import build_optimizer
 from .evaluations import build_evaluator
-from .engine import Engine, Inference, CleanEngine
+from .engine import Engine, Inference
 from .losses import build_criterion
 from easydict import EasyDict as edict
 
 
 engine_factory__ = {
     'engine': Engine,
-    'clean_engine': CleanEngine,
 }
 
 

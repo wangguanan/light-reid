@@ -8,9 +8,7 @@ lightreid:
   light_model: True
   light_feat: False
   light_search: False
-  teacher_path: '/data/projects/light-reid/update-lightreid-20201119/examples/bagtricks_buildwithconfigs2/results/duke/resnet50/lightmodel(False)-lightfeat(False)-lightsearch(False)/final_model.pth.tar'
-
-engine: 'clean_engine'
+  teacher_path: './results/duke/resnet50/final_model.pth.tar'
 
 data:
   sources: ['dukemtmcreid']
