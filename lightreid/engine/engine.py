@@ -461,7 +461,7 @@ class CleanEngine(Engine):
     """
 
     def __init__(self, results_dir, datamanager, model, criterion, optimizer, use_gpu, data_parallel=False, sync_bn=False,
-                 eval_metric='cosine',
+                 eval_metric='cosine', evaluator=None, 
                  light_model=False, light_feat=False, light_search=False,
                  **kwargs):
 
@@ -474,6 +474,7 @@ class CleanEngine(Engine):
         self.optimizer = optimizer
         self.device = torch.device('cuda') if use_gpu else torch.device('cpu')
         self.eval_metric = eval_metric
+        self.evaluator = evaluator
 
         self.loss_meter = MultiItemAverageMeter()
         os.makedirs(self.results_dir, exist_ok=True)
