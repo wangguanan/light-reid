@@ -16,6 +16,7 @@ __all__ = ['NJUST365', 'NJUST365SPR', 'NJUST365WIN']
 class NJUST365(ReIDSamples):
     '''
     njust365-all
+    njust365 is a private dataset, not released yet
     '''
 
     def __init__(self, data_path, combineall=False, season='all', **kwargs):
