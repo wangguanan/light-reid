@@ -11,7 +11,7 @@ it features
 
 
 ## What's New
-- [2021.06]: we support [vision transformers](https://arxiv.org/abs/2010.11929) as cnn backbones. please refer [examples/bagtricks_buildwithconfigs/configs/base_config_duke_vit.yaml](./examples/bagtricks_buildwithconfigs/configs/base_config_duke_vit.yaml)
+- [2021.06]: we support [vision transformers](https://arxiv.org/abs/2010.11929) as cnn backbones. please refer [base_config_duke_vit.yaml](./examples/bagtricks_buildwithconfigs/configs/base_config_duke_vit.yaml)
 - [2020.12]: we release a strong pipeline for occluded/partial re-id. please refer [occluded_reid](./examples/occluded_reid)
 - [2020.11]: we support pca_reduction to 128d with almost no accuracy drop. please refer [bagtricks_pca](./examples/bagtricks_pca)
 - [2020.11]: we support build with config files, making coding more simple. please refer [bagtricks_buildwithconfigs](./examples/bagtricks_buildwithconfigs)
