@@ -114,12 +114,10 @@ class PersonReIDMAP:
         :param set2: np.array, 1d
         :return:
         '''
-
         mask = np.in1d(array1, array2, invert=invert)
         return array1[mask]
 
     def notin1d(self, array1, array2):
-
         return self.in1d(array1, array2, invert=True)
 
     def normalize(self, x):

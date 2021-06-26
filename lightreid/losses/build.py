@@ -25,7 +25,6 @@ def build_criterion(cfg):
         # user customized
         **LOSSes_REGISTRY._obj_map
     }
-    # print(__criterion_factory.keys())
 
     cfg = edict(cfg)
     criterion_list = []

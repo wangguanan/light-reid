@@ -1,19 +1,18 @@
 env:
-  results_dir: './results/duke/resnet18_distill/'
+  results_dir: './results/duke/vit_small_patch16_224/'
   use_gpu: True
   data_parallel: True
   sync_bn: False
 
 lightreid:
-  light_model: True
+  light_model: False
   light_feat: False
   light_search: False
-  teacher_path: './results/duke/resnet50/final_model.pth.tar'
 
 data:
   sources: ['dukemtmcreid']
   targets: ['market1501', 'dukemtmcreid']
-  img_size: [256, 128] # height, width
+  img_size: [224, 224] # height, width
   transforms_train: ['randomflip', 'padcrop', 'rea']
   transforms_test: []
   mean: [0.485, 0.456, 0.406]
@@ -24,8 +23,7 @@ data:
 
 model:
   backbone:
-    name: 'resnet18'
-    last_stride_one: True
+    name: 'vit_small_patch16_224'
     pretrained: True
   pooling:
     name: 'avgpool'
@@ -67,4 +65,3 @@ optim:
     warmup_epochs: 10
   max_epochs: 120
 
-  

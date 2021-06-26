@@ -11,3 +11,5 @@ pyyaml
 hexhamming==1.1
 apex
 opencv-python
+einops
+timm
