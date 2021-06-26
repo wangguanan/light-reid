@@ -26,7 +26,7 @@ def build_model(backbone, pooling, head, **kwargs):
     head = edict(head)
 
     # init
-    backbone = build_cnnbackbone(name=backbone.name, pretrained=backbone.pretrained, last_stride_one=backbone.last_stride_one)
+    backbone = build_cnnbackbone(name=backbone.pop('name'), **backbone)
     pooling = build_pooling(**pooling)
     head = build_head(in_dim=backbone.dim, class_num=head.pop('class_num'), classifier=head.pop('classifier'), **head)
 
