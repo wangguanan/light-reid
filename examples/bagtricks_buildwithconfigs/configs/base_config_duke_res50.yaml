@@ -66,3 +66,8 @@ optim:
     warmup_epochs: 10
   max_epochs: 120
 
+evaluator:
+    name: 'cmc_map_eval'
+    metric: 'cosine'
+    mode: 'inter-camera'
+

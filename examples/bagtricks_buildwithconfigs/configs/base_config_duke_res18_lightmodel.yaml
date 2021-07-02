@@ -66,5 +66,3 @@ optim:
     warmup_factor: 0.01
     warmup_epochs: 10
   max_epochs: 120
-
-  

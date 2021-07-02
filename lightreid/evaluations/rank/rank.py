@@ -45,7 +45,6 @@ class CmcMapEvaluator(BaseEvaluator):
     Args:
         metric(str): could be cosine, euclidean and hamming
         mode(str): could be inter-camera, intra-camera and all
-            inter-camera
     '''
 
     def __init__(self, metric, mode):

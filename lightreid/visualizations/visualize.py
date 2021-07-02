@@ -17,7 +17,7 @@ def make_dirs(dir):
         print('Existed dirs: {}'.format(dir))
 
 
-def visualize_ranked_results(distmat, dataset, save_dir='./vis-results/', sort='ascend', topk=20, mode='inter-camera', show='all'):
+def visualize_ranked_results(distmat, dataset, save_dir='./vis-results/', sort='ascend', topk=20, mode='inter-camera', show='all', display_score=False):
     """Visualizes ranked results.
     Args:
         dismat (numpy.ndarray): distance matrix of shape (nq, ng)
@@ -60,7 +60,8 @@ def visualize_ranked_results(distmat, dataset, save_dir='./vis-results/', sort='
         for img, hit, text in zip(image_list, hit_list, text_list):
             img = Image.open(img).resize((64, 128))
             d = ImageDraw.Draw(img)
-            d.text((3, 1), "{:.3}".format(text), fill=(255, 255, 0))
+            if display_score:
+                d.text((3, 1), "{:.3}".format(text), fill=(255, 255, 0))
             if hit:
                 img = ImageOps.expand(img, border=4, fill='green')
             else:

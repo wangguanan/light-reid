@@ -3,7 +3,7 @@ from lightreid.utils import Registry
 EVALUATORs_REGISTRY = Registry('evaluator')
 
 
-def build_evaluator(name='cmc_map_eval', metric='cosine', mode='all', **kwargs):
+def build_evaluator(name='cmc_map_eval', metric='cosine', mode='inter-camera', **kwargs):
 
     evaluator_factory_ = {
         # original support
