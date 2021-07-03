@@ -1,0 +1,68 @@
+env:
+  results_dir: './results/duke/resnet18_lightfeat/'
+  use_gpu: True
+  data_parallel: True
+  sync_bn: False
+
+lightreid:
+  light_model: False
+  light_feat: True
+  light_search: False
+
+data:
+  sources: ['dukemtmcreid']
+  targets: ['market1501', 'dukemtmcreid']
+  img_size: [256, 128] # height, width
+  transforms_train: ['randomflip', 'padcrop', 'rea']
+  transforms_test: []
+  mean: [0.485, 0.456, 0.406]
+  std: [0.229, 0.224, 0.225]
+  sampler: 'pk'
+  p: 16
+  k: 4
+
+model:
+  backbone:
+    name: 'resnet18'
+    last_stride_one: True
+    pretrained: True
+  pooling:
+    name: 'avgpool'
+  head:
+    name: 'bnhead'
+    classifier:
+      name: 'linear'
+
+criterion:
+  loss1:
+    display_name: 'classification_loss'
+    criterion:
+      name: 'cross_entropy_label_smooth'
+    inputs:
+      inputs: 'logits'
+      targets: 'pids'
+    weight: 1.0
+  loss2:
+    display_name: 'triplet_loss'
+    criterion:
+      name: 'tripletloss'
+      margin: 0.35
+      metric: 'euclidean'
+    inputs:
+      emb: 'feats'
+      label: 'pids'
+    weight: 1.0
+
+optim:
+  optimizer:
+    name: 'adam'
+    lr: 3.5e-4
+    weight_decay: 5.0e-4
+  lr_scheduler:
+    name: 'warmup_multistep'
+    milestones: [40, 70]
+    gamma: 0.1
+    warmup_factor: 0.01
+    warmup_epochs: 10
+  max_epochs: 120
+
