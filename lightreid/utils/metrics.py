@@ -1,3 +1,9 @@
+"""
+@author:    Guan'an Wang
+@contact:   guan.wang0706@gmail.com
+"""
+
+
 import numpy as np
 
 

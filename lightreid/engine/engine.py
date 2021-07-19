@@ -283,6 +283,7 @@ class Engine(object):
 
     def smart_eval(self, onebyone=False, return_pr=False, return_vislist=False, mode='normal'):
         '''
+        save features locally
         extract features --> save features on disk --> load features --> evaluation
         Args:
             onebyone(bool): evaluate query one by one, otherwise in a parallel way
@@ -322,20 +323,6 @@ class Engine(object):
                 gallery_pids = features['gallery_pids']
                 gallery_camids = features['gallery_camids']
 
-                # # compute mAP and rank@k
-                # if isinstance(query_feats, np.ndarray):  #
-                #     if not onebyone:  # eval all query images one shot
-                #         mAP, CMC = CmcMapEvaluator(metric=metric, mode='inter-camera').evaluate(
-                #             query_feats, query_camids, query_pids,
-                #             gallery_feats, gallery_camids, gallery_pids)
-                #     else:  # eval query images one by one
-                #         mAP, CMC, ranktime, evaltime = CmcMapEvaluator1b1(metric=metric, mode='inter-camera').compute(
-                #             query_feats, query_camids, query_pids,
-                #             gallery_feats, gallery_camids, gallery_pids, return_time=True)
-                # elif isinstance(query_feats, list):  # eval with coarse2fine
-                #     mAP, CMC, ranktime, evaltime = CmcMapEvaluatorC2F(metric=metric, mode='inter-camera').compute(
-                #         query_feats, query_camids, query_pids,
-                #         gallery_feats, gallery_camids, gallery_pids, return_time=True)
                 # compute mAP and rank@k
                 mAP, CMC = self.evaluator.evaluate(
                     query_feats, query_camids, query_pids,
@@ -376,7 +363,7 @@ class Engine(object):
                 sort = 'ascend'
             elif metric == 'hamming':
                 distmat = lightreid.utils.hamming_distance(query_feats, gallery_feats)
-                sort = 'descend'
+                sort = 'ascend'
             else:
                 assert 0, 'metric type error'
 
