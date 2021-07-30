@@ -32,7 +32,7 @@ model:
   head:
     name: 'SkeletonMultiHeads'
     weight_global: 16.0
-    pose_model_path: '/data/projects/20190531_Partial-ReID-Skeleton-Feature-Alignment-ReID/datasets/coco/pose_hrnet_w48_256x192.pth'
+    pose_model_path: './pose_hrnet_w48_256x192.pth'
     test_mode: 'sum'
     classifier:
       name: 'linear'

@@ -12,6 +12,8 @@ import yaml
 import time
 import numpy as np
 
+from cores import *
+
 # cfg
 parser = argparse.ArgumentParser()
 parser.add_argument('--config_file', type=str, default='path/to/config.yaml', help='')

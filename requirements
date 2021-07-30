@@ -13,3 +13,5 @@ apex
 opencv-python
 einops
 timm
+mat4py
+yacs
