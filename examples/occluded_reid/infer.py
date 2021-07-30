@@ -25,7 +25,7 @@ with open(args.config_file) as file:
     config = yaml.load(file, Loader=yaml.FullLoader)
 
 # inference only
-inference = lightreid.build_inference(config, model_path=args.model_path, use_gpu=False)
+inference = lightreid.build_inference(config, model_path=args.model_path, use_gpu=True)
 
 # process
 img_paths = [
