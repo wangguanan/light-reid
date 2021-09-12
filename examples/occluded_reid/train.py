@@ -13,7 +13,7 @@ from cores import *
 
 # cfgs
 parser = argparse.ArgumentParser()
-parser.add_argument('--config_file', type=str, default='./configs/base_config.yaml', help='')
+parser.add_argument('--config_file', type=str, default='./configs/config_occludedreid_resnet50.yaml', help='')
 args = parser.parse_args()
 
 # load configs from yaml file
