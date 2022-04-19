@@ -5,7 +5,7 @@ this projects provide links of popular open-sourced Re-ID datasets.
 
 ## Re-ID datasets
 
-| Dataset       | Year | Train Set | Train Set | IDs  | CAMs | IMGs    | Home Page                                                            | Google Drive                                                                               | Baidu Disk                                                     | One Drive  |
+| Dataset       | Year | Train Set |  Test Set | IDs  | CAMs | IMGs    | Home Page                                                            | Google Drive                                                                               | Baidu Disk                                                     | One Drive  |
 |---------------|------|-----------|-----------|------|------|---------|----------------------------------------------------------------------|--------------------------------------------------------------------------------------------|----------------------------------------------------------------|------------|
 | Market-1501   | 2015 | √         | √         | 1501 | 6    | 32,217  | [link](http://www.liangzheng.com.cn/Project/project_reid.html) (404) | [link](https://drive.google.com/file/d/1M8m1SYjx15Yi12-XJ-TV6nVJ_ID1dNN5/view?usp=sharing) | -                                                              | -          |
 | DukeMTMC-reID | 2017 | √         | √         | 1812 | 8    | 36,441  | [link](http://vision.cs.duke.edu/DukeMTMC/) (404)                    | [link](https://drive.google.com/file/d/11FxmKe6SZ55DSeKigEtkb-xQwuq6hOkE/view?usp=sharing) | [link](https://pan.baidu.com/s/1GQfrzbS_2tFZWRNr22hNqg) (35gt)  | -          |
