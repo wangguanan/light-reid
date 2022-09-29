@@ -75,7 +75,7 @@ E-mail: guan.wang0706@gmail.com
 
 
 ## LICENSE
-light-reid is released released under the MIT License (refer to the LICENSE file for details).
+light-reid is released released under the MIT License.
 
 
 ## Citation
